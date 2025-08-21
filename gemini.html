@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Avançado de Análise Educacional - REGINA 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin: auto;
+            height: 400px;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .kpi-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 border-b border-slate-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-800">Painel de Análise REGINA</h1>
+                <p class="text-sm text-slate-500">Desempenho, Evolução e Simulação Super BI 2025</p>
+            </div>
+        </div>
+        <nav class="bg-white border-b border-slate-200">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex space-x-6 overflow-x-auto">
+                <a href="#visao-geral" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent active">Visão Geral</a>
+                <a href="#analise-detalhada" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Análise Detalhada</a>
+                <a href="#evolucao-individual" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Evolução Individual</a>
+                <a href="#simulador" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Simulador Super BI</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="visao-geral" class="scroll-mt-24">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Visão Geral da Rede</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-indigo-500">
+                    <h3 class="text-sm font-medium text-slate-500">Média Desempenho (2º Bi)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">9.1 <span class="text-base font-medium text-green-500 ml-1">+1.5</span></p>
+                    <p class="text-xs text-slate-400 mt-1">vs 1º Bimestre</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-teal-500">
+                    <h3 class="text-sm font-medium text-slate-500">Média Frequência (2º Bi)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">85.9% <span class="text-base font-medium text-green-500 ml-1">+5.2%</span></p>
+                    <p class="text-xs text-slate-400 mt-1">vs 1º Bimestre (Dados Corrigidos)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-amber-500">
+                    <h3 class="text-sm font-medium text-slate-500">Escolas Analisadas</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">26</p>
+                    <p class="text-xs text-slate-400 mt-1">9 PEI e 17 Regulares</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-rose-500">
+                    <h3 class="text-sm font-medium text-slate-500">Alerta de Dados (Semana 5)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">Corrigido</p>
+                    <p class="text-xs text-slate-400 mt-1">Dados anômalos removidos da análise</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-bold text-slate-700 mb-4">Evolução da Rede: 1º vs 2º Bimestre</h3>
+                <div class="chart-container h-80">
+                    <canvas id="networkEvolutionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="analise-detalhada" class="scroll-mt-24 mt-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Análise Detalhada por Escola</h2>
+            <div class="bg-white rounded-lg shadow-sm p-6 overflow-x-auto">
+                 <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 table-header-sortable cursor-pointer" data-sort="nome">Escola</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable cursor-pointer" data-sort="desempenho2">Desempenho 2º Bi</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable cursor-pointer" data-sort="variacao_acad">Evolução Acad.</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable cursor-pointer" data-sort="frequencia2">Frequência 2º Bi</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable cursor-pointer" data-sort="variacao_freq">Evolução Freq.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="school-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section id="evolucao-individual" class="scroll-mt-24 mt-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Análise de Evolução Individual</h2>
+            <div class="mb-4">
+                <label for="evolution-school-selector" class="block text-sm font-medium text-slate-600">Selecione uma Escola para Análise</label>
+                <select id="evolution-school-selector" class="mt-1 block w-full max-w-lg pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+            </div>
+            <div id="school-evolution-container" class="bg-white p-6 rounded-lg shadow-sm">
+                <!-- Conteúdo dinâmico aqui -->
+            </div>
+        </section>
+
+        <section id="simulador" class="scroll-mt-24 mt-12">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-800">Simulador de Projeção Super BI</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto mt-2">Ajuste os indicadores para projetar a nota final de cada escola, com base nas regras de 2025.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-slate-800 mb-4">Parâmetros da Simulação</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="school-selector" class="block text-sm font-medium text-slate-600">Selecione a Escola</label>
+                            <select id="school-selector" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+                        </div>
+                        <div>
+                            <label for="frequencia-slider" class="block text-sm font-medium text-slate-600">Frequência Aluno (%) <span id="frequencia-value" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="frequencia-slider" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="70" max="100" step="0.1">
+                        </div>
+                        <div>
+                            <label for="aprovacao-slider" class="block text-sm font-medium text-slate-600">Taxa de Aprovação (%) <span id="aprovacao-value" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="aprovacao-slider" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="70" max="100" step="0.1">
+                        </div>
+                        <div>
+                            <label for="rendimento-slider" class="block text-sm font-medium text-slate-600">Rendimento Acadêmico (0-10) <span id="rendimento-value" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="rendimento-slider" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="0" max="10" step="0.1">
+                        </div>
+                        <div>
+                            <label for="plataformas-slider" class="block text-sm font-medium text-slate-600">Nota Plataformas (0-10) <span id="plataformas-value" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="plataformas-slider" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="0" max="10" step="0.1">
+                        </div>
+                         <div>
+                            <label for="saresp-slider" class="block text-sm font-medium text-slate-600">Nota SARESP (0-10) <span id="saresp-value" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="saresp-slider" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="0" max="10" step="0.1">
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-slate-800 mb-4">Resultado da Projeção</h3>
+                    <div class="text-center">
+                        <p class="text-slate-500">Nota Final Super BI Projetada</p>
+                        <p id="projected-score" class="text-6xl font-extrabold text-indigo-600 my-4">0.0</p>
+                        <div class="chart-container h-64">
+                            <canvas id="projectionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const schoolData = [
+                { id: 1, nome: "PEI EE Maria Falconi de Felício", tipo: "PEI", desempenho1: 8.7, desempenho2: 10.0, frequencia1: 85.9, frequencia2: 90.6, alunos: 396 },
+                { id: 2, nome: "PEI EE Profº Nestor G de Araújo", tipo: "PEI", desempenho1: 8.3, desempenho2: 9.9, frequencia1: 81.8, frequencia2: 90.6, alunos: 306 },
+                { id: 3, nome: "PEI EE Profª Maria Elyde M dos Santos", tipo: "PEI", desempenho1: 8.3, desempenho2: 10.0, frequencia1: 82.2, frequencia2: 88.2, alunos: 229 },
+                { id: 4, nome: "PEI EE Domingos Paro", tipo: "PEI", desempenho1: 8.1, desempenho2: 10.0, frequencia1: 88.0, frequencia2: 93.2, alunos: 254 },
+                { id: 5, nome: "PEI EE DR Antonio Furlan Júnior", tipo: "PEI", desempenho1: 8.0, desempenho2: 9.8, frequencia1: 88.4, frequencia2: 89.3, alunos: 521 },
+                { id: 6, nome: "PEI EE Profª Dolores B Novaes", tipo: "PEI", desempenho1: 7.9, desempenho2: 9.5, frequencia1: 82.8, frequencia2: 89.2, alunos: 503 },
+                { id: 7, nome: "EE DR Mário Lins", tipo: "Regular", desempenho1: 7.8, desempenho2: 9.3, frequencia1: 85.8, frequencia2: 86.7, alunos: 105 },
+                { id: 8, nome: "EE Dona Adélia Frascino", tipo: "Regular", desempenho1: 7.8, desempenho2: 10.0, frequencia1: 91.5, frequencia2: 92.6, alunos: 50 },
+                { id: 9, nome: "EE Profº Bruno Pieroni", tipo: "Regular", desempenho1: 7.6, desempenho2: 9.8, frequencia1: 82.9, frequencia2: 85.5, alunos: 645 },
+                { id: 10, nome: "EE Mauricio Montecchi", tipo: "Regular", desempenho1: 7.4, desempenho2: 9.9, frequencia1: 91.0, frequencia2: 92.0, alunos: 815 },
+                { id: 11, nome: "PEI EE José Luiz de Siqueira", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.7, frequencia1: 80.9, frequencia2: 89.0, alunos: 742 },
+                { id: 12, nome: "PEI EE Winston Churchill", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.5, frequencia1: 80.1, frequencia2: 87.6, alunos: 386 },
+                { id: 13, nome: "PEI EE Profª Maria C R S Magon", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.4, frequencia1: 70.8, frequencia2: 93.4, alunos: 236 },
+                { id: 14, nome: "EE Profª Yolanda Luiz Sicchieri", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.5, frequencia1: 71.9, frequencia2: 78.6, alunos: 642 },
+                { id: 15, nome: "EE Profª Nícia Fabiola Z. Giraldi", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.2, frequencia1: 80.9, frequencia2: 80.5, alunos: 769 },
+                { id: 16, nome: "EE Orminda Guimarães Cotrim", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.5, frequencia1: 84.4, frequencia2: 84.5, alunos: 779 },
+                { id: 17, nome: "EE Odulfo de Oliveira Guimarães", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.3, frequencia1: 76.2, frequencia2: 80.0, alunos: 897 },
+                { id: 18, nome: "EE DR Isaías José Ferreira", tipo: "Regular", desempenho1: 6.7, desempenho2: 9.6, frequencia1: 78.9, frequencia2: 88.0, alunos: 631 },
+                { id: 19, nome: "EE Luiz Marcari", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 71.3, frequencia2: 86.1, alunos: 249 },
+                { id: 20, nome: "EE Profº Plínio Berardo", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 73.7, frequencia2: 75.2, alunos: 1038 },
+                { id: 21, nome: "EE Profº Basílio R da Silva", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.8, frequencia1: 83.4, frequencia2: 88.4, alunos: 571 },
+                { id: 22, nome: "EE Profª Dolores M de Castro", tipo: "Regular", desempenho1: 6.6, desempenho2: 9.2, frequencia1: 89.7, frequencia2: 91.5, alunos: 148 },
+                { id: 23, nome: "EE Profª Edith Silveira Dalmaso", tipo: "Regular", desempenho1: 6.4, desempenho2: 8.5, frequencia1: 75.3, frequencia2: 90.8, alunos: 1058 },
+                { id: 24, nome: "EE Profª Josepha Castro", tipo: "Regular", desempenho1: 6.2, desempenho2: 9.4, frequencia1: 82.9, frequencia2: 82.3, alunos: 527 },
+                { id: 25, nome: "EE Anna Passamonti Balardin", tipo: "Regular", desempenho1: 6.0, desempenho2: 9.2, frequencia1: 73.1, frequencia2: 78.4, alunos: 968 },
+                { id: 26, nome: "EE Ferrucio Chiaratti", tipo: "Regular", desempenho1: 5.9, desempenho2: 9.0, frequencia1: 70.9, frequencia2: 74.8, alunos: 902 }
+            ].map(d => ({
+                ...d,
+                variacao_acad: parseFloat((d.desempenho2 - d.desempenho1).toFixed(1)),
+                variacao_freq: parseFloat((d.frequencia2 - d.frequencia1).toFixed(1))
+            }));
+
+            function createNetworkEvolutionChart() {
+                const ctx = document.getElementById('networkEvolutionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1º Bimestre', '2º Bimestre'],
+                        datasets: [{
+                            label: 'Média de Desempenho',
+                            data: [7.6, 9.1],
+                            backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Média de Frequência (%)',
+                            data: [80.7, 85.9],
+                            backgroundColor: 'rgba(13, 148, 136, 0.7)',
+                            borderColor: 'rgba(13, 148, 136, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, position: 'left', title: { display: true, text: 'Média de Desempenho' } },
+                            y1: { beginAtZero: false, position: 'right', title: { display: true, text: 'Média de Frequência (%)' }, grid: { drawOnChartArea: false } }
+                        }
+                    }
+                });
+            }
+
+            function populateTable(data) {
+                const tableBody = document.getElementById('school-table-body');
+                tableBody.innerHTML = '';
+                data.forEach(school => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b hover:bg-slate-50';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-slate-900">${school.nome}</td>
+                        <td class="px-6 py-4 text-center">${school.desempenho2.toFixed(1)}</td>
+                        <td class="px-6 py-4 text-center ${school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600'}">${school.variacao_acad > 0 ? '+' : ''}${school.variacao_acad.toFixed(1)}</td>
+                        <td class="px-6 py-4 text-center">${school.frequencia2.toFixed(1)}%</td>
+                        <td class="px-6 py-4 text-center ${school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600'}">${school.variacao_freq > 0 ? '+' : ''}${school.variacao_freq.toFixed(1)}%</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            let currentSort = { key: 'nome', direction: 'asc' };
+            document.querySelectorAll('.table-header-sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortKey = header.dataset.sort;
+                    const direction = (currentSort.key === sortKey && currentSort.direction === 'desc') ? 'asc' : 'desc';
+                    currentSort = { key: sortKey, direction };
+                    const sortedData = [...schoolData].sort((a, b) => {
+                        if (a[sortKey] < b[sortKey]) return direction === 'asc' ? -1 : 1;
+                        if (a[sortKey] > b[sortKey]) return direction === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                    populateTable(sortedData);
+                });
+            });
+
+            const schoolSelector = document.getElementById('school-selector');
+            schoolData.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school.id;
+                option.textContent = school.nome;
+                schoolSelector.appendChild(option);
+            });
+
+            const sliders = {
+                frequencia: document.getElementById('frequencia-slider'),
+                aprovacao: document.getElementById('aprovacao-slider'),
+                rendimento: document.getElementById('rendimento-slider'),
+                plataformas: document.getElementById('plataformas-slider'),
+                saresp: document.getElementById('saresp-slider')
+            };
+
+            const values = {
+                frequencia: document.getElementById('frequencia-value'),
+                aprovacao: document.getElementById('aprovacao-value'),
+                rendimento: document.getElementById('rendimento-value'),
+                plataformas: document.getElementById('plataformas-value'),
+                saresp: document.getElementById('saresp-value')
+            };
+
+            let projectionChart;
+
+            function updateSimulator() {
+                const freq = parseFloat(sliders.frequencia.value);
+                const aprov = parseFloat(sliders.aprovacao.value);
+                const rend = parseFloat(sliders.rendimento.value);
+                const plat = parseFloat(sliders.plataformas.value);
+                const saresp = parseFloat(sliders.saresp.value);
+
+                values.frequencia.textContent = freq.toFixed(1);
+                values.aprovacao.textContent = aprov.toFixed(1);
+                values.rendimento.textContent = rend.toFixed(1);
+                values.plataformas.textContent = plat.toFixed(1);
+                values.saresp.textContent = saresp.toFixed(1);
+
+                const pesos = { freq: 1.5, aprov: 1.0, rend: 2.0, plat: 2.0, saresp: 3.0, formacao: 2.0, apoio: 0.5 };
+                const totalPeso = Object.values(pesos).reduce((a, b) => a + b, 0);
+
+                const notaFreq = (freq / 100) * pesos.freq;
+                const notaAprov = (aprov / 100) * pesos.aprov;
+                const notaRend = (rend / 10) * pesos.rend;
+                const notaPlat = (plat / 10) * pesos.plat;
+                const notaSaresp = (saresp / 10) * pesos.saresp;
+                
+                const notaFormacao = 0.8 * pesos.formacao;
+                const notaApoio = 0.7 * pesos.apoio;
+
+                const notaFinal = (notaFreq + notaAprov + notaRend + notaPlat + notaSaresp + notaFormacao + notaApoio) / totalPeso * 10;
+                
+                document.getElementById('projected-score').textContent = notaFinal.toFixed(2);
+
+                if (projectionChart) projectionChart.destroy();
+                const ctx = document.getElementById('projectionChart').getContext('2d');
+                projectionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Frequência', 'Aprovação', 'Rendimento', 'Plataformas', 'SARESP'],
+                        datasets: [{
+                            label: 'Pontuação Contribuinte',
+                            data: [notaFreq, notaAprov, notaRend, notaPlat, notaSaresp],
+                            backgroundColor: [
+                                'rgba(79, 70, 229, 0.6)',
+                                'rgba(13, 148, 136, 0.6)',
+                                'rgba(217, 119, 6, 0.6)',
+                                'rgba(219, 39, 119, 0.6)',
+                                'rgba(30, 64, 175, 0.6)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: { x: { beginAtZero: true, max: 3 } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            schoolSelector.addEventListener('change', (e) => {
+                const school = schoolData.find(s => s.id == e.target.value);
+                if (school) {
+                    sliders.frequencia.value = school.frequencia2;
+                    sliders.aprovacao.value = 92;
+                    sliders.rendimento.value = school.desempenho2;
+                    sliders.plataformas.value = 8.5;
+                    sliders.saresp.value = 7.8;
+                    updateSimulator();
+                }
+            });
+
+            Object.values(sliders).forEach(slider => slider.addEventListener('input', updateSimulator));
+
+            // --- Análise de Evolução Individual ---
+            const evolutionSelector = document.getElementById('evolution-school-selector');
+            let individualEvolutionChart;
+
+            function populateEvolutionSelector() {
+                schoolData.forEach(school => {
+                    const option = document.createElement('option');
+                    option.value = school.id;
+                    option.textContent = school.nome;
+                    evolutionSelector.appendChild(option);
+                });
+            }
+
+            function updateSchoolEvolution(schoolId) {
+                const school = schoolData.find(s => s.id == schoolId);
+                if (!school) return;
+
+                const container = document.getElementById('school-evolution-container');
+                
+                const acadColor = school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600';
+                const freqColor = school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600';
+                const acadSymbol = school.variacao_acad > 0 ? '+' : '';
+                const freqSymbol = school.variacao_freq > 0 ? '+' : '';
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">${school.nome}</h4>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <p class="font-semibold text-slate-700">Evolução Acadêmica</p>
+                                    <p class="text-sm text-slate-500">1º Bi: ${school.desempenho1.toFixed(1)} &rarr; 2º Bi: ${school.desempenho2.toFixed(1)}</p>
+                                    <p class="text-lg font-bold ${acadColor}">${acadSymbol}${school.variacao_acad.toFixed(1)}</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <p class="font-semibold text-slate-700">Evolução de Frequência</p>
+                                    <p class="text-sm text-slate-500">1º Bi: ${school.frequencia1.toFixed(1)}% &rarr; 2º Bi: ${school.frequencia2.toFixed(1)}%</p>
+                                    <p class="text-lg font-bold ${freqColor}">${freqSymbol}${school.variacao_freq.toFixed(1)}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container h-80">
+                            <canvas id="individualEvolutionChart"></canvas>
+                        </div>
+                    </div>
+                `;
+
+                createSchoolEvolutionChart(school);
+            }
+
+            function createSchoolEvolutionChart(school) {
+                if (individualEvolutionChart) {
+                    individualEvolutionChart.destroy();
+                }
+                const ctx = document.getElementById('individualEvolutionChart').getContext('2d');
+                individualEvolutionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1º Bimestre', '2º Bimestre'],
+                        datasets: [
+                            {
+                                label: 'Desempenho Acadêmico',
+                                data: [school.desempenho1, school.desempenho2],
+                                backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                                yAxisID: 'yDesempenho'
+                            },
+                            {
+                                label: 'Frequência (%)',
+                                data: [school.frequencia1, school.frequencia2],
+                                backgroundColor: 'rgba(13, 148, 136, 0.7)',
+                                yAxisID: 'yFrequencia'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            yDesempenho: {
+                                type: 'linear',
+                                position: 'left',
+                                title: { display: true, text: 'Nota Desempenho' },
+                                min: 0,
+                                max: 10.5
+                            },
+                            yFrequencia: {
+                                type: 'linear',
+                                position: 'right',
+                                title: { display: true, text: 'Frequência (%)' },
+                                min: Math.min(60, school.frequencia1 - 5, school.frequencia2 - 5),
+                                max: 100,
+                                grid: { drawOnChartArea: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            evolutionSelector.addEventListener('change', (e) => updateSchoolEvolution(e.target.value));
+            
+            // Navegação por scroll
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            const isActive = link.getAttribute('href').substring(1) === entry.target.id;
+                            link.classList.toggle('active', isActive);
+                            link.classList.toggle('border-transparent', !isActive);
+                        });
+                    }
+                });
+            }, { rootMargin: "-40% 0px -60% 0px" });
+            sections.forEach(section => observer.observe(section));
+
+            // Initial Load
+            createNetworkEvolutionChart();
+            populateTable(schoolData);
+            populateEvolutionSelector();
+            updateSchoolEvolution(schoolData[0].id);
+            updateSimulator();
+        });
+    </script>
+</body>
+</html>

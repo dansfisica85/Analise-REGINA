@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Geral - Sistema REGINA 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .section-nav { position: sticky; top: 0; z-index: 10; }
+        .chart-container { position: relative; height: 400px; margin: 20px 0; }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">📊 Dashboard Principal - REGINA 2025</h1>
+                    <p class="text-lg opacity-90">Visão Geral da Rede • KPIs e Análises Consolidadas</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="index.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors">
+                    ← Voltar ao Sistema
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navegação Seções -->
+    <nav class="section-nav bg-white shadow-md">
+        <div class="container mx-auto px-6">
+            <div class="flex space-x-8 overflow-x-auto py-4">
+                <a href="#overview" class="nav-link px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap border-b-2 border-transparent hover:border-blue-600">
+                    📊 Visão Geral
+                </a>
+                <a href="#detailed" class="nav-link px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap border-b-2 border-transparent hover:border-blue-600">
+                    📈 Análise Detalhada
+                </a>
+                <a href="#individual" class="nav-link px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap border-b-2 border-transparent hover:border-blue-600">
+                    🏫 Evolução Individual
+                </a>
+                <a href="#simulator" class="nav-link px-4 py-2 text-gray-600 hover:text-blue-600 whitespace-nowrap border-b-2 border-transparent hover:border-blue-600">
+                    🎯 Simulador Super BI
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Seção: Visão Geral da Rede -->
+        <section id="overview" class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Visão Geral da Rede</h2>
+            
+            <!-- KPIs Principais -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-blue-500">
+                    <div class="text-center">
+                        <div id="totalEscolas" class="text-4xl font-bold text-blue-600 mb-2">26</div>
+                        <p class="text-gray-600">Escolas Analisadas</p>
+                        <p class="text-xs text-gray-500 mt-1">Rede completa</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-green-500">
+                    <div class="text-center">
+                        <div id="frequenciaMedia" class="text-4xl font-bold text-green-600 mb-2">89.2%</div>
+                        <p class="text-gray-600">Frequência Média</p>
+                        <p class="text-xs text-green-500 mt-1">+4.1% vs 1º Bi</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-purple-500">
+                    <div class="text-center">
+                        <div id="rendimentoMedio" class="text-4xl font-bold text-purple-600 mb-2">7.8</div>
+                        <p class="text-gray-600">Rendimento Médio</p>
+                        <p class="text-xs text-purple-500 mt-1">+0.4 vs 1º Bi</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-orange-500">
+                    <div class="text-center">
+                        <div id="scoreMedio" class="text-4xl font-bold text-orange-600 mb-2">82.1</div>
+                        <p class="text-gray-600">Score Super BI</p>
+                        <p class="text-xs text-orange-500 mt-1">+3.2 vs 1º Bi</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico Panorama Geral -->
+            <div class="bg-white p-6 rounded-lg shadow-md card mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📈 Panorama Geral da Rede</h3>
+                <div class="chart-container">
+                    <canvas id="panoramaGeral"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção: Análise Detalhada -->
+        <section id="detailed" class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📈 Análise Detalhada</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                <!-- PEI vs Regular -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🏛️ PEI vs Regular</h3>
+                    <div class="chart-container">
+                        <canvas id="peiVsRegular"></canvas>
+                    </div>
+                </div>
+
+                <!-- Distribuição por Classificação -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🎯 Distribuição por Classificação</h3>
+                    <div class="chart-container">
+                        <canvas id="distribuicaoClassificacao"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evolução Temporal -->
+            <div class="bg-white p-6 rounded-lg shadow-md card">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📅 Evolução Temporal</h3>
+                <div class="chart-container">
+                    <canvas id="evolucaoTemporal"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção: Evolução Individual das Escolas -->
+        <section id="individual" class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🏫 Evolução Individual das Escolas</h2>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md card">
+                <div class="mb-4">
+                    <label for="escolaSelect" class="block text-sm font-medium text-gray-700 mb-2">Selecionar Escola para Análise</label>
+                    <select id="escolaSelect" class="border border-gray-300 rounded-lg px-3 py-2 w-full md:w-1/2">
+                        <option value="">Selecione uma escola...</option>
+                    </select>
+                </div>
+                
+                <div id="dadosEscola" class="hidden">
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div id="escolaFrequencia" class="text-2xl font-bold text-blue-600">--</div>
+                            <p class="text-sm text-gray-600">Frequência Média</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div id="escolaRendimento" class="text-2xl font-bold text-green-600">--</div>
+                            <p class="text-sm text-gray-600">Rendimento Médio</p>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <div id="escolaScore" class="text-2xl font-bold text-purple-600">--</div>
+                            <p class="text-sm text-gray-600">Score Super BI</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="evolucaoEscola"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção: Simulador Super BI -->
+        <section id="simulator" class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🎯 Simulador Super BI</h2>
+            
+            <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-lg shadow-lg mb-6">
+                <h3 class="text-xl font-bold mb-2">Acesse o Simulador Completo</h3>
+                <p class="mb-4">Simule cenários e projete resultados baseados no Super BI 2025</p>
+                <a href="simulador.html" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                    🚀 Abrir Simulador
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="dados.js"></script>
+    <script src="graficos.js"></script>
+    <script>
+        // Funções específicas da página visão geral
+        
+        // Atualizar KPIs com dados reais
+        function atualizarKPIs() {
+            if (!dadosEscolas || !resumoRede) return;
+            
+            const stats = calcularEstatisticasRede();
+            if (stats) {
+                document.getElementById('totalEscolas').textContent = stats.total_escolas;
+                document.getElementById('frequenciaMedia').textContent = stats.frequencia_media.toFixed(1) + '%';
+                document.getElementById('rendimentoMedio').textContent = stats.rendimento_medio?.toFixed(1) || '7.8';
+                document.getElementById('scoreMedio').textContent = stats.score_medio.toFixed(1);
+            }
+        }
+        
+        // Criar gráfico panorama geral
+        function criarPanoramaGeral() {
+            const ctx = document.getElementById('panoramaGeral');
+            if (!ctx || !dadosEscolas) return;
+            
+            const dadosPorTipo = obterDadosPorTipo();
+            if (!dadosPorTipo) return;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Frequência', 'Rendimento', 'Aprovação', 'Plataformas', 'Engajamento'],
+                    datasets: [{
+                        label: 'Escolas PEI',
+                        data: [
+                            dadosPorTipo.pei.frequencia_media,
+                            dadosPorTipo.pei.rendimento_medio * 10,
+                            dadosPorTipo.pei.aprovacao_media,
+                            dadosPorTipo.pei.plataformas_media,
+                            dadosPorTipo.pei.escolas.reduce((acc, e) => acc + e.engajamento_docente, 0) / dadosPorTipo.pei.escolas.length * 20
+                        ],
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1
+                    }, {
+                        label: 'Escolas Regulares',
+                        data: [
+                            dadosPorTipo.regular.frequencia_media,
+                            dadosPorTipo.regular.rendimento_medio * 10,
+                            dadosPorTipo.regular.aprovacao_media,
+                            dadosPorTipo.regular.plataformas_media,
+                            dadosPorTipo.regular.escolas.reduce((acc, e) => acc + e.engajamento_docente, 0) / dadosPorTipo.regular.escolas.length * 20
+                        ],
+                        backgroundColor: '#10b981',
+                        borderColor: '#10b981',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparativo Geral: PEI vs Regular'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Configurar seletor de escola
+        function configurarSeletorEscola() {
+            const seletor = document.getElementById('escolaSelect');
+            if (!seletor) return;
+            
+            seletor.addEventListener('change', function() {
+                const escolaId = this.value;
+                const dadosEscolaDiv = document.getElementById('dadosEscola');
+                
+                if (escolaId) {
+                    const escola = obterEscolaPorId(escolaId);
+                    if (escola) {
+                        // Mostrar dados da escola
+                        dadosEscolaDiv.classList.remove('hidden');
+                        
+                        // Atualizar métricas
+                        document.getElementById('escolaFrequencia').textContent = 
+                            ((escola.frequencia_1bi + escola.frequencia_2bi) / 2).toFixed(1) + '%';
+                        document.getElementById('escolaRendimento').textContent = 
+                            ((escola.rendimento_1bi + escola.rendimento_2bi) / 2).toFixed(1);
+                        document.getElementById('escolaScore').textContent = 
+                            escola.score_super_bi.toFixed(1);
+                        
+                        // Criar gráfico de evolução da escola
+                        criarGraficoEvolucaoEscola(escola);
+                    }
+                } else {
+                    dadosEscolaDiv.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Criar gráfico de evolução individual da escola
+        function criarGraficoEvolucaoEscola(escola) {
+            const ctx = document.getElementById('evolucaoEscola');
+            if (!ctx) return;
+            
+            // Destruir gráfico anterior se existir
+            if (window.evolucaoEscolaChart) {
+                window.evolucaoEscolaChart.destroy();
+            }
+            
+            window.evolucaoEscolaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1º Bimestre', '2º Bimestre'],
+                    datasets: [{
+                        label: 'Frequência',
+                        data: [escola.frequencia_1bi, escola.frequencia_2bi],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1
+                    }, {
+                        label: 'Rendimento (x10)',
+                        data: [escola.rendimento_1bi * 10, escola.rendimento_2bi * 10],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Evolução: ${escola.nome}`
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Inicializar página quando dados estiverem prontos
+        document.addEventListener('dadosCarregados', function() {
+            atualizarKPIs();
+            popularSeletorEscolas('escolaSelect');
+            configurarSeletorEscola();
+            
+            // Criar gráficos
+            criarPanoramaGeral();
+            criarGraficoComparativo('peiVsRegular');
+            criarGraficoDistribuicao('distribuicaoClassificacao');
+            criarGraficoEvolucaoTemporal('evolucaoTemporal');
+        });
+    </script>
+</body>
+</html>
+

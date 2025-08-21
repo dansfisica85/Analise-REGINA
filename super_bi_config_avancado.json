@@ -1,0 +1,178 @@
+{
+  "componentes_oficiais": {
+    "FREQUENCIA_ESCOLAR": {
+      "peso": 25.0,
+      "valor_minimo": 0,
+      "valor_maximo": 100,
+      "meta_ideal": 95,
+      "meta_minima": 85,
+      "unidade": "%",
+      "descricao": "Percentual de frequência escolar",
+      "formula": "Presença / Total de Aulas * 100"
+    },
+    "APROVACAO": {
+      "peso": 25.0,
+      "valor_minimo": 0,
+      "valor_maximo": 100,
+      "meta_ideal": 95,
+      "meta_minima": 80,
+      "unidade": "%",
+      "descricao": "Taxa de aprovação escolar",
+      "formula": "Aprovados / Total de Alunos * 100"
+    },
+    "RENDIMENTO_ACADEMICO": {
+      "peso": 20.0,
+      "valor_minimo": 0,
+      "valor_maximo": 10,
+      "meta_ideal": 8.5,
+      "meta_minima": 6.0,
+      "unidade": "nota",
+      "descricao": "Média das avaliações acadêmicas",
+      "formula": "Soma das notas / Número de avaliações"
+    },
+    "USO_PLATAFORMAS_DIGITAIS": {
+      "peso": 15.0,
+      "valor_minimo": 0,
+      "valor_maximo": 100,
+      "meta_ideal": 90,
+      "meta_minima": 70,
+      "unidade": "%",
+      "descricao": "Percentual de uso das plataformas digitais",
+      "formula": "Acessos efetivos / Total de acessos esperados * 100"
+    },
+    "ENGAJAMENTO_DOCENTE": {
+      "peso": 15.0,
+      "valor_minimo": 0,
+      "valor_maximo": 5,
+      "meta_ideal": 4.5,
+      "meta_minima": 3.5,
+      "unidade": "escala",
+      "descricao": "Índice de engajamento dos docentes",
+      "formula": "Média das avaliações de participação docente"
+    }
+  },
+  "plataformas": {
+    "SUPER_BI": {
+      "componentes": [
+        "FREQUENCIA_ESCOLAR",
+        "APROVACAO",
+        "RENDIMENTO_ACADEMICO"
+      ],
+      "peso_total": 70.0,
+      "descricao": "Plataforma principal de Business Intelligence"
+    },
+    "ALUNO_PRESENTE": {
+      "componentes": [
+        "FREQUENCIA_ESCOLAR",
+        "ENGAJAMENTO_DOCENTE"
+      ],
+      "peso_total": 20.0,
+      "descricao": "Plataforma de controle de presença"
+    },
+    "PLATAFORMAS_DIGITAIS": {
+      "componentes": [
+        "USO_PLATAFORMAS_DIGITAIS",
+        "RENDIMENTO_ACADEMICO"
+      ],
+      "peso_total": 10.0,
+      "descricao": "Conjunto de plataformas educacionais digitais"
+    }
+  },
+  "classificacoes": {
+    "EXCELENTE": {
+      "min": 90,
+      "max": 100,
+      "cor": "#4CAF50",
+      "acao": "Manter excelência"
+    },
+    "BOM": {
+      "min": 75,
+      "max": 89,
+      "cor": "#8BC34A",
+      "acao": "Pequenos ajustes"
+    },
+    "REGULAR": {
+      "min": 60,
+      "max": 74,
+      "cor": "#FFC107",
+      "acao": "Melhorias necessárias"
+    },
+    "CRITICO": {
+      "min": 40,
+      "max": 59,
+      "cor": "#FF9800",
+      "acao": "Ação urgente"
+    },
+    "EMERGENCIAL": {
+      "min": 0,
+      "max": 39,
+      "cor": "#F44336",
+      "acao": "Intervenção imediata"
+    }
+  },
+  "metas_bimestrais": {
+    "BIMESTRE_1": {
+      "semanas": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "peso": 0.25
+    },
+    "BIMESTRE_2": {
+      "semanas": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "peso": 0.25
+    },
+    "BIMESTRE_3": {
+      "semanas": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "peso": 0.25
+    },
+    "BIMESTRE_4": {
+      "semanas": [
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "peso": 0.25
+    }
+  }
+}

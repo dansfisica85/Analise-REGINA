@@ -1,0 +1,696 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Super BI 2025 - Avançado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .component-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .component-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .component-card.critical { border-left-color: #ef4444; }
+        .component-card.warning { border-left-color: #f59e0b; }
+        .component-card.good { border-left-color: #10b981; }
+        .component-card.excellent { border-left-color: #059669; }
+
+        .slider-container {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .platform-card {
+            border: 2px solid #e5e7eb;
+            transition: border-color 0.3s ease;
+        }
+
+        .platform-card:hover {
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto p-6">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">🎯 Simulador Super BI 2025</h1>
+            <p class="text-lg text-gray-600">Interface Avançada para Simulação de Performance Escolar</p>
+            <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+                <p class="text-sm text-blue-800">
+                    <strong>📋 Baseado nos dados oficiais do PDF Super BI 2025</strong><br>
+                    Ajuste cada componente e veja o impacto em tempo real nas plataformas e classificação geral
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Painel de Controles -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">🔧 Painel de Controles</h2>
+
+                    <!-- Nome da Escola -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            🏫 Nome da Escola
+                        </label>
+                        <input type="text" id="schoolName" 
+                               value="EE Escola Exemplo"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Componentes do Super BI -->
+                    <div class="space-y-6">
+                        <!-- Frequência Escolar -->
+                        <div class="component-card p-4 border rounded-lg" id="freq-card">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-semibold text-gray-800">📚 Frequência Escolar</h3>
+                                <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">Peso: 25%</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" id="frequencia" class="slider" 
+                                       min="0" max="100" value="85" 
+                                       oninput="updateComponent('frequencia', this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0%</span>
+                                    <span id="freq-value" class="font-semibold text-blue-600">85%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Meta ideal: ≥95% | Meta mínima: ≥85%</p>
+                        </div>
+
+                        <!-- Aprovação -->
+                        <div class="component-card p-4 border rounded-lg" id="aprov-card">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-semibold text-gray-800">✅ Taxa de Aprovação</h3>
+                                <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">Peso: 25%</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" id="aprovacao" class="slider" 
+                                       min="0" max="100" value="80" 
+                                       oninput="updateComponent('aprovacao', this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0%</span>
+                                    <span id="aprov-value" class="font-semibold text-blue-600">80%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Meta ideal: ≥95% | Meta mínima: ≥80%</p>
+                        </div>
+
+                        <!-- Rendimento Acadêmico -->
+                        <div class="component-card p-4 border rounded-lg" id="rend-card">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-semibold text-gray-800">📖 Rendimento Acadêmico</h3>
+                                <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">Peso: 20%</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" id="rendimento" class="slider" 
+                                       min="0" max="10" step="0.1" value="6.5" 
+                                       oninput="updateComponent('rendimento', this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0.0</span>
+                                    <span id="rend-value" class="font-semibold text-blue-600">6.5</span>
+                                    <span>10.0</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Meta ideal: ≥8.5 | Meta mínima: ≥6.0</p>
+                        </div>
+
+                        <!-- Uso de Plataformas -->
+                        <div class="component-card p-4 border rounded-lg" id="plat-card">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-semibold text-gray-800">💻 Uso de Plataformas Digitais</h3>
+                                <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">Peso: 15%</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" id="plataformas" class="slider" 
+                                       min="0" max="100" value="70" 
+                                       oninput="updateComponent('plataformas', this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0%</span>
+                                    <span id="plat-value" class="font-semibold text-blue-600">70%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Meta ideal: ≥90% | Meta mínima: ≥70%</p>
+                        </div>
+
+                        <!-- Engajamento Docente -->
+                        <div class="component-card p-4 border rounded-lg" id="eng-card">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-lg font-semibold text-gray-800">👨‍🏫 Engajamento Docente</h3>
+                                <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">Peso: 15%</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" id="engajamento" class="slider" 
+                                       min="0" max="5" step="0.1" value="3.8" 
+                                       oninput="updateComponent('engajamento', this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0.0</span>
+                                    <span id="eng-value" class="font-semibold text-blue-600">3.8</span>
+                                    <span>5.0</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2">Meta ideal: ≥4.5 | Meta mínima: ≥3.5</p>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Cenários Predefinidos -->
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">🎯 Cenários Predefinidos</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button onclick="applyCenario('critico')" 
+                                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                                🚨 Crítico
+                            </button>
+                            <button onclick="applyCenario('regular')" 
+                                    class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+                                ⚠️ Regular
+                            </button>
+                            <button onclick="applyCenario('bom')" 
+                                    class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                                ✅ Bom
+                            </button>
+                            <button onclick="applyCenario('excelente')" 
+                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                                🌟 Excelente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel de Resultados -->
+            <div class="lg:col-span-1">
+                <div class="space-y-6">
+                    <!-- Score Total -->
+                    <div class="result-card rounded-lg shadow-lg p-6 text-center">
+                        <h2 class="text-xl font-bold mb-4">🎯 Score Super BI</h2>
+                        <div class="text-5xl font-bold mb-2" id="totalScore">72.5</div>
+                        <div class="text-lg mb-4" id="classification">REGULAR</div>
+                        <div class="w-full bg-white bg-opacity-20 rounded-full h-3 mb-4">
+                            <div class="bg-white h-3 rounded-full transition-all duration-500" 
+                                 id="scoreBar" style="width: 72.5%"></div>
+                        </div>
+                        <p class="text-sm opacity-90" id="recommendedAction">Melhorias necessárias</p>
+                    </div>
+
+                    <!-- Scores por Plataforma -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">📱 Scores por Plataforma</h3>
+
+                        <div class="platform-card p-4 rounded-lg mb-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700">Super BI</span>
+                                <span class="text-sm bg-gray-100 px-2 py-1 rounded">70%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full transition-all duration-500" 
+                                     id="superBiBar" style="width: 50%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1" id="superBiScore">35.0 pontos</div>
+                        </div>
+
+                        <div class="platform-card p-4 rounded-lg mb-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700">Aluno Presente</span>
+                                <span class="text-sm bg-gray-100 px-2 py-1 rounded">20%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                                     id="alunoBar" style="width: 65%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1" id="alunoScore">13.0 pontos</div>
+                        </div>
+
+                        <div class="platform-card p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700">Plat. Digitais</span>
+                                <span class="text-sm bg-gray-100 px-2 py-1 rounded">10%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full transition-all duration-500" 
+                                     id="digitaisBar" style="width: 70%"></div>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1" id="digitaisScore">7.0 pontos</div>
+                        </div>
+                    </div>
+
+                    <!-- Recomendações -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">💡 Recomendações</h3>
+                        <div id="recommendations" class="space-y-3">
+                            <div class="p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                                <p class="text-sm font-medium text-yellow-800">Melhorar frequência escolar</p>
+                                <p class="text-xs text-yellow-600">Prazo: 30 dias</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de Radar -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">📊 Análise Radar</h3>
+                        <canvas id="radarChart" width="300" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico de Simulações -->
+        <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">📋 Histórico de Simulações</h2>
+            <div id="historyTable" class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Escola</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Classificação</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Timestamp</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Histórico será populado via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações do simulador
+        const componentConfigs = {
+            frequencia: { peso: 25, min: 0, max: 100, metaIdeal: 95, metaMinima: 85 },
+            aprovacao: { peso: 25, min: 0, max: 100, metaIdeal: 95, metaMinima: 80 },
+            rendimento: { peso: 20, min: 0, max: 10, metaIdeal: 8.5, metaMinima: 6.0 },
+            plataformas: { peso: 15, min: 0, max: 100, metaIdeal: 90, metaMinima: 70 },
+            engajamento: { peso: 15, min: 0, max: 5, metaIdeal: 4.5, metaMinima: 3.5 }
+        };
+
+        const platforms = {
+            superBi: { components: ['frequencia', 'aprovacao', 'rendimento'], weight: 0.7 },
+            alunoPresente: { components: ['frequencia', 'engajamento'], weight: 0.2 },
+            digitais: { components: ['plataformas', 'rendimento'], weight: 0.1 }
+        };
+
+        const classifications = {
+            EXCELENTE: { min: 90, max: 100, color: '#10b981', action: 'Manter excelência' },
+            BOM: { min: 75, max: 89, color: '#8bc34a', action: 'Pequenos ajustes' },
+            REGULAR: { min: 60, max: 74, color: '#ffc107', action: 'Melhorias necessárias' },
+            CRITICO: { min: 40, max: 59, color: '#ff9800', action: 'Ação urgente' },
+            EMERGENCIAL: { min: 0, max: 39, color: '#f44336', action: 'Intervenção imediata' }
+        };
+
+        let radarChart;
+        let simulationHistory = [];
+
+        // Inicializar gráfico radar
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Frequência', 'Aprovação', 'Rendimento', 'Plataformas', 'Engajamento'],
+                    datasets: [{
+                        label: 'Valores Atuais',
+                        data: [85, 80, 65, 70, 76],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2
+                    }, {
+                        label: 'Metas Ideais',
+                        data: [95, 95, 85, 90, 90],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Atualizar componente
+        function updateComponent(component, value) {
+            document.getElementById(component === 'frequencia' ? 'freq-value' : 
+                                  component === 'aprovacao' ? 'aprov-value' :
+                                  component === 'rendimento' ? 'rend-value' :
+                                  component === 'plataformas' ? 'plat-value' : 'eng-value').textContent = 
+                component === 'rendimento' || component === 'engajamento' ? 
+                parseFloat(value).toFixed(1) : Math.round(value) + '%';
+
+            updateCardStatus(component, value);
+            calculateAll();
+        }
+
+        // Atualizar status visual do card
+        function updateCardStatus(component, value) {
+            const card = document.getElementById(component === 'frequencia' ? 'freq-card' :
+                                              component === 'aprovacao' ? 'aprov-card' :
+                                              component === 'rendimento' ? 'rend-card' :
+                                              component === 'plataformas' ? 'plat-card' : 'eng-card');
+
+            const config = componentConfigs[component];
+            card.className = card.className.replace(/\b(critical|warning|good|excellent)\b/g, '');
+
+            if (value < config.metaMinima) {
+                card.classList.add('critical');
+            } else if (value < config.metaIdeal) {
+                card.classList.add('warning');
+            } else {
+                card.classList.add('excellent');
+            }
+        }
+
+        // Calcular tudo
+        function calculateAll() {
+            const values = getCurrentValues();
+            const totalScore = calculateTotalScore(values);
+            const classification = getClassification(totalScore);
+            const recommendations = generateRecommendations(values);
+
+            updateUI(totalScore, classification, values, recommendations);
+            updateRadarChart(values);
+        }
+
+        // Obter valores atuais
+        function getCurrentValues() {
+            return {
+                frequencia: parseFloat(document.getElementById('frequencia').value),
+                aprovacao: parseFloat(document.getElementById('aprovacao').value),
+                rendimento: parseFloat(document.getElementById('rendimento').value),
+                plataformas: parseFloat(document.getElementById('plataformas').value),
+                engajamento: parseFloat(document.getElementById('engajamento').value)
+            };
+        }
+
+        // Calcular score total
+        function calculateTotalScore(values) {
+            let totalScore = 0;
+
+            for (const [component, value] of Object.entries(values)) {
+                const config = componentConfigs[component];
+                let normalizedValue = value;
+
+                if (config.max !== 100) {
+                    normalizedValue = (value / config.max) * 100;
+                }
+
+                totalScore += normalizedValue * (config.peso / 100);
+            }
+
+            return Math.round(totalScore * 100) / 100;
+        }
+
+        // Obter classificação
+        function getClassification(score) {
+            for (const [level, config] of Object.entries(classifications)) {
+                if (score >= config.min && score <= config.max) {
+                    return { level, ...config };
+                }
+            }
+            return { level: 'INDEFINIDO', color: '#gray', action: 'Verificar dados' };
+        }
+
+        // Gerar recomendações
+        function generateRecommendations(values) {
+            const recommendations = [];
+
+            for (const [component, value] of Object.entries(values)) {
+                const config = componentConfigs[component];
+                const displayName = {
+                    frequencia: 'Frequência Escolar',
+                    aprovacao: 'Taxa de Aprovação',
+                    rendimento: 'Rendimento Acadêmico',
+                    plataformas: 'Uso de Plataformas',
+                    engajamento: 'Engajamento Docente'
+                }[component];
+
+                if (value < config.metaMinima) {
+                    recommendations.push({
+                        type: 'CRÍTICO',
+                        component: displayName,
+                        action: `URGENTE: ${displayName} abaixo do mínimo`,
+                        priority: 'high'
+                    });
+                } else if (value < config.metaIdeal) {
+                    recommendations.push({
+                        type: 'MELHORIA',
+                        component: displayName,
+                        action: `Melhorar ${displayName}`,
+                        priority: 'medium'
+                    });
+                }
+            }
+
+            return recommendations;
+        }
+
+        // Atualizar interface
+        function updateUI(totalScore, classification, values, recommendations) {
+            document.getElementById('totalScore').textContent = totalScore.toFixed(1);
+            document.getElementById('classification').textContent = classification.level;
+            document.getElementById('recommendedAction').textContent = classification.action;
+            document.getElementById('scoreBar').style.width = totalScore + '%';
+
+            // Atualizar cor baseada na classificação
+            const resultCard = document.querySelector('.result-card');
+            resultCard.style.background = `linear-gradient(135deg, ${classification.color} 0%, ${classification.color}dd 100%)`;
+
+            updatePlatformScores(values);
+            updateRecommendations(recommendations);
+        }
+
+        // Atualizar scores das plataformas
+        function updatePlatformScores(values) {
+            // Super BI
+            const superBiScore = (values.frequencia * 0.4 + values.aprovacao * 0.4 + values.rendimento * 10 * 0.2) * 0.7;
+            document.getElementById('superBiScore').textContent = superBiScore.toFixed(1) + ' pontos';
+            document.getElementById('superBiBar').style.width = (superBiScore / 70 * 100) + '%';
+
+            // Aluno Presente
+            const alunoScore = (values.frequencia * 0.7 + values.engajamento * 20 * 0.3) * 0.2;
+            document.getElementById('alunoScore').textContent = alunoScore.toFixed(1) + ' pontos';
+            document.getElementById('alunoBar').style.width = (alunoScore / 20 * 100) + '%';
+
+            // Plataformas Digitais
+            const digitaisScore = (values.plataformas * 0.7 + values.rendimento * 10 * 0.3) * 0.1;
+            document.getElementById('digitaisScore').textContent = digitaisScore.toFixed(1) + ' pontos';
+            document.getElementById('digitaisBar').style.width = (digitaisScore / 10 * 100) + '%';
+        }
+
+        // Atualizar recomendações
+        function updateRecommendations(recommendations) {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = '';
+
+            if (recommendations.length === 0) {
+                container.innerHTML = '<p class="text-green-600 text-sm">✅ Todos os indicadores dentro das metas!</p>';
+                return;
+            }
+
+            recommendations.forEach(rec => {
+                const color = rec.type === 'CRÍTICO' ? 'red' : 'yellow';
+                const emoji = rec.type === 'CRÍTICO' ? '🚨' : '⚠️';
+
+                const div = document.createElement('div');
+                div.className = `p-3 bg-${color}-50 border-l-4 border-${color}-400 rounded`;
+                div.innerHTML = `
+                    <p class="text-sm font-medium text-${color}-800">${emoji} ${rec.action}</p>
+                    <p class="text-xs text-${color}-600">Componente: ${rec.component}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Atualizar gráfico radar
+        function updateRadarChart(values) {
+            const radarValues = [
+                values.frequencia,
+                values.aprovacao,
+                values.rendimento * 10, // Converter para escala 0-100
+                values.plataformas,
+                values.engajamento * 20 // Converter para escala 0-100
+            ];
+
+            radarChart.data.datasets[0].data = radarValues;
+            radarChart.update();
+        }
+
+        // Aplicar cenário predefinido
+        function applyCenario(tipo) {
+            const cenarios = {
+                critico: { frequencia: 70, aprovacao: 65, rendimento: 4.5, plataformas: 40, engajamento: 2.5 },
+                regular: { frequencia: 82, aprovacao: 78, rendimento: 6.5, plataformas: 65, engajamento: 3.5 },
+                bom: { frequencia: 90, aprovacao: 88, rendimento: 7.8, plataformas: 85, engajamento: 4.2 },
+                excelente: { frequencia: 96, aprovacao: 94, rendimento: 9.2, plataformas: 95, engajamento: 4.8 }
+            };
+
+            const values = cenarios[tipo];
+            Object.keys(values).forEach(component => {
+                const slider = document.getElementById(component);
+                slider.value = values[component];
+                updateComponent(component, values[component]);
+            });
+        }
+
+        // Salvar simulação
+        function saveSimulation() {
+            const schoolName = document.getElementById('schoolName').value;
+            const values = getCurrentValues();
+            const totalScore = calculateTotalScore(values);
+            const classification = getClassification(totalScore);
+
+            const simulation = {
+                id: Date.now(),
+                school: schoolName,
+                score: totalScore,
+                classification: classification.level,
+                timestamp: new Date().toLocaleString('pt-BR'),
+                values: values
+            };
+
+            simulationHistory.unshift(simulation);
+            updateHistoryTable();
+        }
+
+        // Atualizar tabela de histórico
+        function updateHistoryTable() {
+            const tbody = document.getElementById('historyBody');
+            tbody.innerHTML = '';
+
+            simulationHistory.slice(0, 10).forEach(sim => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-2 text-sm text-gray-900">${sim.school}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900">${sim.score.toFixed(1)}</td>
+                    <td class="px-4 py-2 text-sm">
+                        <span class="px-2 py-1 text-xs rounded ${getClassBadge(sim.classification)}">
+                            ${sim.classification}
+                        </span>
+                    </td>
+                    <td class="px-4 py-2 text-sm text-gray-500">${sim.timestamp}</td>
+                    <td class="px-4 py-2 text-sm">
+                        <button onclick="loadSimulation(${sim.id})" 
+                                class="text-blue-600 hover:text-blue-800">Carregar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Obter classe CSS para badge de classificação
+        function getClassBadge(classification) {
+            const badges = {
+                EXCELENTE: 'bg-green-100 text-green-800',
+                BOM: 'bg-blue-100 text-blue-800',
+                REGULAR: 'bg-yellow-100 text-yellow-800',
+                CRITICO: 'bg-orange-100 text-orange-800',
+                EMERGENCIAL: 'bg-red-100 text-red-800'
+            };
+            return badges[classification] || 'bg-gray-100 text-gray-800';
+        }
+
+        // Carregar simulação do histórico
+        function loadSimulation(id) {
+            const simulation = simulationHistory.find(sim => sim.id === id);
+            if (!simulation) return;
+
+            document.getElementById('schoolName').value = simulation.school;
+
+            Object.keys(simulation.values).forEach(component => {
+                const slider = document.getElementById(component);
+                slider.value = simulation.values[component];
+                updateComponent(component, simulation.values[component]);
+            });
+        }
+
+        // Exportar dados como JSON
+        function exportData() {
+            const data = {
+                currentValues: getCurrentValues(),
+                history: simulationHistory,
+                timestamp: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `simulador-super-bi-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Inicializar quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            initRadarChart();
+            calculateAll();
+
+            // Auto-salvar quando school name muda
+            document.getElementById('schoolName').addEventListener('change', saveSimulation);
+
+            // Adicionar botões de ação
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'mt-6 text-center space-x-4';
+            actionsDiv.innerHTML = `
+                <button onclick="saveSimulation()" 
+                        class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                    💾 Salvar Simulação
+                </button>
+                <button onclick="exportData()" 
+                        class="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                    📊 Exportar Dados
+                </button>
+            `;
+            document.querySelector('.result-card').parentNode.appendChild(actionsDiv);
+        });
+    </script>
+</body>
+</html>

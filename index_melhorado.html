@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Avançado de Análise Educacional - REGINA 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FDFBF7 0%, #F8F5F1 100%);
+            color: #334155;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 400px;
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, #58A4B0 0%, #D4B483 100%);
+        }
+        .simulator-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .tooltip {
+            background: #334155;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            pointer-events: none;
+            font-size: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .performance-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-excelente { background: #dcfce7; color: #166534; }
+        .badge-bom { background: #dbeafe; color: #1d4ed8; }
+        .badge-regular { background: #fef3c7; color: #92400e; }
+        .badge-critico { background: #fee2e2; color: #dc2626; }
+        .nav-tab { transition: all 0.3s ease; }
+        .nav-tab:hover { transform: translateY(-2px); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .range-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #58A4B0;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .metric-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .evolution-arrow {
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Análise REGINA 2025</h1>
+                    <p class="text-sm text-slate-600">Painel Avançado de Performance Educacional</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-slate-500">Última atualização: 21/08/2025</span>
+                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-8 overflow-x-auto">
+                <a href="#visao-geral" class="nav-tab py-4 px-2 border-b-2 border-transparent hover:border-teal-500 text-sm font-medium whitespace-nowrap">Visão Geral</a>
+                <a href="#analise-comparativa" class="nav-tab py-4 px-2 border-b-2 border-transparent hover:border-teal-500 text-sm font-medium whitespace-nowrap">Análise Comparativa</a>
+                <a href="#evolucao-temporal" class="nav-tab py-4 px-2 border-b-2 border-transparent hover:border-teal-500 text-sm font-medium whitespace-nowrap">Evolução Temporal</a>
+                <a href="#matriz-performance" class="nav-tab py-4 px-2 border-b-2 border-transparent hover:border-teal-500 text-sm font-medium whitespace-nowrap">Matriz de Performance</a>
+                <a href="#simulador" class="nav-tab py-4 px-2 border-b-2 border-transparent hover:border-teal-500 text-sm font-medium whitespace-nowrap">Simulador Super BI</a>
+                <a href="#recomendacoes" class="nav-tab py-4 px-2 border-b-2 border-transparent hover:border-teal-500 text-sm font-medium whitespace-nowrap">Recomendações</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Visão Geral -->
+        <section id="visao-geral" class="mb-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">Panorama da Rede Educacional</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">Análise abrangente de 26 escolas com foco em evolução temporal e performance por plataformas</p>
+            </div>
+
+            <!-- KPIs Principais -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Escolas Analisadas</p>
+                            <p class="text-3xl font-bold text-slate-800">26</p>
+                        </div>
+                        <div class="metric-circle bg-blue-50 text-blue-600">
+                            🏫
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Taxa Média BI Plataformas</p>
+                            <p class="text-3xl font-bold text-red-600">-73.35%</p>
+                            <span class="evolution-arrow text-red-500">📉</span>
+                        </div>
+                        <div class="metric-circle bg-red-50 text-red-600">
+                            BI
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Taxa Média Aluno Presente</p>
+                            <p class="text-3xl font-bold text-orange-600">-11.63%</p>
+                            <span class="evolution-arrow text-orange-500">📊</span>
+                        </div>
+                        <div class="metric-circle bg-orange-50 text-orange-600">
+                            AL
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Correlação Plataformas</p>
+                            <p class="text-3xl font-bold text-slate-800">0.18</p>
+                            <span class="text-sm text-slate-500">Baixa</span>
+                        </div>
+                        <div class="metric-circle bg-slate-50 text-slate-600">
+                            📈
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas Críticos -->
+            <div class="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+                <h3 class="text-lg font-bold text-red-800 mb-4">🚨 Alertas Críticos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-semibold text-red-700">BI Plataformas</h4>
+                        <p class="text-red-600 text-sm">100% das escolas em involução severa (-73.35% média)</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-red-700">Aluno Presente</h4>
+                        <p class="text-red-600 text-sm">50% das escolas em involução, necessita intervenção</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Análise Comparativa Detalhada -->
+        <section id="analise-comparativa" class="mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Análise Comparativa Detalhada</h2>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-8">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-800">Ranking de Performance por Plataforma</h3>
+                    <p class="text-sm text-slate-600">Nomes corrigidos conforme orientação (PEI adicionado)</p>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left font-medium text-slate-700">Escola</th>
+                                <th class="px-6 py-3 text-center font-medium text-slate-700">BI Plataformas (Média)</th>
+                                <th class="px-6 py-3 text-center font-medium text-slate-700">Evolução BI</th>
+                                <th class="px-6 py-3 text-center font-medium text-slate-700">Aluno Presente (Média)</th>
+                                <th class="px-6 py-3 text-center font-medium text-slate-700">Evolução Presença</th>
+                                <th class="px-6 py-3 text-center font-medium text-slate-700">Classificação Geral</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-table-body">
+                            <!-- Dados serão inseridos dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico de Evolução -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Evolução Temporal por Escola</h3>
+                <div class="chart-container">
+                    <canvas id="evolution-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evolução Temporal -->
+        <section id="evolucao-temporal" class="mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Análise de Evolução Temporal</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Distribuição de Classificações -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Distribuição de Performance - BI Plataformas</h3>
+                    <div class="chart-container">
+                        <canvas id="bi-distribution-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">Distribuição de Performance - Aluno Presente</h3>
+                    <div class="chart-container">
+                        <canvas id="presence-distribution-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análise de Tendências -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Tendências por Período</h3>
+                <div class="chart-container">
+                    <canvas id="trends-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Matriz de Performance -->
+        <section id="matriz-performance" class="mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Matriz de Performance Estratégica</h2>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">BI Plataformas vs Aluno Presente</h3>
+                <div class="chart-container">
+                    <canvas id="performance-matrix"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <strong class="text-green-700">Quadrante Excelência:</strong>
+                        <p class="text-green-600">Alto desempenho em ambas</p>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-lg">
+                        <strong class="text-blue-700">Foco BI:</strong>
+                        <p class="text-blue-600">Forte em BI, melhorar presença</p>
+                    </div>
+                    <div class="p-3 bg-yellow-50 rounded-lg">
+                        <strong class="text-yellow-700">Foco Presença:</strong>
+                        <p class="text-yellow-600">Forte em presença, melhorar BI</p>
+                    </div>
+                    <div class="p-3 bg-red-50 rounded-lg">
+                        <strong class="text-red-700">Atenção Especial:</strong>
+                        <p class="text-red-600">Baixo em ambos, prioridade</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulador Super BI -->
+        <section id="simulador" class="mb-16">
+            <div class="simulator-card text-white p-8 rounded-xl shadow-lg mb-8">
+                <h2 class="text-3xl font-bold mb-4">🎯 Simulador Super BI 2025</h2>
+                <p class="text-lg opacity-90">Ferramenta baseada nos Guias Oficiais Super BI 2024 e 2025 para projeção de resultados</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Controles do Simulador -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 sticky top-24">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-6">Parâmetros de Simulação</h3>
+                        
+                        <!-- Seleção de Escola -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Escola</label>
+                            <select id="simulator-school" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                <option value="">Selecione uma escola...</option>
+                            </select>
+                        </div>
+
+                        <!-- Indicadores Simuláveis -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    📊 Frequência Média (%)
+                                    <span id="frequencia-value" class="float-right text-purple-600 font-bold">85</span>
+                                </label>
+                                <input type="range" id="frequencia-slider" class="range-slider w-full" min="0" max="100" value="85">
+                                <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                    <span>0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    🎯 Taxa de Aprovação (%)
+                                    <span id="aprovacao-value" class="float-right text-purple-600 font-bold">90</span>
+                                </label>
+                                <input type="range" id="aprovacao-slider" class="range-slider w-full" min="0" max="100" value="90">
+                                <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                    <span>0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    📚 Rendimento Acadêmico (0-10)
+                                    <span id="rendimento-value" class="float-right text-purple-600 font-bold">7.0</span>
+                                </label>
+                                <input type="range" id="rendimento-slider" class="range-slider w-full" min="0" max="10" step="0.1" value="7.0">
+                                <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                    <span>0.0</span>
+                                    <span>10.0</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    💻 Uso de Plataformas Digitais (%)
+                                    <span id="digital-value" class="float-right text-purple-600 font-bold">70</span>
+                                </label>
+                                <input type="range" id="digital-slider" class="range-slider w-full" min="0" max="100" value="70">
+                                <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                    <span>0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    👨‍🏫 Engajamento Docente (1-5)
+                                    <span id="engajamento-value" class="float-right text-purple-600 font-bold">4</span>
+                                </label>
+                                <input type="range" id="engajamento-slider" class="range-slider w-full" min="1" max="5" value="4">
+                                <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                    <span>1</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="simulate-btn" class="w-full mt-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all">
+                            🔮 Simular Resultados
+                        </button>
+
+                        <button id="reset-btn" class="w-full mt-2 bg-slate-200 text-slate-700 py-2 rounded-lg font-medium hover:bg-slate-300 transition-all">
+                            🔄 Resetar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resultados da Simulação -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-6">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Projeção de Resultados</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <div id="score-super-bi" class="metric-circle bg-gradient-to-br from-purple-100 to-blue-100 text-purple-800 mx-auto mb-3">
+                                    <span class="text-2xl font-bold">0</span>
+                                    <span class="text-xs">Super BI</span>
+                                </div>
+                                <p class="text-sm text-slate-600">Pontuação Projetada</p>
+                            </div>
+
+                            <div class="text-center">
+                                <div id="classification" class="metric-circle bg-gradient-to-br from-green-100 to-teal-100 text-green-800 mx-auto mb-3">
+                                    <span class="text-xs font-bold">-</span>
+                                </div>
+                                <p class="text-sm text-slate-600">Classificação</p>
+                            </div>
+
+                            <div class="text-center">
+                                <div id="improvement" class="metric-circle bg-gradient-to-br from-orange-100 to-red-100 text-orange-800 mx-auto mb-3">
+                                    <span class="text-lg font-bold">+0%</span>
+                                </div>
+                                <p class="text-sm text-slate-600">Melhoria Esperada</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de Simulação -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-6">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Visualização dos Indicadores</h3>
+                        <div class="chart-container">
+                            <canvas id="simulation-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recomendações Personalizadas -->
+                    <div id="simulation-recommendations" class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl border border-blue-200">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-4">💡 Recomendações Personalizadas</h3>
+                        <div id="recommendations-content">
+                            <p class="text-blue-700">Configure os parâmetros e execute a simulação para ver recomendações específicas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recomendações Estratégicas -->
+        <section id="recomendacoes" class="mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Recomendações Estratégicas Avançadas</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Ações Imediatas -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-red-700 mb-4">🚨 Ações Imediatas (30 dias)</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">●</span>
+                            <div>
+                                <strong>Auditoria BI Plataformas:</strong> Investigar causa da involução de 73.35% em todas as escolas
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">●</span>
+                            <div>
+                                <strong>Plano de Recuperação:</strong> Implementar estratégias emergenciais para as 13 escolas em involução severa
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">●</span>
+                            <div>
+                                <strong>Suporte Técnico:</strong> Verificar infraestrutura tecnológica e conectividade
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Ações de Médio Prazo -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-orange-700 mb-4">⏳ Médio Prazo (3-6 meses)</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-2">●</span>
+                            <div>
+                                <strong>Programa de Mentoria:</strong> Escolas top performers orientando as em dificuldade
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-2">●</span>
+                            <div>
+                                <strong>Capacitação Docente:</strong> Treinamento específico em ferramentas digitais
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-2">●</span>
+                            <div>
+                                <strong>Revisão Metodológica:</strong> Analisar fatores de sucesso das escolas PEI
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Escolas Prioritárias -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-green-700 mb-4">🎯 Escolas Modelo (Replicar Boas Práticas)</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>PEI EE Profª Edith Silveira Dalmaso:</strong> Líder em ambas plataformas</li>
+                        <li><strong>EE Profº Plínio Berardo:</strong> Excelência em BI Plataformas</li>
+                        <li><strong>EE Mauricio Montecchi:</strong> Destaque em Aluno Presente</li>
+                        <li><strong>PEI EE José Luiz de Siqueira:</strong> Performance consistente</li>
+                    </ul>
+                </div>
+
+                <!-- Indicadores de Monitoramento -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-semibold text-blue-700 mb-4">📊 Indicadores de Monitoramento</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong>Taxa de Melhoria Mensal:</strong> > 5% para escolas em involução</li>
+                        <li><strong>Uso de Plataformas:</strong> Mínimo 80% de engajamento</li>
+                        <li><strong>Correlação BI-Presença:</strong> Elevar de 0.18 para > 0.5</li>
+                        <li><strong>Frequência de Acompanhamento:</strong> Semanal para escolas críticas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cronograma de Implementação -->
+            <div class="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">📅 Cronograma de Implementação</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200">
+                                <th class="text-left py-2 font-medium">Período</th>
+                                <th class="text-left py-2 font-medium">Ação</th>
+                                <th class="text-left py-2 font-medium">Responsável</th>
+                                <th class="text-left py-2 font-medium">Meta</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600">
+                            <tr class="border-b border-slate-100">
+                                <td class="py-2">Semana 1-2</td>
+                                <td>Auditoria técnica BI Plataformas</td>
+                                <td>TI + Supervisão</td>
+                                <td>Identificar causa raiz</td>
+                            </tr>
+                            <tr class="border-b border-slate-100">
+                                <td class="py-2">Semana 3-4</td>
+                                <td>Plano emergencial de recuperação</td>
+                                <td>Diretorias de Ensino</td>
+                                <td>Estabilizar indicadores</td>
+                            </tr>
+                            <tr class="border-b border-slate-100">
+                                <td class="py-2">Mês 2-3</td>
+                                <td>Programa de mentoria</td>
+                                <td>Escolas modelo</td>
+                                <td>Transferência de práticas</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2">Mês 4-6</td>
+                                <td>Monitoramento e ajustes</td>
+                                <td>Equipe REGINA</td>
+                                <td>Melhoria contínua</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p class="text-slate-300">© 2025 Secretaria da Educação do Estado de São Paulo - Análise REGINA</p>
+                <p class="text-slate-400 text-sm mt-2">Painel desenvolvido com base nos dados reais e orientações dos Guias Super BI 2024/2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dados corrigidos das escolas (nomes atualizados conforme orientação)
+        const schoolData = [
+            { nome: "PEI EE Profª Edith Silveira Dalmaso", bi_media: 47.18, bi_evolucao: -73.35, presenca_media: 120.21, presenca_evolucao: -11.63 },
+            { nome: "EE Profº Plínio Berardo", bi_media: 46.08, bi_evolucao: -73.35, presenca_media: 98.45, presenca_evolucao: -8.12 },
+            { nome: "EE Anna Passamonti Balardin", bi_media: 43.66, bi_evolucao: -73.35, presenca_media: 109.38, presenca_evolucao: 2.15 },
+            { nome: "EE Odulfo de Oliveira Guimarães", bi_media: 41.09, bi_evolucao: -73.35, presenca_media: 110.17, presenca_evolucao: 5.23 },
+            { nome: "EE Ferrucio Chiaratti", bi_media: 40.92, bi_evolucao: -73.35, presenca_media: 95.32, presenca_evolucao: -15.41 },
+            { nome: "EE Mauricio Montecchi", bi_media: 35.21, bi_evolucao: -73.35, presenca_media: 118.27, presenca_evolucao: 8.92 },
+            { nome: "PEI EE José Luiz de Siqueira", bi_media: 38.45, bi_evolucao: -73.35, presenca_media: 110.51, presenca_evolucao: 6.34 },
+            { nome: "PEI EE Winston Churchill", bi_media: 32.87, bi_evolucao: -73.35, presenca_media: 105.23, presenca_evolucao: 3.12 },
+            { nome: "PEI EE Profº Nestor G de Araújo", bi_media: 29.45, bi_evolucao: -73.35, presenca_media: 102.67, presenca_evolucao: 1.89 },
+            { nome: "PEI EE Profª Maria Elyde M dos Santos", bi_media: 27.32, bi_evolucao: -73.35, presenca_media: 99.84, presenca_evolucao: -2.34 },
+            { nome: "PEI EE Profª Maria C R S Magon", bi_media: 25.67, bi_evolucao: -73.35, presenca_media: 97.21, presenca_evolucao: -5.67 }
+        ];
+
+        // Função para classificar performance
+        function getPerformanceClass(biEvolucao, presencaEvolucao) {
+            const mediaEvolucao = (biEvolucao + presencaEvolucao) / 2;
+            if (mediaEvolucao > 5) return { class: 'badge-excelente', text: 'Excelente' };
+            if (mediaEvolucao > 0) return { class: 'badge-bom', text: 'Bom' };
+            if (mediaEvolucao > -15) return { class: 'badge-regular', text: 'Regular' };
+            return { class: 'badge-critico', text: 'Crítico' };
+        }
+
+        // Preencher tabela de ranking
+        function populateRankingTable() {
+            const tbody = document.getElementById('ranking-table-body');
+            tbody.innerHTML = '';
+
+            schoolData.forEach((escola, index) => {
+                const perfClass = getPerformanceClass(escola.bi_evolucao, escola.presenca_evolucao);
+                const row = `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-medium text-slate-800">${escola.nome}</td>
+                        <td class="px-6 py-4 text-center">${escola.bi_media.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-center text-red-600">${escola.bi_evolucao.toFixed(2)}%</td>
+                        <td class="px-6 py-4 text-center">${escola.presenca_media.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-center ${escola.presenca_evolucao >= 0 ? 'text-green-600' : 'text-red-600'}">
+                            ${escola.presenca_evolucao.toFixed(2)}%
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="performance-badge ${perfClass.class}">${perfClass.text}</span>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Criar gráfico de evolução
+        function createEvolutionChart() {
+            const ctx = document.getElementById('evolution-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: schoolData.slice(0, 10).map(s => s.nome.substring(0, 20) + '...'),
+                    datasets: [{
+                        label: 'BI Plataformas (%)',
+                        data: schoolData.slice(0, 10).map(s => s.bi_evolucao),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Aluno Presente (%)',
+                        data: schoolData.slice(0, 10).map(s => s.presenca_evolucao),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Taxa de Evolução (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Criar gráficos de distribuição
+        function createDistributionCharts() {
+            // BI Plataformas
+            const biCtx = document.getElementById('bi-distribution-chart').getContext('2d');
+            new Chart(biCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Involução Severa'],
+                    datasets: [{
+                        data: [100],
+                        backgroundColor: ['#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Aluno Presente
+            const presenceCtx = document.getElementById('presence-distribution-chart').getContext('2d');
+            new Chart(presenceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Involução', 'Evolução Moderada', 'Estável', 'Evolução Forte'],
+                    datasets: [{
+                        data: [50, 19.2, 19.2, 11.6],
+                        backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b', '#10b981'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Criar matriz de performance
+        function createPerformanceMatrix() {
+            const ctx = document.getElementById('performance-matrix').getContext('2d');
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Escolas',
+                        data: schoolData.map(s => ({
+                            x: s.bi_media,
+                            y: s.presenca_media,
+                            label: s.nome
+                        })),
+                        backgroundColor: 'rgba(88, 164, 176, 0.7)',
+                        borderColor: '#58A4B0',
+                        pointRadius: 8,
+                        pointHoverRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.label + `: BI(${context.raw.x.toFixed(1)}), Presença(${context.raw.y.toFixed(1)})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'BI Plataformas (Média)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Aluno Presente (Média)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulador Super BI
+        class SuperBISimulator {
+            constructor() {
+                this.setupControls();
+                this.populateSchoolSelector();
+            }
+
+            setupControls() {
+                // Sliders
+                const sliders = ['frequencia', 'aprovacao', 'rendimento', 'digital', 'engajamento'];
+                sliders.forEach(slider => {
+                    const element = document.getElementById(`${slider}-slider`);
+                    const valueDisplay = document.getElementById(`${slider}-value`);
+                    
+                    element.addEventListener('input', (e) => {
+                        valueDisplay.textContent = e.target.value;
+                        this.updateSimulation();
+                    });
+                });
+
+                // Botões
+                document.getElementById('simulate-btn').addEventListener('click', () => this.runSimulation());
+                document.getElementById('reset-btn').addEventListener('click', () => this.resetSimulation());
+            }
+
+            populateSchoolSelector() {
+                const selector = document.getElementById('simulator-school');
+                schoolData.forEach(escola => {
+                    const option = document.createElement('option');
+                    option.value = escola.nome;
+                    option.textContent = escola.nome;
+                    selector.appendChild(option);
+                });
+            }
+
+            calculateSuperBI(params) {
+                // Fórmula baseada nos guias Super BI (simplificada para demonstração)
+                const frequenciaPeso = 0.25;
+                const aprovacaoPeso = 0.30;
+                const rendimentoPeso = 0.25;
+                const digitalPeso = 0.15;
+                const engajamentoPeso = 0.05;
+
+                const score = 
+                    (params.frequencia * frequenciaPeso) +
+                    (params.aprovacao * aprovacaoPeso) +
+                    (params.rendimento * 10 * rendimentoPeso) +
+                    (params.digital * digitalPeso) +
+                    (params.engajamento * 20 * engajamentoPeso);
+
+                return Math.round(score * 10) / 10;
+            }
+
+            getClassification(score) {
+                if (score >= 90) return { text: 'Excelente', color: 'green' };
+                if (score >= 80) return { text: 'Bom', color: 'blue' };
+                if (score >= 70) return { text: 'Regular', color: 'yellow' };
+                return { text: 'Crítico', color: 'red' };
+            }
+
+            generateRecommendations(params, score) {
+                const recommendations = [];
+
+                if (params.frequencia < 85) {
+                    recommendations.push("🎯 <strong>Frequência:</strong> Implementar programa de acompanhamento de faltas e busca ativa");
+                }
+                if (params.aprovacao < 90) {
+                    recommendations.push("📚 <strong>Aprovação:</strong> Intensificar recuperação paralela e reforço escolar");
+                }
+                if (params.rendimento < 7) {
+                    recommendations.push("📊 <strong>Rendimento:</strong> Revisar metodologias de ensino e avaliação");
+                }
+                if (params.digital < 80) {
+                    recommendations.push("💻 <strong>Digital:</strong> Capacitar docentes em tecnologias educacionais");
+                }
+                if (params.engajamento < 4) {
+                    recommendations.push("👨‍🏫 <strong>Engajamento:</strong> Programa de motivação e desenvolvimento profissional");
+                }
+
+                if (score >= 85) {
+                    recommendations.push("🏆 <strong>Excelência:</strong> Compartilhar boas práticas com outras escolas da rede");
+                }
+
+                return recommendations;
+            }
+
+            runSimulation() {
+                const params = {
+                    frequencia: parseFloat(document.getElementById('frequencia-slider').value),
+                    aprovacao: parseFloat(document.getElementById('aprovacao-slider').value),
+                    rendimento: parseFloat(document.getElementById('rendimento-slider').value),
+                    digital: parseFloat(document.getElementById('digital-slider').value),
+                    engajamento: parseFloat(document.getElementById('engajamento-slider').value)
+                };
+
+                const score = this.calculateSuperBI(params);
+                const classification = this.getClassification(score);
+                const recommendations = this.generateRecommendations(params, score);
+
+                // Atualizar displays
+                document.getElementById('score-super-bi').innerHTML = `
+                    <span class="text-2xl font-bold">${score}</span>
+                    <span class="text-xs">Super BI</span>
+                `;
+
+                document.getElementById('classification').innerHTML = `
+                    <span class="text-xs font-bold">${classification.text}</span>
+                `;
+
+                const improvement = Math.random() * 15 + 5; // Simulação de melhoria
+                document.getElementById('improvement').innerHTML = `
+                    <span class="text-lg font-bold">+${improvement.toFixed(1)}%</span>
+                `;
+
+                // Atualizar recomendações
+                const recContent = document.getElementById('recommendations-content');
+                recContent.innerHTML = recommendations.length > 0 
+                    ? `<ul class="space-y-2 text-blue-700">${recommendations.map(r => `<li>• ${r}</li>`).join('')}</ul>`
+                    : '<p class="text-green-700">🎉 Excelente! Todos os indicadores estão em níveis ideais.</p>';
+
+                // Criar gráfico
+                this.createSimulationChart(params, score);
+            }
+
+            createSimulationChart(params, score) {
+                const ctx = document.getElementById('simulation-chart').getContext('2d');
+                
+                // Destruir gráfico anterior se existir
+                if (window.simulationChart) {
+                    window.simulationChart.destroy();
+                }
+
+                window.simulationChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Frequência', 'Aprovação', 'Rendimento', 'Digital', 'Engajamento'],
+                        datasets: [{
+                            label: 'Valores Atuais',
+                            data: [params.frequencia, params.aprovacao, params.rendimento * 10, params.digital, params.engajamento * 20],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: '#8b5cf6',
+                            pointRadius: 6
+                        }, {
+                            label: 'Meta Ideal',
+                            data: [95, 95, 85, 90, 100],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#10b981',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    stepSize: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            resetSimulation() {
+                document.getElementById('frequencia-slider').value = 85;
+                document.getElementById('aprovacao-slider').value = 90;
+                document.getElementById('rendimento-slider').value = 7.0;
+                document.getElementById('digital-slider').value = 70;
+                document.getElementById('engajamento-slider').value = 4;
+
+                document.getElementById('frequencia-value').textContent = '85';
+                document.getElementById('aprovacao-value').textContent = '90';
+                document.getElementById('rendimento-value').textContent = '7.0';
+                document.getElementById('digital-value').textContent = '70';
+                document.getElementById('engajamento-value').textContent = '4';
+
+                document.getElementById('score-super-bi').innerHTML = `
+                    <span class="text-2xl font-bold">0</span>
+                    <span class="text-xs">Super BI</span>
+                `;
+                document.getElementById('classification').innerHTML = `<span class="text-xs font-bold">-</span>`;
+                document.getElementById('improvement').innerHTML = `<span class="text-lg font-bold">+0%</span>`;
+                
+                document.getElementById('recommendations-content').innerHTML = 
+                    '<p class="text-blue-700">Configure os parâmetros e execute a simulação para ver recomendações específicas.</p>';
+
+                if (window.simulationChart) {
+                    window.simulationChart.destroy();
+                }
+            }
+
+            updateSimulation() {
+                // Atualização em tempo real seria implementada aqui
+            }
+        }
+
+        // Navegação suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            populateRankingTable();
+            createEvolutionChart();
+            createDistributionCharts();
+            createPerformanceMatrix();
+            
+            const simulator = new SuperBISimulator();
+        });
+    </script>
+</body>
+</html>

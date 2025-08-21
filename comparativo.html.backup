@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Comparativa - Sistema REGINA 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">⚖️ Análise Comparativa PEI vs Regular</h1>
+                    <p class="text-lg opacity-90">Comparação detalhada entre modelos educacionais</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold">26</div>
+                    <p class="text-sm opacity-75">Escolas Analisadas</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="index.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors">
+                    ← Voltar ao Sistema
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Resumo Comparativo -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Resumo Comparativo</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- PEI -->
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-blue-500">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-4">🏛️</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">Escolas PEI</h3>
+                            <p class="text-gray-600">Programa de Ensino Integral</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600 mb-1">12</div>
+                            <p class="text-gray-600 text-sm">Escolas</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600 mb-1">87.3</div>
+                            <p class="text-gray-600 text-sm">Score Médio</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600 mb-1">92.1%</div>
+                            <p class="text-gray-600 text-sm">Frequência</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-orange-600 mb-1">8.2</div>
+                            <p class="text-gray-600 text-sm">Rendimento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regular -->
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-green-500">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-4">🏫</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">Escolas Regulares</h3>
+                            <p class="text-gray-600">Ensino Regular</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600 mb-1">14</div>
+                            <p class="text-gray-600 text-sm">Escolas</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600 mb-1">79.8</div>
+                            <p class="text-gray-600 text-sm">Score Médio</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600 mb-1">87.5%</div>
+                            <p class="text-gray-600 text-sm">Frequência</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-orange-600 mb-1">7.6</div>
+                            <p class="text-gray-600 text-sm">Rendimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gráficos Comparativos -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📈 Análise Gráfica Comparativa</h2>
+            <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                <!-- Comparação Geral -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Comparação Geral</h3>
+                    <canvas id="graficoComparacaoGeral" width="400" height="300"></canvas>
+                </div>
+
+                <!-- Radar Comparativo -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🎯 Radar Comparativo</h3>
+                    <canvas id="radarComparativo" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Evolução Temporal -->
+            <div class="bg-white p-6 rounded-lg shadow-md card mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📅 Evolução Temporal por Tipo</h3>
+                <canvas id="graficoEvolucaoTemporal" width="800" height="400"></canvas>
+            </div>
+
+            <!-- Distribuição de Scores -->
+            <div class="bg-white p-6 rounded-lg shadow-md card">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📈 Distribuição de Scores Super BI</h3>
+                <canvas id="graficoDistribuicao" width="800" height="400"></canvas>
+            </div>
+        </section>
+
+        <!-- Análise Detalhada -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🔍 Análise Detalhada</h2>
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Performance por Componente -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">⚡ Performance por Componente</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Frequência:</span>
+                            <div class="flex space-x-2">
+                                <span class="text-blue-600 font-medium">PEI: 92.1%</span>
+                                <span class="text-green-600 font-medium">REG: 87.5%</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Rendimento:</span>
+                            <div class="flex space-x-2">
+                                <span class="text-blue-600 font-medium">PEI: 8.2</span>
+                                <span class="text-green-600 font-medium">REG: 7.6</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Aprovação:</span>
+                            <div class="flex space-x-2">
+                                <span class="text-blue-600 font-medium">PEI: 89.5%</span>
+                                <span class="text-green-600 font-medium">REG: 83.2%</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Plataformas:</span>
+                            <div class="flex space-x-2">
+                                <span class="text-blue-600 font-medium">PEI: 84.0%</span>
+                                <span class="text-green-600 font-medium">REG: 76.8%</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Engajamento:</span>
+                            <div class="flex space-x-2">
+                                <span class="text-blue-600 font-medium">PEI: 4.3</span>
+                                <span class="text-green-600 font-medium">REG: 3.9</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Estatísticas</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Diferença Média:</h4>
+                            <div class="text-2xl font-bold text-blue-600">+7.5</div>
+                            <p class="text-xs text-gray-500">PEI superior ao Regular</p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Melhor Performance:</h4>
+                            <div class="text-lg font-medium text-green-600">🏛️ PEI</div>
+                            <p class="text-xs text-gray-500">Em todos os componentes</p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Taxa de Excelência:</h4>
+                            <div class="text-sm">
+                                <div>PEI: <span class="font-medium text-blue-600">75%</span></div>
+                                <div>REG: <span class="font-medium text-green-600">43%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recomendações -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">💡 Recomendações</h3>
+                    <div class="space-y-3">
+                        <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                            <p class="text-sm text-blue-700"><strong>PEI:</strong> Manter padrão de excelência e compartilhar boas práticas</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-400">
+                            <p class="text-sm text-green-700"><strong>Regular:</strong> Implementar metodologias utilizadas nas escolas PEI</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
+                            <p class="text-sm text-yellow-700"><strong>Rede:</strong> Promover intercâmbio de experiências entre tipos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Escolas -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🏫 Lista Completa de Escolas</h2>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Escolas PEI -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        🏛️ Escolas PEI <span class="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">12 unidades</span>
+                    </h3>
+                    <div class="space-y-2 max-h-64 overflow-y-auto">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-gray-800">PEI EE Profª Edith Silveira</span>
+                                <span class="text-blue-600 font-medium">84.2</span>
+                            </div>
+                        </div>
+                        <!-- Mais escolas serão adicionadas via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Escolas Regulares -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        🏫 Escolas Regulares <span class="ml-2 text-sm bg-green-100 text-green-800 px-2 py-1 rounded">14 unidades</span>
+                    </h3>
+                    <div class="space-y-2 max-h-64 overflow-y-auto">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-gray-800">EE Profº Plínio Berardo</span>
+                                <span class="text-green-600 font-medium">79.8</span>
+                            </div>
+                        </div>
+                        <!-- Mais escolas serão adicionadas via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Dados comparativos
+        const dadosComparativos = {
+            pei: {
+                frequencia: 92.1,
+                rendimento: 8.2,
+                aprovacao: 89.5,
+                plataformas: 84.0,
+                engajamento: 4.3,
+                score: 87.3,
+                total: 12
+            },
+            regular: {
+                frequencia: 87.5,
+                rendimento: 7.6,
+                aprovacao: 83.2,
+                plataformas: 76.8,
+                engajamento: 3.9,
+                score: 79.8,
+                total: 14
+            }
+        };
+
+        // Inicializar gráficos
+        document.addEventListener('DOMContentLoaded', function() {
+            criarGraficoComparacaoGeral();
+            criarRadarComparativo();
+            criarGraficoEvolucaoTemporal();
+            criarGraficoDistribuicao();
+        });
+
+        function criarGraficoComparacaoGeral() {
+            const ctx = document.getElementById('graficoComparacaoGeral').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Frequência', 'Rendimento', 'Aprovação', 'Plataformas', 'Score BI'],
+                    datasets: [{
+                        label: 'Escolas PEI',
+                        data: [
+                            dadosComparativos.pei.frequencia,
+                            dadosComparativos.pei.rendimento * 10,
+                            dadosComparativos.pei.aprovacao,
+                            dadosComparativos.pei.plataformas,
+                            dadosComparativos.pei.score
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Escolas Regulares',
+                        data: [
+                            dadosComparativos.regular.frequencia,
+                            dadosComparativos.regular.rendimento * 10,
+                            dadosComparativos.regular.aprovacao,
+                            dadosComparativos.regular.plataformas,
+                            dadosComparativos.regular.score
+                        ],
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparação PEI vs Regular'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function criarRadarComparativo() {
+            const ctx = document.getElementById('radarComparativo').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Frequência', 'Rendimento', 'Aprovação', 'Plataformas', 'Engajamento'],
+                    datasets: [{
+                        label: 'PEI',
+                        data: [
+                            dadosComparativos.pei.frequencia,
+                            dadosComparativos.pei.rendimento * 10,
+                            dadosComparativos.pei.aprovacao,
+                            dadosComparativos.pei.plataformas,
+                            dadosComparativos.pei.engajamento * 20
+                        ],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)'
+                    }, {
+                        label: 'Regular',
+                        data: [
+                            dadosComparativos.regular.frequencia,
+                            dadosComparativos.regular.rendimento * 10,
+                            dadosComparativos.regular.aprovacao,
+                            dadosComparativos.regular.plataformas,
+                            dadosComparativos.regular.engajamento * 20
+                        ],
+                        borderColor: 'rgb(16, 185, 129)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        pointBackgroundColor: 'rgb(16, 185, 129)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function criarGraficoEvolucaoTemporal() {
+            const ctx = document.getElementById('graficoEvolucaoTemporal').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1º Bimestre', '2º Bimestre'],
+                    datasets: [{
+                        label: 'PEI - Frequência',
+                        data: [89.8, 92.1],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Regular - Frequência', 
+                        data: [85.2, 87.5],
+                        borderColor: 'rgb(16, 185, 129)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'PEI - Score BI',
+                        data: [84.1, 87.3],
+                        borderColor: 'rgb(139, 92, 246)',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Regular - Score BI',
+                        data: [76.9, 79.8],
+                        borderColor: 'rgb(245, 158, 11)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolução Temporal por Tipo de Escola'
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+
+        function criarGraficoDistribuicao() {
+            const ctx = document.getElementById('graficoDistribuicao').getContext('2d');
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Escolas PEI',
+                        data: [
+                            {x: 1, y: 84.2}, {x: 2, y: 87.1}, {x: 3, y: 82.5}, {x: 4, y: 89.3},
+                            {x: 5, y: 85.7}, {x: 6, y: 88.1}, {x: 7, y: 86.4}, {x: 8, y: 91.2},
+                            {x: 9, y: 83.8}, {x: 10, y: 87.9}, {x: 11, y: 85.3}, {x: 12, y: 88.7}
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointRadius: 8
+                    }, {
+                        label: 'Escolas Regulares',
+                        data: [
+                            {x: 1, y: 79.8}, {x: 2, y: 76.4}, {x: 3, y: 81.2}, {x: 4, y: 78.9},
+                            {x: 5, y: 80.5}, {x: 6, y: 77.3}, {x: 7, y: 82.1}, {x: 8, y: 79.6},
+                            {x: 9, y: 81.8}, {x: 10, y: 78.2}, {x: 11, y: 80.1}, {x: 12, y: 79.4},
+                            {x: 13, y: 81.5}, {x: 14, y: 77.8}
+                        ],
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        pointRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Distribuição de Scores por Escola'
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Escolas' },
+                            min: 0, max: 15
+                        },
+                        y: { 
+                            title: { display: true, text: 'Score Super BI' },
+                            min: 70, max: 95
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

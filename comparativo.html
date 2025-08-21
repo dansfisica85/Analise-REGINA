@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Comparativa - Sistema REGINA 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .chart-container { position: relative; height: 400px; margin: 20px 0; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">⚖️ Análise Comparativa PEI vs Regular</h1>
+                    <p class="text-lg opacity-90">Comparação detalhada entre modelos educacionais</p>
+                </div>
+                <div class="text-right">
+                    <div id="totalEscolasHeader" class="text-2xl font-bold">26</div>
+                    <p class="text-sm opacity-75">Escolas Analisadas</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="index.html" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors">
+                    ← Voltar ao Sistema
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Resumo Comparativo -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Resumo Comparativo</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- PEI -->
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-blue-500">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-4">🏛️</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">Escolas PEI</h3>
+                            <p class="text-gray-600">Programa de Ensino Integral</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div id="peiEscolas" class="text-2xl font-bold text-blue-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Escolas</p>
+                        </div>
+                        <div class="text-center">
+                            <div id="peiScore" class="text-2xl font-bold text-green-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Score Médio</p>
+                        </div>
+                        <div class="text-center">
+                            <div id="peiFrequencia" class="text-2xl font-bold text-purple-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Frequência</p>
+                        </div>
+                        <div class="text-center">
+                            <div id="peiRendimento" class="text-2xl font-bold text-orange-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Rendimento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regular -->
+                <div class="bg-white p-6 rounded-lg shadow-md card border-l-4 border-green-500">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-4">🏫</span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800">Escolas Regulares</h3>
+                            <p class="text-gray-600">Ensino Regular</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div id="regularEscolas" class="text-2xl font-bold text-blue-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Escolas</p>
+                        </div>
+                        <div class="text-center">
+                            <div id="regularScore" class="text-2xl font-bold text-green-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Score Médio</p>
+                        </div>
+                        <div class="text-center">
+                            <div id="regularFrequencia" class="text-2xl font-bold text-purple-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Frequência</p>
+                        </div>
+                        <div class="text-center">
+                            <div id="regularRendimento" class="text-2xl font-bold text-orange-600 mb-1">--</div>
+                            <p class="text-gray-600 text-sm">Rendimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gráficos Comparativos -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">📈 Análise Gráfica Comparativa</h2>
+            <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                <!-- Comparação Geral -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Comparação Geral</h3>
+                    <div class="chart-container">
+                        <canvas id="graficoComparacaoGeral"></canvas>
+                    </div>
+                </div>
+
+                <!-- Radar Comparativo -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🎯 Radar Comparativo</h3>
+                    <div class="chart-container">
+                        <canvas id="radarComparativo"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evolução Temporal -->
+            <div class="bg-white p-6 rounded-lg shadow-md card mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📅 Evolução Temporal por Tipo</h3>
+                <div class="chart-container">
+                    <canvas id="graficoEvolucaoTemporal"></canvas>
+                </div>
+            </div>
+
+            <!-- Distribuição de Scores -->
+            <div class="bg-white p-6 rounded-lg shadow-md card">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📈 Distribuição de Scores Super BI</h3>
+                <div class="chart-container">
+                    <canvas id="graficoDistribuicao"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Análise Detalhada -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🔍 Análise Detalhada</h2>
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Performance por Componente -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">⚡ Performance por Componente</h3>
+                    <div id="performanceComponentes" class="space-y-3">
+                        <!-- Dados serão inseridos dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Estatísticas</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Diferença Média:</h4>
+                            <div id="diferencaMedia" class="text-2xl font-bold text-blue-600">--</div>
+                            <p class="text-xs text-gray-500">PEI vs Regular</p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Melhor Performance:</h4>
+                            <div id="melhorPerformance" class="text-lg font-medium text-green-600">--</div>
+                            <p class="text-xs text-gray-500">Em todos os componentes</p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Taxa de Excelência:</h4>
+                            <div id="taxaExcelencia" class="text-sm">
+                                <!-- Dados serão inseridos dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recomendações -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">💡 Recomendações</h3>
+                    <div class="space-y-3">
+                        <div class="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                            <p class="text-sm text-blue-700"><strong>PEI:</strong> Manter padrão de excelência e compartilhar boas práticas</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg border-l-4 border-green-400">
+                            <p class="text-sm text-green-700"><strong>Regular:</strong> Implementar metodologias utilizadas nas escolas PEI</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
+                            <p class="text-sm text-yellow-700"><strong>Rede:</strong> Promover intercâmbio de experiências entre tipos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Escolas -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🏫 Lista Completa de Escolas</h2>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Escolas PEI -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        🏛️ Escolas PEI <span id="contadorPEI" class="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">-- unidades</span>
+                    </h3>
+                    <div id="listaPEI" class="space-y-2 max-h-64 overflow-y-auto">
+                        <!-- Escolas PEI serão inseridas dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Escolas Regulares -->
+                <div class="bg-white p-6 rounded-lg shadow-md card">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        🏫 Escolas Regulares <span id="contadorRegular" class="ml-2 text-sm bg-green-100 text-green-800 px-2 py-1 rounded">-- unidades</span>
+                    </h3>
+                    <div id="listaRegular" class="space-y-2 max-h-64 overflow-y-auto">
+                        <!-- Escolas Regulares serão inseridas dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="dados.js"></script>
+    <script src="graficos.js"></script>
+    <script>
+        // Funções específicas da página comparativo
+        
+        // Atualizar resumo comparativo
+        function atualizarResumoComparativo() {
+            if (!dadosEscolas) return;
+            
+            const dadosPorTipo = obterDadosPorTipo();
+            if (!dadosPorTipo) return;
+            
+            // Atualizar dados PEI
+            document.getElementById('peiEscolas').textContent = dadosPorTipo.pei.count;
+            document.getElementById('peiScore').textContent = dadosPorTipo.pei.score_medio.toFixed(1);
+            document.getElementById('peiFrequencia').textContent = dadosPorTipo.pei.frequencia_media.toFixed(1) + '%';
+            document.getElementById('peiRendimento').textContent = dadosPorTipo.pei.rendimento_medio.toFixed(1);
+            
+            // Atualizar dados Regular
+            document.getElementById('regularEscolas').textContent = dadosPorTipo.regular.count;
+            document.getElementById('regularScore').textContent = dadosPorTipo.regular.score_medio.toFixed(1);
+            document.getElementById('regularFrequencia').textContent = dadosPorTipo.regular.frequencia_media.toFixed(1) + '%';
+            document.getElementById('regularRendimento').textContent = dadosPorTipo.regular.rendimento_medio.toFixed(1);
+            
+            // Atualizar total no header
+            document.getElementById('totalEscolasHeader').textContent = dadosPorTipo.pei.count + dadosPorTipo.regular.count;
+        }
+        
+        // Atualizar performance por componentes
+        function atualizarPerformanceComponentes() {
+            if (!dadosEscolas) return;
+            
+            const dadosPorTipo = obterDadosPorTipo();
+            if (!dadosPorTipo) return;
+            
+            const container = document.getElementById('performanceComponentes');
+            container.innerHTML = '';
+            
+            const componentes = [
+                { nome: 'Frequência', pei: dadosPorTipo.pei.frequencia_media, regular: dadosPorTipo.regular.frequencia_media, sufixo: '%' },
+                { nome: 'Rendimento', pei: dadosPorTipo.pei.rendimento_medio, regular: dadosPorTipo.regular.rendimento_medio, sufixo: '' },
+                { nome: 'Aprovação', pei: dadosPorTipo.pei.aprovacao_media, regular: dadosPorTipo.regular.aprovacao_media, sufixo: '%' },
+                { nome: 'Plataformas', pei: dadosPorTipo.pei.plataformas_media, regular: dadosPorTipo.regular.plataformas_media, sufixo: '%' }
+            ];
+            
+            componentes.forEach(comp => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center';
+                div.innerHTML = `
+                    <span class="text-gray-600">${comp.nome}:</span>
+                    <div class="flex space-x-2">
+                        <span class="text-blue-600 font-medium">PEI: ${comp.pei.toFixed(1)}${comp.sufixo}</span>
+                        <span class="text-green-600 font-medium">REG: ${comp.regular.toFixed(1)}${comp.sufixo}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Atualizar estatísticas
+        function atualizarEstatisticas() {
+            if (!dadosEscolas) return;
+            
+            const dadosPorTipo = obterDadosPorTipo();
+            if (!dadosPorTipo) return;
+            
+            const diferenca = dadosPorTipo.pei.score_medio - dadosPorTipo.regular.score_medio;
+            document.getElementById('diferencaMedia').textContent = '+' + diferenca.toFixed(1);
+            document.getElementById('melhorPerformance').textContent = '🏛️ PEI';
+            
+            // Calcular taxa de excelência (score >= 85)
+            const peiExcelentes = dadosPorTipo.pei.escolas.filter(e => e.score_super_bi >= 85).length;
+            const regularExcelentes = dadosPorTipo.regular.escolas.filter(e => e.score_super_bi >= 85).length;
+            
+            const taxaPEI = (peiExcelentes / dadosPorTipo.pei.count * 100).toFixed(0);
+            const taxaRegular = (regularExcelentes / dadosPorTipo.regular.count * 100).toFixed(0);
+            
+            document.getElementById('taxaExcelencia').innerHTML = `
+                <div>PEI: <span class="font-medium text-blue-600">${taxaPEI}%</span></div>
+                <div>REG: <span class="font-medium text-green-600">${taxaRegular}%</span></div>
+            `;
+        }
+        
+        // Atualizar listas de escolas
+        function atualizarListasEscolas() {
+            if (!dadosEscolas) return;
+            
+            const dadosPorTipo = obterDadosPorTipo();
+            if (!dadosPorTipo) return;
+            
+            // Atualizar contadores
+            document.getElementById('contadorPEI').textContent = `${dadosPorTipo.pei.count} unidades`;
+            document.getElementById('contadorRegular').textContent = `${dadosPorTipo.regular.count} unidades`;
+            
+            // Lista PEI
+            const listaPEI = document.getElementById('listaPEI');
+            listaPEI.innerHTML = '';
+            dadosPorTipo.pei.escolas
+                .sort((a, b) => b.score_super_bi - a.score_super_bi)
+                .forEach(escola => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 bg-gray-50 rounded-lg';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-gray-800">${escola.nome}</span>
+                            <span class="text-blue-600 font-medium">${escola.score_super_bi.toFixed(1)}</span>
+                        </div>
+                    `;
+                    listaPEI.appendChild(div);
+                });
+            
+            // Lista Regular
+            const listaRegular = document.getElementById('listaRegular');
+            listaRegular.innerHTML = '';
+            dadosPorTipo.regular.escolas
+                .sort((a, b) => b.score_super_bi - a.score_super_bi)
+                .forEach(escola => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 bg-gray-50 rounded-lg';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-gray-800">${escola.nome}</span>
+                            <span class="text-green-600 font-medium">${escola.score_super_bi.toFixed(1)}</span>
+                        </div>
+                    `;
+                    listaRegular.appendChild(div);
+                });
+        }
+        
+        // Inicializar página quando dados estiverem prontos
+        document.addEventListener('dadosCarregados', function() {
+            atualizarResumoComparativo();
+            atualizarPerformanceComponentes();
+            atualizarEstatisticas();
+            atualizarListasEscolas();
+            
+            // Criar gráficos
+            criarGraficoComparativo('graficoComparacaoGeral');
+            criarRadarComparativo('radarComparativo');
+            criarGraficoEvolucaoTemporal('graficoEvolucaoTemporal');
+            criarGraficoDistribuicao('graficoDistribuicao');
+        });
+    </script>
+</body>
+</html>
+
