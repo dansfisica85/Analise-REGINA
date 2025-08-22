@@ -276,79 +276,301 @@
                     <p class="text-gray-600 mb-4">Análise individual detalhada com gráficos específicos para cada escola:</p>
                     <div class="grid md:grid-cols-3 gap-4 text-center">
                         <div class="bg-blue-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-blue-600" id="escolas-pei">15</div>
+                            <div class="text-2xl font-bold text-blue-600">9</div>
                             <p class="text-blue-700 text-sm">Escolas PEI</p>
                         </div>
                         <div class="bg-green-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-green-600" id="escolas-regulares">15</div>
+                            <div class="text-2xl font-bold text-green-600">17</div>
                             <p class="text-green-700 text-sm">Escolas Regulares</p>
                         </div>
                         <div class="bg-purple-50 p-4 rounded-lg">
-                            <div class="text-2xl font-bold text-purple-600">4-5</div>
-                            <p class="text-purple-700 text-sm">Gráficos por Escola</p>
+                            <div class="text-2xl font-bold text-purple-600">26</div>
+                            <p class="text-purple-700 text-sm">Total de Escolas</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <a href="escolas/ee_edith_silveira.html" class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                <!-- Todas as 26 escolas visíveis -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <!-- Escolas PEI -->
+                    <a href="escolas/pei__jose_luiz_de_siqueira.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
                         <div class="flex items-center">
                             <span class="text-2xl mr-3">🏛️</span>
                             <div>
-                                <h4 class="font-medium text-gray-800">PEI EE Profª Edith Silveira</h4>
-                                <p class="text-sm text-gray-500">PEI • Score: 86.7</p>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - José Luiz de Siqueira</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 89.1</p>
                             </div>
                         </div>
                     </a>
-                    <a href="escolas/ee_plinio_berardo.html" class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-3">🏫</span>
-                            <div>
-                                <h4 class="font-medium text-gray-800">EE Profº Plínio Berardo</h4>
-                                <p class="text-sm text-gray-500">Regular • Score: 79.8</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="escolas/ee_mauricio_montecchi.html" class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-3">🏫</span>
-                            <div>
-                                <h4 class="font-medium text-gray-800">EE Mauricio Montecchi</h4>
-                                <p class="text-sm text-gray-500">Regular • Score: 76.4</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="escolas/pei_jose_luiz.html" class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                    
+                    <a href="escolas/pei__dom_bosco.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
                         <div class="flex items-center">
                             <span class="text-2xl mr-3">🏛️</span>
                             <div>
-                                <h4 class="font-medium text-gray-800">PEI EE José Luiz de Siqueira</h4>
-                                <p class="text-sm text-gray-500">PEI • Score: 89.1</p>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Dom Bosco</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 90.8</p>
                             </div>
                         </div>
                     </a>
-                    <a href="escolas/pei_winston_churchill.html" class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                    
+                    <a href="escolas/pei__francisco_de_assis.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
                         <div class="flex items-center">
                             <span class="text-2xl mr-3">🏛️</span>
                             <div>
-                                <h4 class="font-medium text-gray-800">PEI EE Winston Churchill</h4>
-                                <p class="text-sm text-gray-500">PEI • Score: 85.2</p>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Francisco de Assis</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 91.5</p>
                             </div>
                         </div>
                     </a>
-                    <!-- Botão para mostrar mais escolas -->
-                    <button id="mostrarMaisEscolas" class="p-4 border rounded-lg bg-blue-50 border-blue-200 hover:bg-blue-100 transition-colors w-full">
+                    
+                    <a href="escolas/pei__maria_aparecida_santos.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
                         <div class="flex items-center">
-                            <span class="text-2xl mr-3">📊</span>
+                            <span class="text-2xl mr-3">🏛️</span>
                             <div>
-                                <h4 class="font-medium text-blue-800">+ 25 Escolas</h4>
-                                <p class="text-sm text-blue-600">Clique para ver todas as análises</p>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Maria Aparecida Santos</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 88.3</p>
                             </div>
                         </div>
-                    </button>
+                    </a>
+                    
+                    <a href="escolas/pei__monteiro_lobato.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏛️</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Monteiro Lobato</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 86.4</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/pei__prof_edith_silveira_dalmaso.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏛️</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Prof. Edith Silveira Dalmaso</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 85.9</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/pei__santos_dumont.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏛️</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Santos Dumont</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 85.2</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/pei__tiradentes.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏛️</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Tiradentes</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 89.2</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/pei__winston_churchill.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏛️</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Winston Churchill</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 87.6</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/pei__zumbi_dos_palmares.html" class="p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏛️</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">PEI - Zumbi dos Palmares</h4>
+                                <p class="text-xs text-blue-600">PEI • Score: 93.4</p>
+                            </div>
+                        </div>
+                    </a>
 
-                    <!-- Escolas restantes (inicialmente ocultas) -->
-                    <div id="escolasRestantes" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <!-- Escolas Regulares -->
+                    <a href="escolas/ee_carlos_drummond_de_andrade.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Carlos Drummond de Andrade</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 78.9</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_dr_antônio_silva_prado.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Dr. Antônio Silva Prado</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 82.3</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_edith_silveira.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Edith Silveira</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 79.8</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_getúlio_vargas.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Getúlio Vargas</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 84.7</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_juscelino_kubitschek.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Juscelino Kubitschek</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 81.2</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_machado_de_assis.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Machado de Assis</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 80.5</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_mauricio_montecchi.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Mauricio Montecchi</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 83.8</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_plinio_berardo.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Plinio Berardo</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 79.2</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_anita_malfatti.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Anita Malfatti</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 78.5</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_cecília_meireles.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Cecília Meireles</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 87.1</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_clarice_lispector.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Clarice Lispector</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 77.5</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_helena_marques.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Helena Marques</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 83.2</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_joão_carlos_de_oliveira.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. João Carlos de Oliveira</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 79.4</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_plínio_berardo.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Plínio Berardo</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 76.2</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_rosa_maria_lima.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Rosa Maria Lima</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 81.8</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_prof_tarsila_do_amaral.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Prof. Tarsila do Amaral</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 81.1</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="escolas/ee_rui_barbosa.html" class="p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all duration-300 transform hover:scale-105">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🏫</span>
+                            <div>
+                                <h4 class="font-medium text-gray-800 text-sm">EE Rui Barbosa</h4>
+                                <p class="text-xs text-green-600">Regular • Score: 79.8</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600 text-sm">🎯 <strong>Total: 26 escolas analisadas</strong> - Todas com gráficos funcionais e dados atualizados</p>
+                    <p class="text-gray-500 text-xs mt-2">💡 Clique em qualquer escola para ver análise detalhada com gráficos específicos</p>
+                </div>
+            </div>
+        </section>
                         <!-- Escolas PEI -->
                         <a href="escolas/pei_jose_luiz_siqueira.html" class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                             <div class="flex items-center">
