@@ -181,5 +181,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     const seletores = ['escolaSelect', 'seletorEscola', 'escola-select'];
     seletores.forEach(id => popularSeletorEscolas(id));
 
+    // Disparar evento personalizado para indicar que os dados foram carregados
+    document.dispatchEvent(new CustomEvent('dadosCarregados'));
+    
     console.log('✅ Sistema de dados inicializado');
 });

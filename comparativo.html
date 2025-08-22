@@ -352,16 +352,19 @@
         
         // Inicializar página quando dados estiverem prontos
         document.addEventListener('dadosCarregados', function() {
+            console.log('Dados carregados, iniciando página comparativo...');
             atualizarResumoComparativo();
             atualizarPerformanceComponentes();
             atualizarEstatisticas();
             atualizarListasEscolas();
             
             // Criar gráficos
+            console.log('Criando gráficos...');
             criarGraficoComparativo('graficoComparacaoGeral');
             criarRadarComparativo('radarComparativo');
-            criarGraficoEvolucaoTemporal('graficoEvolucaoTemporal');
+            criarGraficoEvolucao('graficoEvolucaoTemporal');
             criarGraficoDistribuicao('graficoDistribuicao');
+            console.log('Gráficos criados com sucesso!');
         });
     </script>
 </body>
