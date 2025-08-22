@@ -131,52 +131,55 @@
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md card">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">⚖️ Comparativo PEI vs Regular</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">📈 Performance Geral</h3>
+                    <div class="chart-container">
+                        <canvas id="graficoPerformanceGeral"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- KPIs Detalhados do Sistema REGINA -->
+        <!-- CONTEÚDO EXATO DO GEMINI.HTML -->
+        
+        <!-- Visão Geral da Rede -->
         <section class="mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">📊 Métricas Detalhadas da Rede</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Visão Geral da Rede</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-500">
-                    <h3 class="text-sm font-medium text-gray-500">Média Desempenho (2º Bi)</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">9.1 <span class="text-base font-medium text-green-500 ml-1">+1.5</span></p>
-                    <p class="text-xs text-gray-400 mt-1">vs 1º Bimestre</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-indigo-500" style="transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;">
+                    <h3 class="text-sm font-medium text-slate-500">Média Desempenho (2º Bi)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">9.1 <span class="text-base font-medium text-green-500 ml-1">+1.5</span></p>
+                    <p class="text-xs text-slate-400 mt-1">vs 1º Bimestre</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-teal-500">
-                    <h3 class="text-sm font-medium text-gray-500">Média Frequência (2º Bi)</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">85.9% <span class="text-base font-medium text-green-500 ml-1">+5.2%</span></p>
-                    <p class="text-xs text-gray-400 mt-1">vs 1º Bimestre (Dados Corrigidos)</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-teal-500" style="transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;">
+                    <h3 class="text-sm font-medium text-slate-500">Média Frequência (2º Bi)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">85.9% <span class="text-base font-medium text-green-500 ml-1">+5.2%</span></p>
+                    <p class="text-xs text-slate-400 mt-1">vs 1º Bimestre (Dados Corrigidos)</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-amber-500">
-                    <h3 class="text-sm font-medium text-gray-500">Escolas Analisadas</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">26</p>
-                    <p class="text-xs text-gray-400 mt-1">9 PEI e 17 Regulares</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-amber-500" style="transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;">
+                    <h3 class="text-sm font-medium text-slate-500">Escolas Analisadas</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">26</p>
+                    <p class="text-xs text-slate-400 mt-1">9 PEI e 17 Regulares</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-rose-500">
-                    <h3 class="text-sm font-medium text-gray-500">Alerta de Dados (Semana 5)</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">Corrigido</p>
-                    <p class="text-xs text-gray-400 mt-1">Dados anômalos removidos da análise</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm kpi-card border-l-4 border-rose-500" style="transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;">
+                    <h3 class="text-sm font-medium text-slate-500">Alerta de Dados (Semana 5)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">Corrigido</p>
+                    <p class="text-xs text-slate-400 mt-1">Dados anômalos removidos da análise</p>
                 </div>
             </div>
-            
-            <!-- Gráfico de Evolução da Rede -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">📈 Evolução da Rede: 1º vs 2º Bimestre</h3>
-                <div class="chart-container">
-                    <canvas id="networkEvolutionChart"></canvas>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="font-bold text-slate-700 mb-4">Evolução da Rede: 1º vs 2º Bimestre</h3>
+                <div class="chart-container h-80" style="position: relative; width: 100%; margin: auto; height: 400px;">
+                    <canvas id="networkEvolutionChartMain"></canvas>
                 </div>
             </div>
         </section>
 
         <!-- Análise Detalhada por Escola -->
         <section class="mb-12">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏫 Análise Detalhada por Escola</h2>
-            <div class="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Análise Detalhada por Escola</h2>
+            <div class="bg-white rounded-lg shadow-sm p-6 overflow-x-auto">
+                 <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 table-header-sortable cursor-pointer" data-sort="nome">Escola</th>
                             <th scope="col" class="px-6 py-3 text-center table-header-sortable cursor-pointer" data-sort="desempenho2">Desempenho 2º Bi</th>
@@ -185,56 +188,77 @@
                             <th scope="col" class="px-6 py-3 text-center table-header-sortable cursor-pointer" data-sort="variacao_freq">Evolução Freq.</th>
                         </tr>
                     </thead>
-                    <tbody id="school-table-body">
-                        <!-- Dados serão inseridos dinamicamente -->
+                    <tbody id="school-table-body-main">
                     </tbody>
                 </table>
             </div>
         </section>
+        
+        <!-- Análise de Evolução Individual com IA -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Análise de Evolução Individual com IA</h2>
+            <div class="mb-4">
+                <label for="evolution-school-selector-main" class="block text-sm font-medium text-slate-600">Selecione uma Escola para Análise</label>
+                <select id="evolution-school-selector-main" class="mt-1 block w-full max-w-lg pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+            </div>
+            <div id="school-evolution-container-main" class="bg-white p-6 rounded-lg shadow-sm">
+                <!-- Conteúdo dinâmico aqui -->
+            </div>
+        </section>
 
-        <!-- Simulador Super BI Detalhado -->
+        <!-- Simulador de Projeção Super BI -->
         <section class="mb-12">
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">🎯 Simulador de Projeção Super BI Avançado</h2>
+                <h2 class="text-3xl font-bold text-gray-800">Simulador de Projeção Super BI</h2>
                 <p class="text-gray-600 max-w-2xl mx-auto mt-2">Ajuste os indicadores para projetar a nota final de cada escola, com base nas regras de 2025.</p>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Parâmetros da Simulação</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-slate-800 mb-4">Parâmetros da Simulação</h3>
                     <div class="space-y-4">
                         <div>
-                            <label for="school-selector-advanced" class="block text-sm font-medium text-gray-600">Selecione a Escola</label>
-                            <select id="school-selector-advanced" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+                            <label for="school-selector-main" class="block text-sm font-medium text-slate-600">Selecione a Escola</label>
+                            <select id="school-selector-main" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
                         </div>
                         <div>
-                            <label for="frequencia-slider-advanced" class="block text-sm font-medium text-gray-600">Frequência Aluno (%) <span id="frequencia-value-advanced" class="font-bold text-indigo-600"></span></label>
-                            <input type="range" id="frequencia-slider-advanced" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="70" max="100" step="0.1">
+                            <label for="frequencia-slider-main" class="block text-sm font-medium text-slate-600">Frequência Aluno (%) <span id="frequencia-value-main" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="frequencia-slider-main" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="70" max="100" step="0.1" style="-webkit-appearance: none; appearance: none;">
                         </div>
                         <div>
-                            <label for="aprovacao-slider-advanced" class="block text-sm font-medium text-gray-600">Taxa de Aprovação (%) <span id="aprovacao-value-advanced" class="font-bold text-indigo-600"></span></label>
-                            <input type="range" id="aprovacao-slider-advanced" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="70" max="100" step="0.1">
+                            <label for="aprovacao-slider-main" class="block text-sm font-medium text-slate-600">Taxa de Aprovação (%) <span id="aprovacao-value-main" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="aprovacao-slider-main" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="70" max="100" step="0.1" style="-webkit-appearance: none; appearance: none;">
                         </div>
                         <div>
-                            <label for="rendimento-slider-advanced" class="block text-sm font-medium text-gray-600">Rendimento Acadêmico (0-10) <span id="rendimento-value-advanced" class="font-bold text-indigo-600"></span></label>
-                            <input type="range" id="rendimento-slider-advanced" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="10" step="0.1">
+                            <label for="rendimento-slider-main" class="block text-sm font-medium text-slate-600">Rendimento Acadêmico (0-10) <span id="rendimento-value-main" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="rendimento-slider-main" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="0" max="10" step="0.1" style="-webkit-appearance: none; appearance: none;">
                         </div>
                         <div>
-                            <label for="plataformas-slider-advanced" class="block text-sm font-medium text-gray-600">Nota Plataformas (0-10) <span id="plataformas-value-advanced" class="font-bold text-indigo-600"></span></label>
-                            <input type="range" id="plataformas-slider-advanced" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="10" step="0.1">
+                            <label for="plataformas-slider-main" class="block text-sm font-medium text-slate-600">Nota Plataformas (0-10) <span id="plataformas-value-main" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="plataformas-slider-main" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="0" max="10" step="0.1" style="-webkit-appearance: none; appearance: none;">
                         </div>
-                        <div>
-                            <label for="saresp-slider-advanced" class="block text-sm font-medium text-gray-600">Nota SARESP (0-10) <span id="saresp-value-advanced" class="font-bold text-indigo-600"></span></label>
-                            <input type="range" id="saresp-slider-advanced" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="10" step="0.1">
+                         <div>
+                            <label for="saresp-slider-main" class="block text-sm font-medium text-slate-600">Nota SARESP (0-10) <span id="saresp-value-main" class="font-bold text-indigo-600"></span></label>
+                            <input type="range" id="saresp-slider-main" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-slider" min="0" max="10" step="0.1" style="-webkit-appearance: none; appearance: none;">
                         </div>
                     </div>
                 </div>
-                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Resultado da Projeção</h3>
+                <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-slate-800 mb-4">Resultado da Projeção e Plano de Ação</h3>
                     <div class="text-center">
-                        <p class="text-gray-500">Nota Final Super BI Projetada</p>
-                        <p id="projected-score-advanced" class="text-6xl font-extrabold text-indigo-600 my-4">0.0</p>
-                        <div class="chart-container">
-                            <canvas id="projectionChartAdvanced"></canvas>
+                        <p class="text-slate-500">Nota Final Super BI Projetada</p>
+                        <p id="projected-score-main" class="text-6xl font-extrabold text-indigo-600 my-4">0.0</p>
+                        <div class="chart-container h-64" style="position: relative; width: 100%; margin: auto; height: 400px;">
+                            <canvas id="projectionChartMain"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-3">Plano de Ação com IA</h4>
+                        <button id="generate-plan-btn-main" class="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50">
+                            <span id="plan-btn-text-main">✨ Sugerir Plano de Ação</span>
+                            <div id="plan-btn-spinner-main" class="spinner hidden" style="border: 2px solid rgba(0, 0, 0, 0.1); border-left-color: #fff; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite;"></div>
+                        </button>
+                        <div id="ai-plan-container-main" class="mt-4 p-4 bg-slate-50 rounded-lg text-slate-600 text-sm hidden prose prose-sm max-w-none">
+                            <div id="ai-plan-content-main"></div>
                         </div>
                     </div>
                 </div>
