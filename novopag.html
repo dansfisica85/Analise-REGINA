@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Desempenho da Rede de Ensino - 1º Semestre 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Background: #FDFBF7, Text: #334155, Accents: #58A4B0, #D4B483) -->
+    <!-- Application Structure Plan: A dashboard-style SPA with five thematic sections: 1) Overview with KPIs, 2) Interactive Performance Matrix (scatter plot) for strategic segmentation, 3) Comparative Analysis with a sortable table and ranking charts, 4) Detailed School Profiles dynamically updated via user selection, and 5) Actionable Recommendations. This structure transforms the linear report into an exploratory tool, allowing users to move from a macro (network-wide) to a micro (individual school) view intuitively, which is more effective for data discovery and decision-making. -->
+    <!-- Visualization & Content Choices: Network trends -> Bar Chart (Goal: Compare); School Segmentation -> Interactive Scatter Plot (Goal: Relationships/Organize); Rankings -> Sortable Table & Bar Charts (Goal: Compare); School Volatility -> Line Chart (Goal: Change). All charts use Chart.js (Canvas) for interactivity and responsiveness. Textual insights are paired directly with visualizations for context. This approach prioritizes visual data exploration over static text, directly supporting the application's goal of making the report's content easily consumable. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #334155;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 450px;
+        }
+        .quadrant {
+            border: 1px dashed rgba(0,0,0,0.1);
+        }
+        .active-nav {
+            color: #58A4B0;
+            border-bottom-color: #58A4B0;
+        }
+        .inactive-nav {
+            border-bottom-color: transparent;
+        }
+        .table-header-sortable {
+            cursor: pointer;
+        }
+        .table-header-sortable:hover {
+            background-color: #f0ebe5;
+        }
+        .tooltip {
+            background: #334155;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            pointer-events: none;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-10 border-b border-slate-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-700">Análise da Rede de Ensino</h1>
+                <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+                    <a href="#visao-geral" class="border-b-2 pb-1 transition-colors duration-200 active-nav">Visão Geral</a>
+                    <a href="#matriz-desempenho" class="border-b-2 pb-1 transition-colors duration-200 inactive-nav">Matriz de Desempenho</a>
+                    <a href="#analise-comparativa" class="border-b-2 pb-1 transition-colors duration-200 inactive-nav">Análise Comparativa</a>
+                    <a href="#perfis-escolas" class="border-b-2 pb-1 transition-colors duration-200 inactive-nav">Perfis por Escola</a>
+                    <a href="#recomendacoes" class="border-b-2 pb-1 transition-colors duration-200 inactive-nav">Recomendações</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+        <section id="visao-geral" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Visão Geral da Rede</h2>
+            <p class="text-slate-500 mb-8 max-w-3xl">Um resumo dos principais indicadores e descobertas do 1º semestre de 2025, destacando a evolução geral no desempenho acadêmico e na frequência dos alunos.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-medium text-slate-500">Média de Desempenho (2º Bi)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-2">9.1 <span class="text-lg font-medium text-green-500 ml-2">+1.5</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Comparado ao 1º Bimestre (7.6)</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-medium text-slate-500">Média de Frequência (2º Bi)</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-2">85.9% <span class="text-lg font-medium text-green-500 ml-2">+5.2%</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Comparado ao 1º Bimestre (80.7%)</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-medium text-slate-500">Escolas Analisadas</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-2">26</p>
+                    <p class="text-xs text-slate-400 mt-1">5 PEI e 21 Regulares</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-medium text-slate-500">Total de Alunos</h3>
+                    <p class="text-3xl font-bold text-slate-800 mt-2">16,134</p>
+                    <p class="text-xs text-slate-400 mt-1">Impactados pela análise</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-slate-700 mb-4">Evolução da Rede: 1º vs 2º Bimestre</h3>
+                    <div class="chart-container h-80 sm:h-96">
+                        <canvas id="networkEvolutionChart"></canvas>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-slate-700 mb-4">Principais Conclusões</h3>
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start">
+                            <span class="text-teal-500 mr-3 mt-1">✔</span>
+                            <div><strong class="font-semibold text-slate-700">Tendência Positiva:</strong> A rede demonstrou melhoria significativa tanto no desempenho acadêmico quanto na frequência.</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-teal-500 mr-3 mt-1">✔</span>
+                            <div><strong class="font-semibold text-slate-700">Forte Correlação:</strong> Maior frequência está diretamente associada a melhores resultados acadêmicos.</div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-orange-500 mr-3 mt-1">⚠</span>
+                            <div><strong class="font-semibold text-slate-700">Anomalia de Dados:</strong> Uma queda atípica na frequência na Semana 5 (S5) do 1º bimestre requer investigação.</div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="text-teal-500 mr-3 mt-1">✔</span>
+                            <div><strong class="font-semibold text-slate-700">Segmentação Estratégica:</strong> A classificação em 4 quadrantes permite ações direcionadas para cada perfil de escola.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="matriz-desempenho" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Matriz de Desempenho vs. Frequência</h2>
+            <p class="text-slate-500 mb-6 max-w-3xl">Visualize a performance de todas as escolas no 2º bimestre. A matriz cruza o desempenho acadêmico com a frequência, classificando as escolas em quatro quadrantes estratégicos. Interaja com o gráfico para explorar.</p>
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button id="filter-all" class="px-3 py-1 text-sm font-medium rounded-full bg-slate-200 text-slate-700">Todas</button>
+                    <button id="filter-q1" class="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-800">Excelência</button>
+                    <button id="filter-q2" class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">Oportunidade</button>
+                    <button id="filter-q3" class="px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">Risco</button>
+                    <button id="filter-q4" class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800">Crítica</button>
+                </div>
+                <div class="relative">
+                    <div class="chart-container h-[500px]">
+                        <canvas id="performanceMatrixChart"></canvas>
+                    </div>
+                    <div id="matrix-tooltip" class="tooltip"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analise-comparativa" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Análise Comparativa</h2>
+            <p class="text-slate-500 mb-6 max-w-3xl">Compare todas as escolas da rede. Classifique a tabela clicando nos cabeçalhos para identificar líderes em desempenho, evolução e frequência.</p>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-x-auto">
+                <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 table-header-sortable" data-sort="nome">Escola</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable" data-sort="desempenho2">Desempenho 2º Bi</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable" data-sort="variacao_acad">Evolução Acad.</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable" data-sort="frequencia2">Frequência 2º Bi</th>
+                            <th scope="col" class="px-6 py-3 text-center table-header-sortable" data-sort="variacao_freq">Evolução Freq.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="school-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="perfis-escolas" class="scroll-mt-20 mb-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Perfis Detalhados por Escola</h2>
+            <p class="text-slate-500 mb-6 max-w-3xl">Selecione uma escola para ver sua análise individual, incluindo a trajetória de desempenho, classificação e pontos de atenção específicos.</p>
+
+            <div class="mb-6">
+                <select id="school-selector" class="w-full max-w-md p-3 border border-slate-300 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                </select>
+            </div>
+
+            <div id="school-profile-container" class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-100">
+            </div>
+        </section>
+
+        <section id="recomendacoes" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Recomendações Estratégicas</h2>
+            <p class="text-slate-500 mb-6 max-w-3xl">Com base na análise, apresentamos planos de ação para a rede e para cada grupo de escolas, visando a melhoria contínua da qualidade educacional.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-700 mb-3">Estratégias para a Rede</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li><strong>Governança de Dados:</strong> Auditar a anomalia da Semana 5 para garantir a precisão dos dados futuros.</li>
+                        <li><strong>Disseminar Boas Práticas:</strong> Criar um programa para compartilhar as estratégias das escolas do Quadrante de Excelência.</li>
+                        <li><strong>Avaliar Programa PEI:</strong> Estudar os fatores de sucesso das escolas de ensino integral para possível expansão.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-700 mb-3">Ações por Quadrante</h3>
+                     <ul class="space-y-3 text-sm text-slate-600">
+                        <li><strong class="text-green-700">Oportunidade Pedagógica:</strong> Foco em suporte pedagógico, formação de professores e revisão de metodologias.</li>
+                        <li><strong class="text-yellow-700">Risco:</strong> Implementar programas de busca ativa e engajamento familiar para combater o absenteísmo.</li>
+                        <li><strong class="text-red-700">Intervenção Crítica:</strong> Formar forças-tarefa com planos de recuperação intensivos e multifacetados.</li>
+                    </ul>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-700 mb-3">Próximos Passos</h3>
+                     <ul class="space-y-3 text-sm text-slate-600">
+                        <li><strong>Monitoramento Contínuo:</strong> Acompanhar os indicadores semanalmente para identificar tendências emergentes.</li>
+                        <li><strong>Planos Individuais:</strong> Desenvolver planos de ação específicos para as escolas nos quadrantes de Risco e Crítico.</li>
+                        <li><strong>Feedback e Colaboração:</strong> Promover reuniões entre gestores para discutir os resultados e colaborar em soluções.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-200 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-slate-500">
+            <p>Relatório Consolidado do 1º Semestre de 2025 | Painel Interativo</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const schoolData = [
+                { id: 1, nome: "PEI EE Maria Falconi de Felício", desempenho1: 8.7, desempenho2: 10.0, frequencia1: 85.9, frequencia2: 90.6, pei: true, alunos: 396 },
+                { id: 2, nome: "EE Profº Nestor G de Araújo", desempenho1: 8.3, desempenho2: 9.9, frequencia1: 81.8, frequencia2: 90.6, pei: false, alunos: 306 },
+                { id: 3, nome: "EE Profª Maria Elyde M dos Santos", desempenho1: 8.3, desempenho2: 10.0, frequencia1: 82.2, frequencia2: 88.2, pei: false, alunos: 229 },
+                { id: 4, nome: "PEI EE Domingos Paro", desempenho1: 8.1, desempenho2: 10.0, frequencia1: 88.0, frequencia2: 93.2, pei: true, alunos: 254 },
+                { id: 5, nome: "PEI EE DR Antonio Furlan Júnior", desempenho1: 8.0, desempenho2: 9.8, frequencia1: 88.4, frequencia2: 89.3, pei: true, alunos: 521 },
+                { id: 6, nome: "PEI EE Profª Dolores B Novaes", desempenho1: 7.9, desempenho2: 9.5, frequencia1: 82.8, frequencia2: 89.2, pei: true, alunos: 503 },
+                { id: 7, nome: "EE DR Mário Lins", desempenho1: 7.8, desempenho2: 9.3, frequencia1: 85.8, frequencia2: 86.7, pei: false, alunos: 105 },
+                { id: 8, nome: "EE Dona Adélia Frascino", desempenho1: 7.8, desempenho2: 10.0, frequencia1: 91.5, frequencia2: 92.6, pei: false, alunos: 50 },
+                { id: 9, nome: "EE Profº Bruno Pieroni", desempenho1: 7.6, desempenho2: 9.8, frequencia1: 82.9, frequencia2: 85.5, pei: false, alunos: 645 },
+                { id: 10, nome: "EE Mauricio Montecchi", desempenho1: 7.4, desempenho2: 9.9, frequencia1: 91.0, frequencia2: 92.0, pei: false, alunos: 815 },
+                { id: 11, nome: "PEI EE José Luiz de Siqueira", desempenho1: 7.2, desempenho2: 9.7, frequencia1: 80.9, frequencia2: 89.0, pei: true, alunos: 742 },
+                { id: 12, nome: "EE Winston Churchill", desempenho1: 7.2, desempenho2: 9.5, frequencia1: 80.1, frequencia2: 87.6, pei: false, alunos: 386 },
+                { id: 13, nome: "EE Profª Maria C R S Magon", desempenho1: 7.2, desempenho2: 9.4, frequencia1: 70.8, frequencia2: 93.4, pei: false, alunos: 236 },
+                { id: 14, nome: "EE Profª Yolanda Luiz Sicchieri", desempenho1: 7.1, desempenho2: 9.5, frequencia1: 71.9, frequencia2: 78.6, pei: false, alunos: 642 },
+                { id: 15, nome: "EE Profª Nícia Fabiola Z. Giraldi", desempenho1: 7.1, desempenho2: 9.2, frequencia1: 80.9, frequencia2: 80.5, pei: false, alunos: 769 },
+                { id: 16, nome: "EE Orminda Guimarães Cotrim", desempenho1: 7.0, desempenho2: 9.5, frequencia1: 84.4, frequencia2: 84.5, pei: false, alunos: 779 },
+                { id: 17, nome: "EE Odulfo de Oliveira Guimarães", desempenho1: 7.0, desempenho2: 9.3, frequencia1: 76.2, frequencia2: 80.0, pei: false, alunos: 897 },
+                { id: 18, nome: "EE DR Isaías José Ferreira", desempenho1: 6.7, desempenho2: 9.6, frequencia1: 78.9, frequencia2: 88.0, pei: false, alunos: 631 },
+                { id: 19, nome: "EE Luiz Marcari", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 71.3, frequencia2: 86.1, pei: false, alunos: 249 },
+                { id: 20, nome: "EE Profº Plínio Berardo", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 73.7, frequencia2: 75.2, pei: false, alunos: 1038 },
+                { id: 21, nome: "EE Profº Basílio R da Silva", desempenho1: 6.6, desempenho2: 8.8, frequencia1: 83.4, frequencia2: 88.4, pei: false, alunos: 571 },
+                { id: 22, nome: "EE Profª Dolores M de Castro", desempenho1: 6.6, desempenho2: 9.2, frequencia1: 89.7, frequencia2: 91.5, pei: false, alunos: 148 },
+                { id: 23, nome: "EE Profª Edith Silveira Dalmaso", desempenho1: 6.4, desempenho2: 8.5, frequencia1: 75.3, frequencia2: 90.8, pei: false, alunos: 1058 },
+                { id: 24, nome: "EE Profª Josepha Castro", desempenho1: 6.2, desempenho2: 9.4, frequencia1: 82.9, frequencia2: 82.3, pei: false, alunos: 527 },
+                { id: 25, nome: "EE Anna Passamonti Balardin", desempenho1: 6.0, desempenho2: 9.2, frequencia1: 73.1, frequencia2: 78.4, pei: false, alunos: 968 },
+                { id: 26, nome: "EE Ferrucio Chiaratti", desempenho1: 5.9, desempenho2: 9.0, frequencia1: 70.9, frequencia2: 74.8, pei: false, alunos: 902 }
+            ].map(d => ({
+                ...d,
+                variacao_acad: parseFloat((d.desempenho2 - d.desempenho1).toFixed(1)),
+                variacao_freq: parseFloat((d.frequencia2 - d.frequencia1).toFixed(1))
+            }));
+
+            const MEDIAN_DESEMPENHO = 9.5;
+            const MEDIAN_FREQUENCIA = 88.1;
+
+            const getQuadrant = (school) => {
+                if (school.desempenho2 >= MEDIAN_DESEMPENHO && school.frequencia2 >= MEDIAN_FREQUENCIA) return 1; // Excelência
+                if (school.desempenho2 < MEDIAN_DESEMPENHO && school.frequencia2 >= MEDIAN_FREQUENCIA) return 2; // Oportunidade
+                if (school.desempenho2 >= MEDIAN_DESEMPENHO && school.frequencia2 < MEDIAN_FREQUENCIA) return 3; // Risco
+                return 4; // Crítica
+            };
+            
+            const quadrantInfo = {
+                1: { name: 'Excelência', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.2)' },
+                2: { name: 'Oportunidade Pedagógica', color: '#22c55e', bgColor: 'rgba(34, 197, 94, 0.2)' },
+                3: { name: 'Risco', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.2)' },
+                4: { name: 'Intervenção Crítica', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.2)' }
+            };
+
+            const schoolDataWithQuadrants = schoolData.map(d => ({ ...d, quadrant: getQuadrant(d) }));
+
+            let performanceMatrixChart;
+
+            function createNetworkEvolutionChart() {
+                const ctx = document.getElementById('networkEvolutionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1º Bimestre', '2º Bimestre'],
+                        datasets: [{
+                            label: 'Média de Desempenho',
+                            data: [7.6, 9.1],
+                            backgroundColor: '#D4B483',
+                            borderColor: '#c9a56f',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Média de Frequência (%)',
+                            data: [80.7, 85.9],
+                            backgroundColor: '#58A4B0',
+                            borderColor: '#4e939e',
+                            borderWidth: 1,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                position: 'left',
+                                title: { display: true, text: 'Média de Desempenho' }
+                            },
+                            y1: {
+                                beginAtZero: false,
+                                position: 'right',
+                                title: { display: true, text: 'Média de Frequência (%)' },
+                                grid: { drawOnChartArea: false }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + (context.datasetIndex === 1 ? '%' : '');
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function createPerformanceMatrixChart(filteredData) {
+                const ctx = document.getElementById('performanceMatrixChart').getContext('2d');
+                const tooltipEl = document.getElementById('matrix-tooltip');
+
+                const datasets = Object.keys(quadrantInfo).map(q => {
+                    const quadrantId = parseInt(q);
+                    return {
+                        label: quadrantInfo[quadrantId].name,
+                        data: filteredData.filter(d => d.quadrant === quadrantId).map(d => ({ x: d.frequencia2, y: d.desempenho2, school: d })),
+                        backgroundColor: quadrantInfo[quadrantId].color,
+                        pointRadius: 6,
+                        pointHoverRadius: 9
+                    };
+                });
+
+                if (performanceMatrixChart) {
+                    performanceMatrixChart.destroy();
+                }
+
+                performanceMatrixChart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: { datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const element = elements[0];
+                                const schoolId = performanceMatrixChart.data.datasets[element.datasetIndex].data[element.index].school.id;
+                                const schoolProfileSection = document.getElementById('perfis-escolas');
+                                updateSchoolProfile(schoolId);
+                                schoolProfileSection.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Frequência Média (2º Bimestre %)' },
+                                min: 70,
+                                max: 95
+                            },
+                            y: {
+                                title: { display: true, text: 'Desempenho Acadêmico Médio (2º Bimestre)' },
+                                min: 8.0,
+                                max: 10.2
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                enabled: false,
+                                external: function(context) {
+                                    const tooltipModel = context.tooltip;
+                                    if (tooltipModel.opacity === 0) {
+                                        tooltipEl.style.opacity = 0;
+                                        return;
+                                    }
+                                    
+                                    if (tooltipModel.body) {
+                                        const dataPoint = tooltipModel.dataPoints[0].raw.school;
+                                        tooltipEl.innerHTML = `
+                                            <div class="font-bold">${dataPoint.nome}</div>
+                                            <div>Desempenho: ${dataPoint.desempenho2}</div>
+                                            <div>Frequência: ${dataPoint.frequencia2}%</div>
+                                        `;
+                                    }
+                                    
+                                    const position = context.chart.canvas.getBoundingClientRect();
+                                    tooltipEl.style.opacity = 1;
+                                    tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                                    tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                                    tooltipEl.style.transform = 'translate(-50%, -120%)';
+                                },
+                            },
+                            annotation: {
+                                annotations: {
+                                    lineX: {
+                                        type: 'line',
+                                        xMin: MEDIAN_FREQUENCIA,
+                                        xMax: MEDIAN_FREQUENCIA,
+                                        borderColor: 'rgba(100, 116, 139, 0.5)',
+                                        borderWidth: 2,
+                                        borderDash: [6, 6],
+                                        label: {
+                                            content: 'Mediana Freq.',
+                                            enabled: true,
+                                            position: 'start',
+                                            backgroundColor: 'rgba(255,255,255,0.5)'
+                                        }
+                                    },
+                                    lineY: {
+                                        type: 'line',
+                                        yMin: MEDIAN_DESEMPENHO,
+                                        yMax: MEDIAN_DESEMPENHO,
+                                        borderColor: 'rgba(100, 116, 139, 0.5)',
+                                        borderWidth: 2,
+                                        borderDash: [6, 6],
+                                        label: {
+                                            content: 'Mediana Desemp.',
+                                            enabled: true,
+                                            position: 'end',
+                                            backgroundColor: 'rgba(255,255,255,0.5)'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function populateTable(data) {
+                const tableBody = document.getElementById('school-table-body');
+                tableBody.innerHTML = '';
+                data.forEach(school => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-slate-900">${school.nome}</td>
+                        <td class="px-6 py-4 text-center">${school.desempenho2.toFixed(1)}</td>
+                        <td class="px-6 py-4 text-center ${school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600'}">${school.variacao_acad > 0 ? '+' : ''}${school.variacao_acad.toFixed(1)}</td>
+                        <td class="px-6 py-4 text-center">${school.frequencia2.toFixed(1)}%</td>
+                        <td class="px-6 py-4 text-center ${school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600'}">${school.variacao_freq > 0 ? '+' : ''}${school.variacao_freq.toFixed(1)}%</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            function sortTable(key, direction) {
+                const sortedData = [...schoolDataWithQuadrants].sort((a, b) => {
+                    if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+                    if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                populateTable(sortedData);
+            }
+
+            let currentSort = { key: 'nome', direction: 'asc' };
+            document.querySelectorAll('.table-header-sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortKey = header.dataset.sort;
+                    const direction = (currentSort.key === sortKey && currentSort.direction === 'desc') ? 'asc' : 'desc';
+                    currentSort = { key: sortKey, direction };
+                    sortTable(sortKey, direction);
+                });
+            });
+
+            function populateSchoolSelector() {
+                const selector = document.getElementById('school-selector');
+                schoolDataWithQuadrants.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(school => {
+                    const option = document.createElement('option');
+                    option.value = school.id;
+                    option.textContent = school.nome;
+                    selector.appendChild(option);
+                });
+                selector.addEventListener('change', (e) => updateSchoolProfile(e.target.value));
+            }
+
+            function updateSchoolProfile(schoolId) {
+                const school = schoolDataWithQuadrants.find(s => s.id == schoolId);
+                if (!school) return;
+
+                document.getElementById('school-selector').value = schoolId;
+
+                const container = document.getElementById('school-profile-container');
+                const quadInfo = quadrantInfo[school.quadrant];
+
+                container.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-start mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-800">${school.nome}</h3>
+                            <div class="flex items-center space-x-4 text-sm text-slate-500 mt-1">
+                                <span>${school.pei ? 'PEI' : 'Regular'}</span>
+                                <span>•</span>
+                                <span>${school.alunos} alunos</span>
+                            </div>
+                        </div>
+                        <div class="text-right mt-2 sm:mt-0">
+                            <span class="px-3 py-1 text-sm font-semibold rounded-full" style="background-color:${quadInfo.bgColor}; color:${quadInfo.color};">${quadInfo.name}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="border p-4 rounded-lg">
+                            <h4 class="font-semibold text-center mb-2">Desempenho Acadêmico (2º Bi)</h4>
+                            <div class="chart-container h-64"><canvas id="schoolPerfChart"></canvas></div>
+                        </div>
+                        <div class="border p-4 rounded-lg">
+                            <h4 class="font-semibold text-center mb-2">Frequência (2º Bi)</h4>
+                            <div class="chart-container h-64"><canvas id="schoolFreqChart"></canvas></div>
+                        </div>
+                    </div>
+                `;
+                createSchoolGaugeChart('schoolPerfChart', 'Desempenho', school.desempenho2, 10, 'nota');
+                createSchoolGaugeChart('schoolFreqChart', 'Frequência', school.frequencia2, 100, '%');
+            }
+
+            function createSchoolGaugeChart(canvasId, label, value, maxValue, unit) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [label, ''],
+                        datasets: [{
+                            data: [value, maxValue - value],
+                            backgroundColor: ['#58A4B0', '#e5e7eb'],
+                            borderColor: ['#58A4B0', '#e5e7eb'],
+                            borderWidth: 1,
+                            circumference: 180,
+                            rotation: 270,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: false },
+                            title: {
+                                display: true,
+                                text: `${value.toFixed(1)}${unit}`,
+                                position: 'bottom',
+                                font: { size: 24, weight: 'bold' },
+                                color: '#334155',
+                                padding: { top: -40 }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+
+            function setupNavScroll() {
+                const navLinks = document.querySelectorAll('nav a');
+                const sections = document.querySelectorAll('main section');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            navLinks.forEach(link => {
+                                link.classList.toggle('active-nav', link.getAttribute('href').substring(1) === entry.target.id);
+                                link.classList.toggle('inactive-nav', link.getAttribute('href').substring(1) !== entry.target.id);
+                            });
+                        }
+                    });
+                }, { rootMargin: "-50% 0px -50% 0px" });
+
+                sections.forEach(section => observer.observe(section));
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                    });
+                });
+            }
+
+            function setupMatrixFilters() {
+                document.getElementById('filter-all').addEventListener('click', () => createPerformanceMatrixChart(schoolDataWithQuadrants));
+                document.getElementById('filter-q1').addEventListener('click', () => createPerformanceMatrixChart(schoolDataWithQuadrants.filter(d => d.quadrant === 1)));
+                document.getElementById('filter-q2').addEventListener('click', () => createPerformanceMatrixChart(schoolDataWithQuadrants.filter(d => d.quadrant === 2)));
+                document.getElementById('filter-q3').addEventListener('click', () => createPerformanceMatrixChart(schoolDataWithQuadrants.filter(d => d.quadrant === 3)));
+                document.getElementById('filter-q4').addEventListener('click', () => createPerformanceMatrixChart(schoolDataWithQuadrants.filter(d => d.quadrant === 4)));
+            }
+
+            createNetworkEvolutionChart();
+            createPerformanceMatrixChart(schoolDataWithQuadrants);
+            populateTable(schoolDataWithQuadrants);
+            populateSchoolSelector();
+            updateSchoolProfile(schoolDataWithQuadrants[0].id);
+            setupNavScroll();
+            setupMatrixFilters();
+        });
+    </script>
+</body>
+</html>
