@@ -605,6 +605,549 @@
     <!-- Scripts -->
     <script src="dados.js"></script>
     <script src="graficos.js"></script>
+    
+    <!-- Scripts específicos do sistema avançado -->
+    <script>
+        // API Key do Gemini (substitua pela sua chave real)
+        const GEMINI_API_KEY = 'SUA_CHAVE_API_AQUI';
+
+        // Estilo para KPI cards com hover
+        document.addEventListener('DOMContentLoaded', function() {
+            const kpiCards = document.querySelectorAll('.kpi-card');
+            kpiCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                });
+            });
+        });
+
+        // Estilos para sliders
+        const style = document.createElement('style');
+        style.textContent = `
+            .range-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #6366f1;
+                cursor: pointer;
+                box-shadow: 0 0 2px 0 #555;
+                transition: background .15s ease-in-out;
+            }
+            .range-slider::-webkit-slider-thumb:hover {
+                background: #4f46e5;
+            }
+            .range-slider::-moz-range-thumb {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #6366f1;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 0 2px 0 #555;
+            }
+            .spinner {
+                border: 2px solid rgba(0, 0, 0, 0.1);
+                border-left-color: #fff;
+                border-radius: 50%;
+                width: 16px;
+                height: 16px;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Dados das escolas para funcionalidades avançadas
+        const schoolDataMain = [
+            { id: 1, nome: "PEI - José Luiz de Siqueira", tipo: "PEI", desempenho1: 8.1, desempenho2: 8.3, frequencia1: 93.2, frequencia2: 94.1, alunos: 742 },
+            { id: 2, nome: "EE Luiz Marcari", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 71.3, frequencia2: 86.1, alunos: 249 },
+            { id: 3, nome: "PEI - Nestor Gomes de Araújo", tipo: "PEI", desempenho1: 8.3, desempenho2: 9.9, frequencia1: 81.8, frequencia2: 90.6, alunos: 306 },
+            { id: 4, nome: "EE Dr. Mário Lins", tipo: "Regular", desempenho1: 7.8, desempenho2: 9.3, frequencia1: 85.8, frequencia2: 86.7, alunos: 105 },
+            { id: 5, nome: "EE Prof. Plínio Berardo", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 73.7, frequencia2: 75.2, alunos: 1038 },
+            { id: 6, nome: "PEI - Domingos Paro", tipo: "PEI", desempenho1: 8.1, desempenho2: 10.0, frequencia1: 88.0, frequencia2: 93.2, alunos: 254 },
+            { id: 7, nome: "PEI - Maria Falconi de Felício", tipo: "PEI", desempenho1: 8.7, desempenho2: 10.0, frequencia1: 85.9, frequencia2: 90.6, alunos: 396 },
+            { id: 8, nome: "EE Maurício Montecchi", tipo: "Regular", desempenho1: 7.4, desempenho2: 9.9, frequencia1: 91.0, frequencia2: 92.0, alunos: 815 },
+            { id: 9, nome: "EE Orminda Guimarães Cotrim", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.5, frequencia1: 84.4, frequencia2: 84.5, alunos: 779 },
+            { id: 10, nome: "EE Prof. Basílio Rodrigues da Silva", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.8, frequencia1: 83.4, frequencia2: 88.4, alunos: 571 },
+            { id: 11, nome: "PEI - Dolores Belém Novaes", tipo: "PEI", desempenho1: 7.9, desempenho2: 9.5, frequencia1: 82.8, frequencia2: 89.2, alunos: 503 },
+            { id: 12, nome: "EE Profª Dolores Martins de Castro", tipo: "Regular", desempenho1: 6.6, desempenho2: 9.2, frequencia1: 89.7, frequencia2: 91.5, alunos: 148 },
+            { id: 13, nome: "EE Profª Josepha Castro", tipo: "Regular", desempenho1: 6.2, desempenho2: 9.4, frequencia1: 82.9, frequencia2: 82.3, alunos: 527 },
+            { id: 14, nome: "EE Profª Yolanda Luiz Sichieri", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.5, frequencia1: 71.9, frequencia2: 78.6, alunos: 642 },
+            { id: 15, nome: "EE Dona Adélia Frascino", tipo: "Regular", desempenho1: 7.8, desempenho2: 10.0, frequencia1: 91.5, frequencia2: 92.6, alunos: 50 },
+            { id: 16, nome: "EE Anna Passamonti Balardin", tipo: "Regular", desempenho1: 6.0, desempenho2: 9.2, frequencia1: 73.1, frequencia2: 78.4, alunos: 968 },
+            { id: 17, nome: "PEI - Dr. Antônio Furlan Júnior", tipo: "PEI", desempenho1: 8.0, desempenho2: 9.8, frequencia1: 88.4, frequencia2: 89.3, alunos: 521 },
+            { id: 18, nome: "EE Prof. Bruno Pieroni", tipo: "Regular", desempenho1: 7.6, desempenho2: 9.8, frequencia1: 82.9, frequencia2: 85.5, alunos: 645 },
+            { id: 19, nome: "EE Profª Edith Silveira Dalmaso", tipo: "Regular", desempenho1: 6.4, desempenho2: 8.5, frequencia1: 75.3, frequencia2: 90.8, alunos: 1058 },
+            { id: 20, nome: "EE Ferrúcio Chiaratti", tipo: "Regular", desempenho1: 5.9, desempenho2: 9.0, frequencia1: 70.9, frequencia2: 74.8, alunos: 902 },
+            { id: 21, nome: "EE Dr. Isaías José Ferreira", tipo: "Regular", desempenho1: 6.7, desempenho2: 9.6, frequencia1: 78.9, frequencia2: 88.0, alunos: 631 },
+            { id: 22, nome: "PEI - Maria Conceição R. Silva Magon", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.4, frequencia1: 70.8, frequencia2: 93.4, alunos: 236 },
+            { id: 23, nome: "EE Profª Nícia Fabíola Zanutto Giraldi", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.2, frequencia1: 80.9, frequencia2: 80.5, alunos: 769 },
+            { id: 24, nome: "PEI - Winston Churchill", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.5, frequencia1: 80.1, frequencia2: 87.6, alunos: 386 },
+            { id: 25, nome: "PEI - Maria Élyde Mônaco dos Santos", tipo: "PEI", desempenho1: 8.3, desempenho2: 10.0, frequencia1: 82.2, frequencia2: 88.2, alunos: 229 },
+            { id: 26, nome: "EE Odulfo de Oliveira Guimarães", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.3, frequencia1: 76.2, frequencia2: 80.0, alunos: 897 }
+        ].map(d => ({
+            ...d,
+            variacao_acad: parseFloat((d.desempenho2 - d.desempenho1).toFixed(1)),
+            variacao_freq: parseFloat((d.frequencia2 - d.frequencia1).toFixed(1))
+        }));
+
+        // Gráfico de evolução da rede principal
+        let networkEvolutionChartMain;
+        
+        function createNetworkEvolutionChartMain() {
+            const ctx = document.getElementById('networkEvolutionChartMain');
+            if (!ctx) return;
+            
+            if (networkEvolutionChartMain) networkEvolutionChartMain.destroy();
+            
+            networkEvolutionChartMain = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['1º Bimestre', '2º Bimestre'],
+                    datasets: [{
+                        label: 'Média de Desempenho',
+                        data: [7.6, 9.1],
+                        backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Média de Frequência (%)',
+                        data: [80.7, 85.9],
+                        backgroundColor: 'rgba(13, 148, 136, 0.7)',
+                        borderColor: 'rgba(13, 148, 136, 1)',
+                        borderWidth: 1,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            position: 'left', 
+                            title: { display: true, text: 'Média de Desempenho' }
+                        },
+                        y1: { 
+                            beginAtZero: false, 
+                            position: 'right', 
+                            title: { display: true, text: 'Média de Frequência (%)' },
+                            grid: { drawOnChartArea: false }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolução da Rede Estadual - 1º vs 2º Bimestre'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Popular tabela com dados das escolas
+        function populateMainTable(data) {
+            const tableBody = document.getElementById('school-table-body-main');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            data.forEach(school => {
+                const row = document.createElement('tr');
+                row.className = 'bg-white border-b hover:bg-slate-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 font-medium text-slate-900">${school.nome}</td>
+                    <td class="px-6 py-4 text-center">${school.desempenho2.toFixed(1)}</td>
+                    <td class="px-6 py-4 text-center ${school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600'}">${school.variacao_acad > 0 ? '+' : ''}${school.variacao_acad.toFixed(1)}</td>
+                    <td class="px-6 py-4 text-center">${school.frequencia2.toFixed(1)}%</td>
+                    <td class="px-6 py-4 text-center ${school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600'}">${school.variacao_freq > 0 ? '+' : ''}${school.variacao_freq.toFixed(1)}%</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Ordenação da tabela principal
+        let currentSortMain = { key: 'nome', direction: 'asc' };
+        function setupMainTableSorting() {
+            document.querySelectorAll('.table-header-sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortKey = header.dataset.sort;
+                    const direction = (currentSortMain.key === sortKey && currentSortMain.direction === 'desc') ? 'asc' : 'desc';
+                    currentSortMain = { key: sortKey, direction };
+                    const sortedData = [...schoolDataMain].sort((a, b) => {
+                        if (a[sortKey] < b[sortKey]) return direction === 'asc' ? -1 : 1;
+                        if (a[sortKey] > b[sortKey]) return direction === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                    populateMainTable(sortedData);
+                });
+            });
+        }
+
+        // Análise de evolução individual
+        function initializeEvolutionAnalysis() {
+            const schoolSelector = document.getElementById('evolution-school-selector-main');
+            if (!schoolSelector) return;
+
+            // Popular seletor de escolas
+            schoolDataMain.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school.id;
+                option.textContent = school.nome;
+                schoolSelector.appendChild(option);
+            });
+
+            schoolSelector.addEventListener('change', (e) => {
+                const school = schoolDataMain.find(s => s.id == e.target.value);
+                if (school) {
+                    displayEvolutionAnalysis(school);
+                }
+            });
+
+            // Exibir primeira escola por padrão
+            if (schoolDataMain.length > 0) {
+                schoolSelector.value = schoolDataMain[0].id;
+                displayEvolutionAnalysis(schoolDataMain[0]);
+            }
+        }
+
+        function displayEvolutionAnalysis(school) {
+            const container = document.getElementById('school-evolution-container-main');
+            if (!container) return;
+            
+            const academicTrend = school.variacao_acad >= 0 ? 'Melhoria' : 'Queda';
+            const frequencyTrend = school.variacao_freq >= 0 ? 'Melhoria' : 'Queda';
+            const academicColor = school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600';
+            const frequencyColor = school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600';
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-slate-800 mb-2">Desempenho Acadêmico</h4>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold ${academicColor}">${school.desempenho2.toFixed(1)}</span>
+                            <span class="text-sm ${academicColor}">${academicTrend}: ${school.variacao_acad > 0 ? '+' : ''}${school.variacao_acad.toFixed(1)}</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">1º Bimestre: ${school.desempenho1.toFixed(1)}</div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-slate-800 mb-2">Frequência dos Alunos</h4>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold ${frequencyColor}">${school.frequencia2.toFixed(1)}%</span>
+                            <span class="text-sm ${frequencyColor}">${frequencyTrend}: ${school.variacao_freq > 0 ? '+' : ''}${school.variacao_freq.toFixed(1)}%</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">1º Bimestre: ${school.frequencia1.toFixed(1)}%</div>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-800 mb-2">💡 Insight Automático</h4>
+                    <p class="text-sm text-blue-700">
+                        ${generateAutomaticInsight(school)}
+                    </p>
+                </div>
+            `;
+        }
+
+        function generateAutomaticInsight(school) {
+            const academicGrowth = school.variacao_acad;
+            const frequencyGrowth = school.variacao_freq;
+            
+            if (academicGrowth >= 2 && frequencyGrowth >= 5) {
+                return `Excelente evolução! A escola apresentou crescimento significativo tanto no desempenho acadêmico (+${academicGrowth.toFixed(1)}) quanto na frequência (+${frequencyGrowth.toFixed(1)}%). Modelo de referência para outras unidades.`;
+            } else if (academicGrowth >= 1 && frequencyGrowth >= 0) {
+                return `Evolução positiva no desempenho acadêmico (+${academicGrowth.toFixed(1)}). Recomenda-se manter as estratégias atuais e focar em ações para melhorar a frequência dos alunos.`;
+            } else if (academicGrowth < 0 && frequencyGrowth < 0) {
+                return `Situação que requer atenção. Ambos os indicadores apresentaram queda. Sugestão: revisão das estratégias pedagógicas e implementação de ações específicas para engajamento dos alunos.`;
+            } else {
+                return `Desempenho misto. Enquanto um indicador melhorou, outro precisa de atenção. Recomenda-se análise detalhada dos fatores que influenciam cada métrica.`;
+            }
+        }
+
+        // Simulador principal com IA
+        const slidersMain = {
+            frequencia: null,
+            aprovacao: null,
+            rendimento: null,
+            plataformas: null,
+            saresp: null
+        };
+
+        const valuesMain = {
+            frequencia: null,
+            aprovacao: null,
+            rendimento: null,
+            plataformas: null,
+            saresp: null
+        };
+
+        let projectionChartMain;
+
+        function initializeMainSimulator() {
+            const schoolSelector = document.getElementById('school-selector-main');
+            if (!schoolSelector) return;
+
+            // Popular seletor de escolas
+            schoolDataMain.forEach(school => {
+                const option = document.createElement('option');
+                option.value = school.id;
+                option.textContent = school.nome;
+                schoolSelector.appendChild(option);
+            });
+
+            // Configurar sliders
+            slidersMain.frequencia = document.getElementById('frequencia-slider-main');
+            slidersMain.aprovacao = document.getElementById('aprovacao-slider-main');
+            slidersMain.rendimento = document.getElementById('rendimento-slider-main');
+            slidersMain.plataformas = document.getElementById('plataformas-slider-main');
+            slidersMain.saresp = document.getElementById('saresp-slider-main');
+
+            valuesMain.frequencia = document.getElementById('frequencia-value-main');
+            valuesMain.aprovacao = document.getElementById('aprovacao-value-main');
+            valuesMain.rendimento = document.getElementById('rendimento-value-main');
+            valuesMain.plataformas = document.getElementById('plataformas-value-main');
+            valuesMain.saresp = document.getElementById('saresp-value-main');
+
+            // Configurar botão de IA
+            const generatePlanBtn = document.getElementById('generate-plan-btn-main');
+            if (generatePlanBtn) {
+                generatePlanBtn.addEventListener('click', generateAIPlan);
+            }
+
+            // Eventos
+            schoolSelector.addEventListener('change', (e) => {
+                const school = schoolDataMain.find(s => s.id == e.target.value);
+                if (school) {
+                    slidersMain.frequencia.value = school.frequencia2;
+                    slidersMain.aprovacao.value = 92;
+                    slidersMain.rendimento.value = school.desempenho2;
+                    slidersMain.plataformas.value = 8.5;
+                    slidersMain.saresp.value = 7.8;
+                    updateMainSimulator();
+                }
+            });
+
+            Object.values(slidersMain).forEach(slider => {
+                if (slider) slider.addEventListener('input', updateMainSimulator);
+            });
+
+            updateMainSimulator();
+        }
+
+        function updateMainSimulator() {
+            if (!slidersMain.frequencia) return;
+
+            const freq = parseFloat(slidersMain.frequencia.value);
+            const aprov = parseFloat(slidersMain.aprovacao.value);
+            const rend = parseFloat(slidersMain.rendimento.value);
+            const plat = parseFloat(slidersMain.plataformas.value);
+            const saresp = parseFloat(slidersMain.saresp.value);
+
+            valuesMain.frequencia.textContent = freq.toFixed(1);
+            valuesMain.aprovacao.textContent = aprov.toFixed(1);
+            valuesMain.rendimento.textContent = rend.toFixed(1);
+            valuesMain.plataformas.textContent = plat.toFixed(1);
+            valuesMain.saresp.textContent = saresp.toFixed(1);
+
+            const pesos = { freq: 1.5, aprov: 1.0, rend: 2.0, plat: 2.0, saresp: 3.0, formacao: 2.0, apoio: 0.5 };
+            const totalPeso = Object.values(pesos).reduce((a, b) => a + b, 0);
+
+            const notaFreq = (freq / 100) * pesos.freq;
+            const notaAprov = (aprov / 100) * pesos.aprov;
+            const notaRend = (rend / 10) * pesos.rend;
+            const notaPlat = (plat / 10) * pesos.plat;
+            const notaSaresp = (saresp / 10) * pesos.saresp;
+            
+            const notaFormacao = 0.8 * pesos.formacao;
+            const notaApoio = 0.7 * pesos.apoio;
+
+            const notaFinal = (notaFreq + notaAprov + notaRend + notaPlat + notaSaresp + notaFormacao + notaApoio) / totalPeso * 10;
+            
+            document.getElementById('projected-score-main').textContent = notaFinal.toFixed(2);
+
+            // Atualizar gráfico
+            if (projectionChartMain) projectionChartMain.destroy();
+            const ctx = document.getElementById('projectionChartMain');
+            if (ctx) {
+                projectionChartMain = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Frequência', 'Aprovação', 'Rendimento', 'Plataformas', 'SARESP'],
+                        datasets: [{
+                            label: 'Pontuação Contribuinte',
+                            data: [notaFreq, notaAprov, notaRend, notaPlat, notaSaresp],
+                            backgroundColor: [
+                                'rgba(79, 70, 229, 0.6)',
+                                'rgba(13, 148, 136, 0.6)',
+                                'rgba(217, 119, 6, 0.6)',
+                                'rgba(219, 39, 119, 0.6)',
+                                'rgba(30, 64, 175, 0.6)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: { x: { beginAtZero: true, max: 3 } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        }
+
+        // Função para gerar plano de ação com IA
+        async function generateAIPlan() {
+            const btn = document.getElementById('generate-plan-btn-main');
+            const btnText = document.getElementById('plan-btn-text-main');
+            const btnSpinner = document.getElementById('plan-btn-spinner-main');
+            const container = document.getElementById('ai-plan-container-main');
+            const content = document.getElementById('ai-plan-content-main');
+
+            if (!btn || !container) return;
+
+            // Estado de carregamento
+            btn.disabled = true;
+            btnText.textContent = 'Gerando Plano...';
+            btnSpinner.classList.remove('hidden');
+
+            try {
+                const schoolSelector = document.getElementById('school-selector-main');
+                const selectedSchool = schoolDataMain.find(s => s.id == schoolSelector.value);
+                
+                const currentScore = parseFloat(document.getElementById('projected-score-main').textContent);
+                const freq = parseFloat(slidersMain.frequencia.value);
+                const rend = parseFloat(slidersMain.rendimento.value);
+                
+                // Simular resposta da IA (substitua por chamada real à API do Gemini)
+                const prompt = `Como especialista em educação, crie um plano de ação para a escola "${selectedSchool.nome}" (tipo: ${selectedSchool.tipo}) com base nos seguintes dados:
+                
+                - Nota projetada Super BI: ${currentScore.toFixed(2)}
+                - Frequência atual: ${freq.toFixed(1)}%
+                - Rendimento acadêmico: ${rend.toFixed(1)}
+                - Evolução acadêmica: ${selectedSchool.variacao_acad > 0 ? '+' : ''}${selectedSchool.variacao_acad.toFixed(1)}
+                - Evolução frequência: ${selectedSchool.variacao_freq > 0 ? '+' : ''}${selectedSchool.variacao_freq.toFixed(1)}%
+                
+                Forneça um plano estruturado com ações específicas, priorizadas e com prazos.`;
+
+                // Simular delay da API
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Resposta simulada (substitua por chamada real à API)
+                const aiResponse = generateMockAIPlan(selectedSchool, currentScore, freq, rend);
+
+                content.innerHTML = aiResponse;
+                container.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Erro ao gerar plano de ação:', error);
+                content.innerHTML = '<p class="text-red-600">❌ Erro ao gerar plano de ação. Tente novamente.</p>';
+                container.classList.remove('hidden');
+            } finally {
+                // Restaurar estado do botão
+                btn.disabled = false;
+                btnText.textContent = '✨ Sugerir Plano de Ação';
+                btnSpinner.classList.add('hidden');
+            }
+        }
+
+        function generateMockAIPlan(school, score, freq, rend) {
+            const priorityActions = [];
+            
+            if (freq < 85) {
+                priorityActions.push({
+                    title: "🎯 Estratégias de Engajamento",
+                    actions: [
+                        "Implementar sistema de monitoramento diário de faltas",
+                        "Criar programa de mentoria estudantil",
+                        "Desenvolver atividades extracurriculares atrativas"
+                    ],
+                    deadline: "30 dias"
+                });
+            }
+            
+            if (rend < 8.5) {
+                priorityActions.push({
+                    title: "📚 Melhoria do Rendimento Acadêmico",
+                    actions: [
+                        "Intensificar aulas de reforço nas disciplinas críticas",
+                        "Implementar metodologias ativas de ensino",
+                        "Capacitar professores em novas estratégias pedagógicas"
+                    ],
+                    deadline: "45 dias"
+                });
+            }
+            
+            if (score < 8.0) {
+                priorityActions.push({
+                    title: "🏆 Estratégias para Super BI",
+                    actions: [
+                        "Intensificar uso das plataformas digitais",
+                        "Preparação específica para SARESP",
+                        "Fortalecer formação continuada dos professores"
+                    ],
+                    deadline: "60 dias"
+                });
+            }
+
+            let planHTML = `
+                <h5 class="font-semibold text-slate-800 mb-3">📋 Plano de Ação Personalizado - ${school.nome}</h5>
+                <div class="text-sm text-slate-600 mb-4">
+                    <strong>Situação Atual:</strong> Nota projetada ${score.toFixed(2)} | 
+                    Frequência ${freq.toFixed(1)}% | 
+                    Rendimento ${rend.toFixed(1)}
+                </div>
+            `;
+
+            priorityActions.forEach((action, index) => {
+                planHTML += `
+                    <div class="mb-4 p-3 border-l-4 border-blue-400 bg-blue-50">
+                        <h6 class="font-medium text-blue-800 mb-2">${action.title}</h6>
+                        <ul class="text-sm text-blue-700 mb-2">
+                            ${action.actions.map(item => `<li>• ${item}</li>`).join('')}
+                        </ul>
+                        <div class="text-xs text-blue-600 font-medium">⏱️ Prazo: ${action.deadline}</div>
+                    </div>
+                `;
+            });
+
+            planHTML += `
+                <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-400">
+                    <h6 class="font-medium text-green-800 mb-2">🎯 Meta de Melhoria</h6>
+                    <p class="text-sm text-green-700">
+                        Com a implementação dessas ações, a projeção é atingir uma nota Super BI de 
+                        <strong>${(score + 0.5).toFixed(2)}</strong> no próximo bimestre.
+                    </p>
+                </div>
+            `;
+
+            return planHTML;
+        }
+
+        // Inicialização completa
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando funcionalidades avançadas...');
+            
+            setTimeout(() => {
+                createNetworkEvolutionChartMain();
+                populateMainTable(schoolDataMain);
+                setupMainTableSorting();
+                initializeEvolutionAnalysis();
+                initializeMainSimulator();
+                
+                console.log('✅ Todas as funcionalidades avançadas inicializadas');
+            }, 1000);
+        });
+    </script>
     <script>
         // Inicialização específica do index
         document.addEventListener('DOMContentLoaded', async function() {
