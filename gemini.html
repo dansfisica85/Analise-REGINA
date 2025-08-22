@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset=                <a href="#simulador" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Simulador</a>TF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Avançado de Análise Educacional - REGINA 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,6 +44,17 @@
             cursor: pointer;
             border-radius: 50%;
         }
+        .spinner {
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #fff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="antialiased text-slate-700">
@@ -59,8 +70,8 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex space-x-6 overflow-x-auto">
                 <a href="#visao-geral" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent active">Visão Geral</a>
                 <a href="#analise-detalhada" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Análise Detalhada</a>
-                <a href="#evolucao-individual" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Evolução Individual</a>
-                <a href="#simulador" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Simulador Super BI</a>
+                <a href="#evolucao-individual" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Análise Individual com IA</a>
+                <a href="#simulador" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Simulador e Plano de Ação</a>
             </div>
         </nav>
     </header>
@@ -118,13 +129,24 @@
             </div>
         </section>
         
+        <section id="evolucao-individual" class="scroll-mt-24 mt-12">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Análise de Evolução Individual com IA</h2>
+            <div class="mb-4">
+                <label for="evolution-school-selector" class="block text-sm font-medium text-slate-600">Selecione uma Escola para Análise</label>
+                <select id="evolution-school-selector" class="mt-1 block w-full max-w-lg pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
+            </div>
+            <div id="school-evolution-container" class="bg-white p-6 rounded-lg shadow-sm">
+                <!-- Conteúdo dinâmico aqui -->
+            </div>
+        </section>
+
         <section id="simulador" class="scroll-mt-24 mt-12">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-slate-800">Simulador de Projeção Super BI</h2>
                 <p class="text-slate-600 max-w-2xl mx-auto mt-2">Ajuste os indicadores para projetar a nota final de cada escola, com base nas regras de 2025.</p>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
                     <h3 class="font-semibold text-slate-800 mb-4">Parâmetros da Simulação</h3>
                     <div class="space-y-4">
                         <div>
@@ -153,13 +175,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="font-semibold text-slate-800 mb-4">Resultado da Projeção</h3>
+                <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-slate-800 mb-4">Resultado da Projeção e Plano de Ação</h3>
                     <div class="text-center">
                         <p class="text-slate-500">Nota Final Super BI Projetada</p>
                         <p id="projected-score" class="text-6xl font-extrabold text-indigo-600 my-4">0.0</p>
                         <div class="chart-container h-64">
                             <canvas id="projectionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-3">Plano de Ação com IA</h4>
+                        <button id="generate-plan-btn" class="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50">
+                            <span id="plan-btn-text">✨ Sugerir Plano de Ação</span>
+                            <div id="plan-btn-spinner" class="spinner hidden"></div>
+                        </button>
+                        <div id="ai-plan-container" class="mt-4 p-4 bg-slate-50 rounded-lg text-slate-600 text-sm hidden prose prose-sm max-w-none">
+                            <div id="ai-plan-content"></div>
                         </div>
                     </div>
                 </div>
@@ -171,38 +203,130 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const schoolData = [
-                { id: 1, nome: "PEI EE Prof. José Luiz de Siqueira", tipo: "PEI", desempenho1: 8.1, desempenho2: 8.3, frequencia1: 93.2, frequencia2: 94.1, alunos: 742 },
-                { id: 2, nome: "EE Luiz Marcari", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 71.3, frequencia2: 86.1, alunos: 249 },
-                { id: 3, nome: "PEI EE Prof. Nestor Gomes de Araújo", tipo: "PEI", desempenho1: 8.3, desempenho2: 9.9, frequencia1: 81.8, frequencia2: 90.6, alunos: 306 },
-                { id: 4, nome: "EE Dr. Mário Lins", tipo: "Regular", desempenho1: 7.8, desempenho2: 9.3, frequencia1: 85.8, frequencia2: 86.7, alunos: 105 },
-                { id: 5, nome: "EE Prof. Plínio Berardo", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 73.7, frequencia2: 75.2, alunos: 1038 },
-                { id: 6, nome: "PEI EE Domingos Paro", tipo: "PEI", desempenho1: 8.1, desempenho2: 10.0, frequencia1: 88.0, frequencia2: 93.2, alunos: 254 },
-                { id: 7, nome: "PEI EE Maria Falconi de Felício", tipo: "PEI", desempenho1: 8.7, desempenho2: 10.0, frequencia1: 85.9, frequencia2: 90.6, alunos: 396 },
-                { id: 8, nome: "EE Maurício Montecchi", tipo: "Regular", desempenho1: 7.4, desempenho2: 9.9, frequencia1: 91.0, frequencia2: 92.0, alunos: 815 },
-                { id: 9, nome: "EE Orminda Guimarães Cotrim", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.5, frequencia1: 84.4, frequencia2: 84.5, alunos: 779 },
-                { id: 10, nome: "EE Prof. Basílio Rodrigues da Silva", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.8, frequencia1: 83.4, frequencia2: 88.4, alunos: 571 },
-                { id: 11, nome: "PEI EE Profª Dolores Belém Novaes", tipo: "PEI", desempenho1: 7.9, desempenho2: 9.5, frequencia1: 82.8, frequencia2: 89.2, alunos: 503 },
-                { id: 12, nome: "EE Profª Dolores Martins de Castro", tipo: "Regular", desempenho1: 6.6, desempenho2: 9.2, frequencia1: 89.7, frequencia2: 91.5, alunos: 148 },
-                { id: 13, nome: "EE Profª Josepha Castro", tipo: "Regular", desempenho1: 6.2, desempenho2: 9.4, frequencia1: 82.9, frequencia2: 82.3, alunos: 527 },
-                { id: 14, nome: "EE Profª Yolanda Luiz Sichieri", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.5, frequencia1: 71.9, frequencia2: 78.6, alunos: 642 },
-                { id: 15, nome: "EE Dona Adélia Frascino", tipo: "Regular", desempenho1: 7.8, desempenho2: 10.0, frequencia1: 91.5, frequencia2: 92.6, alunos: 50 },
-                { id: 16, nome: "EE Anna Passamonti Balardin", tipo: "Regular", desempenho1: 6.0, desempenho2: 9.2, frequencia1: 73.1, frequencia2: 78.4, alunos: 968 },
-                { id: 17, nome: "PEI EE Dr. Antônio Furlan Júnior", tipo: "PEI", desempenho1: 8.0, desempenho2: 9.8, frequencia1: 88.4, frequencia2: 89.3, alunos: 521 },
-                { id: 18, nome: "EE Prof. Bruno Pieroni", tipo: "Regular", desempenho1: 7.6, desempenho2: 9.8, frequencia1: 82.9, frequencia2: 85.5, alunos: 645 },
-                { id: 19, nome: "EE Profª Edith Silveira Dalmaso", tipo: "Regular", desempenho1: 6.4, desempenho2: 8.5, frequencia1: 75.3, frequencia2: 90.8, alunos: 1058 },
-                { id: 20, nome: "EE Ferrúcio Chiaratti", tipo: "Regular", desempenho1: 5.9, desempenho2: 9.0, frequencia1: 70.9, frequencia2: 74.8, alunos: 902 },
-                { id: 21, nome: "EE Dr. Isaías José Ferreira", tipo: "Regular", desempenho1: 6.7, desempenho2: 9.6, frequencia1: 78.9, frequencia2: 88.0, alunos: 631 },
-                { id: 22, nome: "PEI EE Profª Maria Conceição R. Silva Magon", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.4, frequencia1: 70.8, frequencia2: 93.4, alunos: 236 },
-                { id: 23, nome: "EE Profª Nícia Fabíola Zanutto Giraldi", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.2, frequencia1: 80.9, frequencia2: 80.5, alunos: 769 },
-                { id: 24, nome: "PEI EE Winston Churchill", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.5, frequencia1: 80.1, frequencia2: 87.6, alunos: 386 },
-                { id: 25, nome: "PEI EE Profª Maria Élyde Mônaco dos Santos", tipo: "PEI", desempenho1: 8.3, desempenho2: 10.0, frequencia1: 82.2, frequencia2: 88.2, alunos: 229 },
-                { id: 26, nome: "EE Odulfo de Oliveira Guimarães", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.3, frequencia1: 76.2, frequencia2: 80.0, alunos: 897 }
+                { id: 1, nome: "PEI EE Maria Falconi de Felício", tipo: "PEI", desempenho1: 8.7, desempenho2: 10.0, frequencia1: 85.9, frequencia2: 90.6, alunos: 396 },
+                { id: 2, nome: "PEI EE Profº Nestor G de Araújo", tipo: "PEI", desempenho1: 8.3, desempenho2: 9.9, frequencia1: 81.8, frequencia2: 90.6, alunos: 306 },
+                { id: 3, nome: "PEI EE Profª Maria Elyde M dos Santos", tipo: "PEI", desempenho1: 8.3, desempenho2: 10.0, frequencia1: 82.2, frequencia2: 88.2, alunos: 229 },
+                { id: 4, nome: "PEI EE Domingos Paro", tipo: "PEI", desempenho1: 8.1, desempenho2: 10.0, frequencia1: 88.0, frequencia2: 93.2, alunos: 254 },
+                { id: 5, nome: "PEI EE DR Antonio Furlan Júnior", tipo: "PEI", desempenho1: 8.0, desempenho2: 9.8, frequencia1: 88.4, frequencia2: 89.3, alunos: 521 },
+                { id: 6, nome: "PEI EE Profª Dolores B Novaes", tipo: "PEI", desempenho1: 7.9, desempenho2: 9.5, frequencia1: 82.8, frequencia2: 89.2, alunos: 503 },
+                { id: 7, nome: "EE DR Mário Lins", tipo: "Regular", desempenho1: 7.8, desempenho2: 9.3, frequencia1: 85.8, frequencia2: 86.7, alunos: 105 },
+                { id: 8, nome: "EE Dona Adélia Frascino", tipo: "Regular", desempenho1: 7.8, desempenho2: 10.0, frequencia1: 91.5, frequencia2: 92.6, alunos: 50 },
+                { id: 9, nome: "EE Profº Bruno Pieroni", tipo: "Regular", desempenho1: 7.6, desempenho2: 9.8, frequencia1: 82.9, frequencia2: 85.5, alunos: 645 },
+                { id: 10, nome: "EE Mauricio Montecchi", tipo: "Regular", desempenho1: 7.4, desempenho2: 9.9, frequencia1: 91.0, frequencia2: 92.0, alunos: 815 },
+                { id: 11, nome: "PEI EE José Luiz de Siqueira", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.7, frequencia1: 80.9, frequencia2: 89.0, alunos: 742 },
+                { id: 12, nome: "PEI EE Winston Churchill", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.5, frequencia1: 80.1, frequencia2: 87.6, alunos: 386 },
+                { id: 13, nome: "PEI EE Profª Maria C R S Magon", tipo: "PEI", desempenho1: 7.2, desempenho2: 9.4, frequencia1: 70.8, frequencia2: 93.4, alunos: 236 },
+                { id: 14, nome: "EE Profª Yolanda Luiz Sicchieri", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.5, frequencia1: 71.9, frequencia2: 78.6, alunos: 642 },
+                { id: 15, nome: "EE Profª Nícia Fabiola Z. Giraldi", tipo: "Regular", desempenho1: 7.1, desempenho2: 9.2, frequencia1: 80.9, frequencia2: 80.5, alunos: 769 },
+                { id: 16, nome: "EE Orminda Guimarães Cotrim", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.5, frequencia1: 84.4, frequencia2: 84.5, alunos: 779 },
+                { id: 17, nome: "EE Odulfo de Oliveira Guimarães", tipo: "Regular", desempenho1: 7.0, desempenho2: 9.3, frequencia1: 76.2, frequencia2: 80.0, alunos: 897 },
+                { id: 18, nome: "EE DR Isaías José Ferreira", tipo: "Regular", desempenho1: 6.7, desempenho2: 9.6, frequencia1: 78.9, frequencia2: 88.0, alunos: 631 },
+                { id: 19, nome: "EE Luiz Marcari", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 71.3, frequencia2: 86.1, alunos: 249 },
+                { id: 20, nome: "EE Profº Plínio Berardo", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.6, frequencia1: 73.7, frequencia2: 75.2, alunos: 1038 },
+                { id: 21, nome: "EE Profº Basílio R da Silva", tipo: "Regular", desempenho1: 6.6, desempenho2: 8.8, frequencia1: 83.4, frequencia2: 88.4, alunos: 571 },
+                { id: 22, nome: "EE Profª Dolores M de Castro", tipo: "Regular", desempenho1: 6.6, desempenho2: 9.2, frequencia1: 89.7, frequencia2: 91.5, alunos: 148 },
+                { id: 23, nome: "EE Profª Edith Silveira Dalmaso", tipo: "Regular", desempenho1: 6.4, desempenho2: 8.5, frequencia1: 75.3, frequencia2: 90.8, alunos: 1058 },
+                { id: 24, nome: "EE Profª Josepha Castro", tipo: "Regular", desempenho1: 6.2, desempenho2: 9.4, frequencia1: 82.9, frequencia2: 82.3, alunos: 527 },
+                { id: 25, nome: "EE Anna Passamonti Balardin", tipo: "Regular", desempenho1: 6.0, desempenho2: 9.2, frequencia1: 73.1, frequencia2: 78.4, alunos: 968 },
+                { id: 26, nome: "EE Ferrucio Chiaratti", tipo: "Regular", desempenho1: 5.9, desempenho2: 9.0, frequencia1: 70.9, frequencia2: 74.8, alunos: 902 }
             ].map(d => ({
                 ...d,
                 variacao_acad: parseFloat((d.desempenho2 - d.desempenho1).toFixed(1)),
                 variacao_freq: parseFloat((d.frequencia2 - d.frequencia1).toFixed(1))
             }));
 
+            // --- Gemini API Helper ---
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=`;
+
+            async function fetchWithBackoff(payload, maxRetries = 3) {
+                let delay = 1000;
+                for (let i = 0; i < maxRetries; i++) {
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.ok) return await response.json();
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+                return null;
+            }
+
+            async function generateAIAnalysis(school) {
+                const btn = document.getElementById('generate-analysis-btn');
+                const spinner = document.getElementById('analysis-btn-spinner');
+                const btnText = document.getElementById('analysis-btn-text');
+                const container = document.getElementById('ai-analysis-container');
+                const contentDiv = document.getElementById('ai-analysis-content');
+
+                btn.disabled = true;
+                spinner.classList.remove('hidden');
+                btnText.textContent = 'Gerando...';
+                container.classList.remove('hidden');
+                contentDiv.innerHTML = '<p class="text-center text-slate-500">Analisando dados...</p>';
+
+                const prompt = `Aja como um analista de dados educacionais. Analise os seguintes dados para a escola "${school.nome}": Desempenho 1º Bimestre: ${school.desempenho1}, Desempenho 2º Bimestre: ${school.desempenho2}, Frequência 1º Bimestre: ${school.frequencia1}%, Frequência 2º Bimestre: ${school.frequencia2}%. Forneça uma análise concisa em português (máximo de 3 parágrafos) sobre a evolução da escola, destacando pontos fortes, áreas de melhoria e possíveis causas para as mudanças. Formate a resposta com parágrafos simples.`;
+
+                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                const result = await fetchWithBackoff(payload);
+                
+                if (result && result.candidates && result.candidates[0].content.parts[0].text) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    contentDiv.innerHTML = text.replace(/\n/g, '<br>');
+                } else {
+                    contentDiv.innerHTML = '<p class="text-red-500">Não foi possível gerar a análise. Tente novamente.</p>';
+                }
+
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.textContent = '✨ Gerar Análise dos Dados';
+            }
+
+            async function generateAIPlan() {
+                const btn = document.getElementById('generate-plan-btn');
+                const spinner = document.getElementById('plan-btn-spinner');
+                const btnText = document.getElementById('plan-btn-text');
+                const container = document.getElementById('ai-plan-container');
+                const contentDiv = document.getElementById('ai-plan-content');
+
+                btn.disabled = true;
+                spinner.classList.remove('hidden');
+                btnText.textContent = 'Sugerindo...';
+                container.classList.remove('hidden');
+                contentDiv.innerHTML = '<p class="text-center text-slate-500">Criando plano de ação...</p>';
+
+                const params = {
+                    frequencia: parseFloat(sliders.frequencia.value),
+                    aprovacao: parseFloat(sliders.aprovacao.value),
+                    rendimento: parseFloat(sliders.rendimento.value),
+                    plataformas: parseFloat(sliders.plataformas.value),
+                    saresp: parseFloat(sliders.saresp.value)
+                };
+
+                const prompt = `Aja como um consultor educacional. Uma escola deseja alcançar as seguintes metas: Frequência de Alunos: ${params.frequencia}%, Taxa de Aprovação: ${params.aprovacao}%, Rendimento Acadêmico: ${params.rendimento}, Nota das Plataformas: ${params.plataformas}, Nota SARESP: ${params.saresp}. Sugira um plano de ação com 3 a 5 pontos práticos e específicos, em português, para ajudar a escola a atingir esses objetivos. Formate a resposta como uma lista com marcadores (usando *).`;
+
+                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                const result = await fetchWithBackoff(payload);
+
+                if (result && result.candidates && result.candidates[0].content.parts[0].text) {
+                    let text = result.candidates[0].content.parts[0].text;
+                    text = text.replace(/\*/g, '<li>');
+                    contentDiv.innerHTML = `<ul>${text}</ul>`;
+                } else {
+                    contentDiv.innerHTML = '<p class="text-red-500">Não foi possível gerar o plano. Tente novamente.</p>';
+                }
+
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.textContent = '✨ Sugerir Plano de Ação';
+            }
+
+            // --- Funções de Gráficos e Tabelas ---
             function createNetworkEvolutionChart() {
                 const ctx = document.getElementById('networkEvolutionChart').getContext('2d');
                 new Chart(ctx, {
@@ -365,6 +489,117 @@
 
             Object.values(sliders).forEach(slider => slider.addEventListener('input', updateSimulator));
 
+            // --- Análise de Evolução Individual ---
+            const evolutionSelector = document.getElementById('evolution-school-selector');
+            let individualEvolutionChart;
+
+            function populateEvolutionSelector() {
+                schoolData.forEach(school => {
+                    const option = document.createElement('option');
+                    option.value = school.id;
+                    option.textContent = school.nome;
+                    evolutionSelector.appendChild(option);
+                });
+            }
+
+            function updateSchoolEvolution(schoolId) {
+                const school = schoolData.find(s => s.id == schoolId);
+                if (!school) return;
+
+                const container = document.getElementById('school-evolution-container');
+                
+                const acadColor = school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600';
+                const freqColor = school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600';
+                const acadSymbol = school.variacao_acad > 0 ? '+' : '';
+                const freqSymbol = school.variacao_freq > 0 ? '+' : '';
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">${school.nome}</h4>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <p class="font-semibold text-slate-700">Evolução Acadêmica</p>
+                                    <p class="text-sm text-slate-500">1º Bi: ${school.desempenho1.toFixed(1)} &rarr; 2º Bi: ${school.desempenho2.toFixed(1)}</p>
+                                    <p class="text-lg font-bold ${acadColor}">${acadSymbol}${school.variacao_acad.toFixed(1)}</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <p class="font-semibold text-slate-700">Evolução de Frequência</p>
+                                    <p class="text-sm text-slate-500">1º Bi: ${school.frequencia1.toFixed(1)}% &rarr; 2º Bi: ${school.frequencia2.toFixed(1)}%</p>
+                                    <p class="text-lg font-bold ${freqColor}">${freqSymbol}${school.variacao_freq.toFixed(1)}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container h-80">
+                            <canvas id="individualEvolutionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-slate-200">
+                        <h4 class="text-xl font-bold text-slate-800 mb-4">Análise com IA</h4>
+                        <button id="generate-analysis-btn" class="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+                            <span id="analysis-btn-text">✨ Gerar Análise dos Dados</span>
+                            <div id="analysis-btn-spinner" class="spinner hidden"></div>
+                        </button>
+                        <div id="ai-analysis-container" class="mt-4 p-4 bg-slate-50 rounded-lg text-slate-600 text-sm hidden prose prose-sm max-w-none">
+                            <div id="ai-analysis-content"></div>
+                        </div>
+                    </div>
+                `;
+
+                createSchoolEvolutionChart(school);
+                document.getElementById('generate-analysis-btn').addEventListener('click', () => generateAIAnalysis(school));
+            }
+
+            function createSchoolEvolutionChart(school) {
+                if (individualEvolutionChart) {
+                    individualEvolutionChart.destroy();
+                }
+                const ctx = document.getElementById('individualEvolutionChart').getContext('2d');
+                individualEvolutionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1º Bimestre', '2º Bimestre'],
+                        datasets: [
+                            {
+                                label: 'Desempenho Acadêmico',
+                                data: [school.desempenho1, school.desempenho2],
+                                backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                                yAxisID: 'yDesempenho'
+                            },
+                            {
+                                label: 'Frequência (%)',
+                                data: [school.frequencia1, school.frequencia2],
+                                backgroundColor: 'rgba(13, 148, 136, 0.7)',
+                                yAxisID: 'yFrequencia'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            yDesempenho: {
+                                type: 'linear',
+                                position: 'left',
+                                title: { display: true, text: 'Nota Desempenho' },
+                                min: 0,
+                                max: 10.5
+                            },
+                            yFrequencia: {
+                                type: 'linear',
+                                position: 'right',
+                                title: { display: true, text: 'Frequência (%)' },
+                                min: Math.min(60, school.frequencia1 - 5, school.frequencia2 - 5),
+                                max: 100,
+                                grid: { drawOnChartArea: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            evolutionSelector.addEventListener('change', (e) => updateSchoolEvolution(e.target.value));
+            document.getElementById('generate-plan-btn').addEventListener('click', generateAIPlan);
             
             // Navegação por scroll
             const navLinks = document.querySelectorAll('.nav-link');
@@ -385,6 +620,8 @@
             // Initial Load
             createNetworkEvolutionChart();
             populateTable(schoolData);
+            populateEvolutionSelector();
+            updateSchoolEvolution(schoolData[0].id);
             updateSimulator();
         });
     </script>
