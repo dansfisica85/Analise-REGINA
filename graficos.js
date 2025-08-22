@@ -29,8 +29,25 @@ let graficosAtivos = {};
 // Função para destruir gráfico existente
 function destruirGrafico(canvasId) {
     if (graficosAtivos[canvasId]) {
-        graficosAtivos[canvasId].destroy();
-        delete graficosAtivos[canvasId];
+        try {
+            graficosAtivos[canvasId].destroy();
+            delete graficosAtivos[canvasId];
+            console.log(`🗑️ Gráfico ${canvasId} destruído`);
+        } catch (error) {
+            console.warn(`⚠️ Erro ao destruir gráfico ${canvasId}:`, error);
+            delete graficosAtivos[canvasId];
+        }
+    }
+    
+    // Força limpeza do canvas
+    const canvas = document.getElementById(canvasId);
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Remove qualquer instância de Chart.js associada
+        if (Chart.getChart(canvas)) {
+            Chart.getChart(canvas).destroy();
+        }
     }
 }
 
@@ -476,156 +493,6 @@ document.addEventListener('DOMContentLoaded', inicializarGraficos);
 function reinicializarGraficos() {
     Object.keys(graficosAtivos).forEach(destruirGrafico);
     inicializarGraficos();
-}
-
-// Função para criar gráficos específicos de uma escola
-function criarGraficosEscola(escola) {
-    console.log('📊 Criando gráficos para escola:', escola.nome);
-    
-    // Destrói gráficos existentes da escola
-    destruirGrafico('grafico-evolucao-bimestre');
-    destruirGrafico('grafico-performance-plataforma');
-    
-    // Cria gráfico de evolução por bimestre
-    criarGraficoEvolucaoBimestre(escola);
-    
-    // Cria gráfico de performance por plataforma
-    criarGraficoPerformancePlataforma(escola);
-}
-
-// Gráfico de evolução por bimestre
-function criarGraficoEvolucaoBimestre(escola) {
-    const ctx = document.getElementById('grafico-evolucao-bimestre');
-    if (!ctx) {
-        console.log('❌ Canvas grafico-evolucao-bimestre não encontrado');
-        return;
-    }
-
-    const dados = {
-        labels: ['1º Bimestre', '2º Bimestre'],
-        datasets: [
-            {
-                label: 'Frequência (%)',
-                data: [escola.frequencia_1bi || 0, escola.frequencia_2bi || 0],
-                borderColor: cores.pei,
-                backgroundColor: cores.fundo.pei,
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            },
-            {
-                label: 'Rendimento (%)',
-                data: [escola.rendimento_1bi || 0, escola.rendimento_2bi || 0],
-                borderColor: cores.regular,
-                backgroundColor: cores.fundo.regular,
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }
-        ]
-    };
-
-    const config = {
-        type: 'line',
-        data: dados,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: `Evolução - ${escola.nome}`,
-                    font: { size: 14, weight: 'bold' }
-                },
-                legend: {
-                    position: 'top'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    }
-                }
-            },
-            elements: {
-                point: {
-                    radius: 6,
-                    hoverRadius: 8
-                }
-            }
-        }
-    };
-
-    graficosAtivos['grafico-evolucao-bimestre'] = new Chart(ctx, config);
-}
-
-// Gráfico de performance por plataforma
-function criarGraficoPerformancePlataforma(escola) {
-    const ctx = document.getElementById('grafico-performance-plataforma');
-    if (!ctx) {
-        console.log('❌ Canvas grafico-performance-plataforma não encontrado');
-        return;
-    }
-
-    const dados = {
-        labels: ['Uso de Plataformas', 'Score Super BI', 'Taxa de Aprovação'],
-        datasets: [{
-            label: escola.nome,
-            data: [
-                escola.uso_plataformas || 0,
-                escola.score_super_bi || 0,
-                escola.aprovacao || 0
-            ],
-            backgroundColor: [
-                cores.fundo.primaria,
-                cores.fundo.secundaria,
-                cores.fundo.terciaria
-            ],
-            borderColor: [
-                cores.primaria,
-                cores.secundaria,
-                cores.terciaria
-            ],
-            borderWidth: 2
-        }]
-    };
-
-    const config = {
-        type: 'bar',
-        data: dados,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: `Performance - ${escola.nome}`,
-                    font: { size: 14, weight: 'bold' }
-                },
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    graficosAtivos['grafico-performance-plataforma'] = new Chart(ctx, config);
 }
 
 // Gráfico Radar de Simulação

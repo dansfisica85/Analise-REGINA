@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset=                <a href="#simulador" class="nav-link py-3 px-1 border-b-2 font-medium text-sm text-slate-600 hover:text-indigo-600 border-transparent">Simulador</a>TF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Avançado de Análise Educacional - REGINA 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -118,17 +118,6 @@
             </div>
         </section>
         
-        <section id="evolucao-individual" class="scroll-mt-24 mt-12">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">Análise de Evolução Individual</h2>
-            <div class="mb-4">
-                <label for="evolution-school-selector" class="block text-sm font-medium text-slate-600">Selecione uma Escola para Análise</label>
-                <select id="evolution-school-selector" class="mt-1 block w-full max-w-lg pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></select>
-            </div>
-            <div id="school-evolution-container" class="bg-white p-6 rounded-lg shadow-sm">
-                <!-- Conteúdo dinâmico aqui -->
-            </div>
-        </section>
-
         <section id="simulador" class="scroll-mt-24 mt-12">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-slate-800">Simulador de Projeção Super BI</h2>
@@ -376,105 +365,6 @@
 
             Object.values(sliders).forEach(slider => slider.addEventListener('input', updateSimulator));
 
-            // --- Análise de Evolução Individual ---
-            const evolutionSelector = document.getElementById('evolution-school-selector');
-            let individualEvolutionChart;
-
-            function populateEvolutionSelector() {
-                schoolData.forEach(school => {
-                    const option = document.createElement('option');
-                    option.value = school.id;
-                    option.textContent = school.nome;
-                    evolutionSelector.appendChild(option);
-                });
-            }
-
-            function updateSchoolEvolution(schoolId) {
-                const school = schoolData.find(s => s.id == schoolId);
-                if (!school) return;
-
-                const container = document.getElementById('school-evolution-container');
-                
-                const acadColor = school.variacao_acad >= 0 ? 'text-green-600' : 'text-red-600';
-                const freqColor = school.variacao_freq >= 0 ? 'text-green-600' : 'text-red-600';
-                const acadSymbol = school.variacao_acad > 0 ? '+' : '';
-                const freqSymbol = school.variacao_freq > 0 ? '+' : '';
-
-                container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                        <div>
-                            <h4 class="text-xl font-bold text-slate-800 mb-4">${school.nome}</h4>
-                            <div class="space-y-4">
-                                <div class="p-4 bg-slate-50 rounded-lg">
-                                    <p class="font-semibold text-slate-700">Evolução Acadêmica</p>
-                                    <p class="text-sm text-slate-500">1º Bi: ${school.desempenho1.toFixed(1)} &rarr; 2º Bi: ${school.desempenho2.toFixed(1)}</p>
-                                    <p class="text-lg font-bold ${acadColor}">${acadSymbol}${school.variacao_acad.toFixed(1)}</p>
-                                </div>
-                                <div class="p-4 bg-slate-50 rounded-lg">
-                                    <p class="font-semibold text-slate-700">Evolução de Frequência</p>
-                                    <p class="text-sm text-slate-500">1º Bi: ${school.frequencia1.toFixed(1)}% &rarr; 2º Bi: ${school.frequencia2.toFixed(1)}%</p>
-                                    <p class="text-lg font-bold ${freqColor}">${freqSymbol}${school.variacao_freq.toFixed(1)}%</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chart-container h-80">
-                            <canvas id="individualEvolutionChart"></canvas>
-                        </div>
-                    </div>
-                `;
-
-                createSchoolEvolutionChart(school);
-            }
-
-            function createSchoolEvolutionChart(school) {
-                if (individualEvolutionChart) {
-                    individualEvolutionChart.destroy();
-                }
-                const ctx = document.getElementById('individualEvolutionChart').getContext('2d');
-                individualEvolutionChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['1º Bimestre', '2º Bimestre'],
-                        datasets: [
-                            {
-                                label: 'Desempenho Acadêmico',
-                                data: [school.desempenho1, school.desempenho2],
-                                backgroundColor: 'rgba(79, 70, 229, 0.7)',
-                                yAxisID: 'yDesempenho'
-                            },
-                            {
-                                label: 'Frequência (%)',
-                                data: [school.frequencia1, school.frequencia2],
-                                backgroundColor: 'rgba(13, 148, 136, 0.7)',
-                                yAxisID: 'yFrequencia'
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            yDesempenho: {
-                                type: 'linear',
-                                position: 'left',
-                                title: { display: true, text: 'Nota Desempenho' },
-                                min: 0,
-                                max: 10.5
-                            },
-                            yFrequencia: {
-                                type: 'linear',
-                                position: 'right',
-                                title: { display: true, text: 'Frequência (%)' },
-                                min: Math.min(60, school.frequencia1 - 5, school.frequencia2 - 5),
-                                max: 100,
-                                grid: { drawOnChartArea: false }
-                            }
-                        }
-                    }
-                });
-            }
-
-            evolutionSelector.addEventListener('change', (e) => updateSchoolEvolution(e.target.value));
             
             // Navegação por scroll
             const navLinks = document.querySelectorAll('.nav-link');
@@ -495,8 +385,6 @@
             // Initial Load
             createNetworkEvolutionChart();
             populateTable(schoolData);
-            populateEvolutionSelector();
-            updateSchoolEvolution(schoolData[0].id);
             updateSimulator();
         });
     </script>

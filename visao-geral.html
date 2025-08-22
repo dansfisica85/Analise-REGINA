@@ -134,40 +134,7 @@
             </div>
         </section>
 
-        <!-- Seção: Evolução Individual das Escolas -->
-        <section id="individual" class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">🏫 Evolução Individual das Escolas</h2>
-            
-            <div class="bg-white p-6 rounded-lg shadow-md card">
-                <div class="mb-4">
-                    <label for="escolaSelect" class="block text-sm font-medium text-gray-700 mb-2">Selecionar Escola para Análise</label>
-                    <select id="escolaSelect" class="border border-gray-300 rounded-lg px-3 py-2 w-full md:w-1/2">
-                        <option value="">Selecione uma escola...</option>
-                    </select>
-                </div>
-                
-                <div id="dadosEscola" class="hidden">
-                    <div class="grid md:grid-cols-3 gap-4 mb-6">
-                        <div class="text-center p-4 bg-blue-50 rounded-lg">
-                            <div id="escolaFrequencia" class="text-2xl font-bold text-blue-600">--</div>
-                            <p class="text-sm text-gray-600">Frequência Média</p>
-                        </div>
-                        <div class="text-center p-4 bg-green-50 rounded-lg">
-                            <div id="escolaRendimento" class="text-2xl font-bold text-green-600">--</div>
-                            <p class="text-sm text-gray-600">Rendimento Médio</p>
-                        </div>
-                        <div class="text-center p-4 bg-purple-50 rounded-lg">
-                            <div id="escolaScore" class="text-2xl font-bold text-purple-600">--</div>
-                            <p class="text-sm text-gray-600">Score Super BI</p>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="evolucaoEscola"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <!-- Seção: Simulador Super BI -->
         <section id="simulator" class="mb-12">
@@ -263,36 +230,16 @@
         }
         
         // Configurar seletor de escola
-        function configurarSeletorEscola() {
-            const seletor = document.getElementById('escolaSelect');
-            if (!seletor) return;
+        // Inicializar página quando dados estiverem prontos
+        document.addEventListener('dadosCarregados', function() {
+            atualizarKPIs();
             
-            seletor.addEventListener('change', function() {
-                const escolaId = this.value;
-                const dadosEscolaDiv = document.getElementById('dadosEscola');
-                
-                if (escolaId) {
-                    const escola = obterEscolaPorId(escolaId);
-                    if (escola) {
-                        // Mostrar dados da escola
-                        dadosEscolaDiv.classList.remove('hidden');
-                        
-                        // Atualizar métricas
-                        document.getElementById('escolaFrequencia').textContent = 
-                            ((escola.frequencia_1bi + escola.frequencia_2bi) / 2).toFixed(1) + '%';
-                        document.getElementById('escolaRendimento').textContent = 
-                            ((escola.rendimento_1bi + escola.rendimento_2bi) / 2).toFixed(1);
-                        document.getElementById('escolaScore').textContent = 
-                            escola.score_super_bi.toFixed(1);
-                        
-                        // Criar gráfico de evolução da escola
-                        criarGraficoEvolucaoEscola(escola);
-                    }
-                } else {
-                    dadosEscolaDiv.classList.add('hidden');
-                }
-            });
-        }
+            // Criar gráficos
+            criarPanoramaGeral();
+            criarGraficoComparativo('peiVsRegular');
+            criarGraficoDistribuicao('distribuicaoClassificacao');
+            criarGraficoEvolucaoTemporal('evolucaoTemporal');
+        });
         
         // Criar gráfico de evolução individual da escola
         function criarGraficoEvolucaoEscola(escola) {
