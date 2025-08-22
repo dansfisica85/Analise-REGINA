@@ -1402,80 +1402,81 @@
                 console.error('Erro na inicialização:', error);
             }
 
-            // Funcionalidade do botão "Mostrar Mais Escolas"
-            const btnMostrarMais = document.getElementById('mostrarMaisEscolas');
-            const escolasRestantes = document.getElementById('escolasRestantes');
-            let escolasVisiveis = false;
-
-            btnMostrarMais.addEventListener('click', function() {
-                escolasVisiveis = !escolasVisiveis;
-                
-                if (escolasVisiveis) {
-                    escolasRestantes.classList.remove('hidden');
-                    escolasRestantes.classList.add('grid');
-                    btnMostrarMais.innerHTML = `
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-3">📊</span>
-                            <div>
-                                <h4 class="font-medium text-blue-800">Ocultar Escolas</h4>
-                                <p class="text-sm text-blue-600">Clique para recolher a lista</p>
-                            </div>
-                        </div>
-                    `;
-                    btnMostrarMais.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    escolasRestantes.classList.add('hidden');
-                    escolasRestantes.classList.remove('grid');
-                    btnMostrarMais.innerHTML = `
-                        <div class="flex items-center">
-                            <span class="text-2xl mr-3">📊</span>
-                            <div>
-                                <h4 class="font-medium text-blue-800">+ 25 Escolas</h4>
-                                <p class="text-sm text-blue-600">Clique para ver todas as análises</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-
             console.log('✅ Dashboard Principal inicializado');
         });
 
-        // Gráfico de performance geral
+        // Gráfico de performance geral das 26 escolas
         function criarGraficoPerformanceGeral() {
             const canvas = document.getElementById('graficoPerformanceGeral');
-            if (!canvas || !dadosEscolas) {
-                console.warn('Canvas graficoPerformanceGeral não encontrado ou dados não carregados');
+            if (!canvas) {
+                console.warn('Canvas graficoPerformanceGeral não encontrado');
                 return;
             }
 
-            // Calcular distribuição real dos dados
-            const distribuicao = { excelente: 0, bom: 0, regular: 0, precisa: 0 };
-            
-            dadosEscolas.forEach(escola => {
-                const score = escola.score_super_bi;
-                if (score >= 85) distribuicao.excelente++;
-                else if (score >= 75) distribuicao.bom++;
-                else if (score >= 65) distribuicao.regular++;
-                else distribuicao.precisa++;
-            });
+            // Dados das 26 escolas com 1º e 2º bimestre
+            const escolasData = [
+                { nome: "PEI - José Luiz", tipo: "PEI", bi1: 8.1, bi2: 8.3 },
+                { nome: "EE Luiz Marcari", tipo: "Regular", bi1: 6.6, bi2: 8.6 },
+                { nome: "PEI - Nestor Gomes", tipo: "PEI", bi1: 8.3, bi2: 9.9 },
+                { nome: "EE Dr. Mário Lins", tipo: "Regular", bi1: 7.8, bi2: 9.3 },
+                { nome: "EE Prof. Plínio Berardo", tipo: "Regular", bi1: 6.6, bi2: 8.6 },
+                { nome: "PEI - Domingos Paro", tipo: "PEI", bi1: 8.1, bi2: 10.0 },
+                { nome: "PEI - Maria Falconi", tipo: "PEI", bi1: 8.7, bi2: 10.0 },
+                { nome: "EE Maurício Montecchi", tipo: "Regular", bi1: 7.4, bi2: 9.9 },
+                { nome: "EE Orminda Guimarães", tipo: "Regular", bi1: 7.0, bi2: 9.5 },
+                { nome: "EE Prof. Basílio Rodrigues", tipo: "Regular", bi1: 6.6, bi2: 8.8 },
+                { nome: "PEI - Dolores Belém", tipo: "PEI", bi1: 7.9, bi2: 9.5 },
+                { nome: "EE Profª Dolores Martins", tipo: "Regular", bi1: 6.6, bi2: 9.2 },
+                { nome: "EE Profª Josepha Castro", tipo: "Regular", bi1: 6.2, bi2: 9.4 },
+                { nome: "EE Profª Yolanda Sichieri", tipo: "Regular", bi1: 7.1, bi2: 9.5 },
+                { nome: "EE Dona Adélia Frascino", tipo: "Regular", bi1: 7.8, bi2: 10.0 },
+                { nome: "EE Anna Passamonti", tipo: "Regular", bi1: 6.0, bi2: 9.2 },
+                { nome: "PEI - Antônio Furlan", tipo: "PEI", bi1: 8.0, bi2: 9.8 },
+                { nome: "EE Prof. Bruno Pieroni", tipo: "Regular", bi1: 7.6, bi2: 9.8 },
+                { nome: "EE Profª Edith Silveira", tipo: "Regular", bi1: 6.4, bi2: 8.5 },
+                { nome: "EE Ferrúcio Chiaratti", tipo: "Regular", bi1: 5.9, bi2: 9.0 },
+                { nome: "EE Dr. Isaías Ferreira", tipo: "Regular", bi1: 6.7, bi2: 9.6 },
+                { nome: "PEI - Maria Conceição", tipo: "PEI", bi1: 7.2, bi2: 9.4 },
+                { nome: "EE Profª Nícia Giraldi", tipo: "Regular", bi1: 7.1, bi2: 9.2 },
+                { nome: "PEI - Winston Churchill", tipo: "PEI", bi1: 7.2, bi2: 9.5 },
+                { nome: "PEI - Maria Élyde", tipo: "PEI", bi1: 8.3, bi2: 10.0 },
+                { nome: "EE Odulfo Guimarães", tipo: "Regular", bi1: 7.0, bi2: 9.3 }
+            ];
 
             const ctx = canvas.getContext('2d');
+            
+            // Cores diferentes para PEI e Regulares
+            const cores1Bi = escolasData.map(escola => 
+                escola.tipo === "PEI" ? 'rgba(59, 130, 246, 0.7)' : 'rgba(34, 197, 94, 0.7)'
+            );
+            const cores2Bi = escolasData.map(escola => 
+                escola.tipo === "PEI" ? 'rgba(37, 99, 235, 0.8)' : 'rgba(22, 163, 74, 0.8)'
+            );
+            
             new Chart(ctx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
-                    labels: ['Excelente (≥85)', 'Bom (75-84)', 'Regular (65-74)', 'Precisa Melhorar (<65)'],
-                    datasets: [{
-                        data: [distribuicao.excelente, distribuicao.bom, distribuicao.regular, distribuicao.precisa],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)',   // Verde
-                            'rgba(59, 130, 246, 0.8)',   // Azul
-                            'rgba(245, 158, 11, 0.8)',   // Amarelo
-                            'rgba(239, 68, 68, 0.8)'     // Vermelho
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
+                    labels: escolasData.map(escola => escola.nome),
+                    datasets: [
+                        {
+                            label: '1º Bimestre',
+                            data: escolasData.map(escola => escola.bi1),
+                            backgroundColor: cores1Bi,
+                            borderColor: cores1Bi.map(cor => cor.replace('0.7', '1')),
+                            borderWidth: 1.5,
+                            barThickness: 'flex',
+                            maxBarThickness: 40
+                        },
+                        {
+                            label: '2º Bimestre',
+                            data: escolasData.map(escola => escola.bi2),
+                            backgroundColor: cores2Bi,
+                            borderColor: cores2Bi.map(cor => cor.replace('0.8', '1')),
+                            borderWidth: 1.5,
+                            barThickness: 'flex',
+                            maxBarThickness: 40
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -1483,8 +1484,72 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Distribuição de Performance da Rede'
+                            text: 'Evolução do Desempenho: 1º vs 2º Bimestre (26 Escolas)',
+                            font: { size: 16, weight: 'bold' },
+                            padding: 20
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    const escola = escolasData[context[0].dataIndex];
+                                    return `${escola.nome} (${escola.tipo})`;
+                                },
+                                label: function(context) {
+                                    const evolucao = escolasData[context.dataIndex].bi2 - escolasData[context.dataIndex].bi1;
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(1)} (${evolucao >= 0 ? '+' : ''}${evolucao.toFixed(1)})`;
+                                }
+                            },
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                            borderWidth: 1
                         }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: { size: 10 }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 10.5,
+                            ticks: {
+                                stepSize: 1,
+                                font: { size: 11 }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Nota de Desempenho',
+                                font: { size: 12, weight: 'bold' }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutCubic'
                     }
                 }
             });
