@@ -112,6 +112,86 @@
             </div>
         </section>
 
+        <!-- Seção Comparativa PEI vs Regular -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏛️ Resumo Comparativo PEI vs Regular</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- PEI -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg shadow-md">
+                    <div class="text-center mb-4">
+                        <h3 class="text-xl font-bold text-blue-800">🏛️ Escolas PEI</h3>
+                        <p class="text-blue-600 text-sm">Programa de Ensino Integral</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div id="escolas-pei-count" class="text-2xl font-bold text-blue-800">9</div>
+                            <p class="text-sm text-blue-600">Escolas</p>
+                        </div>
+                        <div>
+                            <div id="score-medio-pei" class="text-2xl font-bold text-blue-800">87.3</div>
+                            <p class="text-sm text-blue-600">Score Médio</p>
+                        </div>
+                        <div>
+                            <div id="freq-media-pei" class="text-2xl font-bold text-blue-800">91.2%</div>
+                            <p class="text-sm text-blue-600">Frequência</p>
+                        </div>
+                        <div>
+                            <div id="rend-medio-pei" class="text-2xl font-bold text-blue-800">8.9</div>
+                            <p class="text-sm text-blue-600">Rendimento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regular -->
+                <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg shadow-md">
+                    <div class="text-center mb-4">
+                        <h3 class="text-xl font-bold text-green-800">🏫 Escolas Regulares</h3>
+                        <p class="text-green-600 text-sm">Ensino Regular</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div id="escolas-reg-count" class="text-2xl font-bold text-green-800">17</div>
+                            <p class="text-sm text-green-600">Escolas</p>
+                        </div>
+                        <div>
+                            <div id="score-medio-reg" class="text-2xl font-bold text-green-800">81.4</div>
+                            <p class="text-sm text-green-600">Score Médio</p>
+                        </div>
+                        <div>
+                            <div id="freq-media-reg" class="text-2xl font-bold text-green-800">85.7%</div>
+                            <p class="text-sm text-green-600">Frequência</p>
+                        </div>
+                        <div>
+                            <div id="rend-medio-reg" class="text-2xl font-bold text-green-800">8.2</div>
+                            <p class="text-sm text-green-600">Rendimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análise Estatística -->
+            <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Análise Estatística</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-lg font-semibold text-gray-700">Diferença Média:</div>
+                        <div id="diferenca-score" class="text-2xl font-bold text-blue-600">+5.9</div>
+                        <div class="text-sm text-gray-500">PEI vs Regular</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-semibold text-gray-700">Melhor Performance:</div>
+                        <div class="text-2xl font-bold text-green-600">PEI</div>
+                        <div class="text-sm text-gray-500">Em todos os componentes</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-semibold text-gray-700">Taxa de Excelência:</div>
+                        <div id="taxa-excelencia" class="text-2xl font-bold text-purple-600">78%</div>
+                        <div class="text-sm text-gray-500">PEI ≥85 vs 35% Regular</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Gráficos em Tempo Real -->
         <section class="mb-12">
             <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">📊 Visão Geral da Rede</h2>
@@ -182,6 +262,60 @@
                         <span class="text-xs text-pink-700 font-medium">FOCO: Análise individual</span>
                     </div>
                 </a>
+            </div>
+        </section>
+
+        <!-- Evolução Individual das Escolas -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">🏫 Evolução Individual das Escolas</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="mb-6">
+                    <label for="escola-selector" class="block text-sm font-medium text-gray-700 mb-2">
+                        Selecionar Escola para Análise:
+                    </label>
+                    <select id="escola-selector" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Escolha uma escola...</option>
+                    </select>
+                </div>
+                
+                <div id="escola-detalhes" class="hidden">
+                    <!-- Dados da Escola Selecionada -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4" id="escola-nome"></h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600" id="escola-tipo"></div>
+                                <p class="text-gray-600 text-sm">Tipo</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600" id="escola-alunos"></div>
+                                <p class="text-gray-600 text-sm">Total de Alunos</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600" id="escola-media"></div>
+                                <p class="text-gray-600 text-sm">Média Geral</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos de Evolução -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white p-4 rounded-lg border">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-4">📈 Evolução por Bimestre</h4>
+                            <canvas id="grafico-evolucao-bimestre" height="300"></canvas>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-4">📊 Performance por Plataforma</h4>
+                            <canvas id="grafico-performance-plataforma" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Análise Detalhada -->
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="text-lg font-semibold text-blue-800 mb-3">📋 Análise Detalhada</h4>
+                        <div id="escola-analise" class="text-gray-700"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -530,17 +664,29 @@
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('Inicializando Dashboard Principal...');
 
-            // Aguardar carregamento dos dados
-            await carregarDados();
+            try {
+                // Aguardar carregamento dos dados
+                const dados = await carregarDados();
+                console.log('Dados carregados:', dados);
 
-            // Atualizar KPIs dinâmicos
-            atualizarKPIs();
+                if (dados && dados.escolas) {
+                    console.log('Atualizando KPIs...');
+                    // Atualizar KPIs dinâmicos
+                    atualizarKPIs();
 
-            // Criar gráficos do dashboard
-            setTimeout(() => {
-                criarGraficoComparativo('graficoComparativo');
-                criarGraficoPerformanceGeral();
-            }, 500);
+                    console.log('Criando gráficos...');
+                    // Criar gráficos do dashboard
+                    setTimeout(() => {
+                        criarGraficoComparativo('graficoComparativo');
+                        criarGraficoPerformanceGeral();
+                        console.log('Gráficos criados');
+                    }, 500);
+                } else {
+                    console.error('Dados não carregados corretamente');
+                }
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+            }
 
             // Funcionalidade do botão "Mostrar Mais Escolas"
             const btnMostrarMais = document.getElementById('mostrarMaisEscolas');
@@ -584,7 +730,21 @@
         // Gráfico de performance geral
         function criarGraficoPerformanceGeral() {
             const canvas = document.getElementById('graficoPerformanceGeral');
-            if (!canvas || !resumoRede) return;
+            if (!canvas || !dadosEscolas) {
+                console.warn('Canvas graficoPerformanceGeral não encontrado ou dados não carregados');
+                return;
+            }
+
+            // Calcular distribuição real dos dados
+            const distribuicao = { excelente: 0, bom: 0, regular: 0, precisa: 0 };
+            
+            dadosEscolas.forEach(escola => {
+                const score = escola.score_super_bi;
+                if (score >= 85) distribuicao.excelente++;
+                else if (score >= 75) distribuicao.bom++;
+                else if (score >= 65) distribuicao.regular++;
+                else distribuicao.precisa++;
+            });
 
             const ctx = canvas.getContext('2d');
             new Chart(ctx, {
@@ -592,7 +752,7 @@
                 data: {
                     labels: ['Excelente (≥85)', 'Bom (75-84)', 'Regular (65-74)', 'Precisa Melhorar (<65)'],
                     datasets: [{
-                        data: [9, 12, 4, 1], // Distribuição estimada
+                        data: [distribuicao.excelente, distribuicao.bom, distribuicao.regular, distribuicao.precisa],
                         backgroundColor: [
                             'rgba(16, 185, 129, 0.8)',   // Verde
                             'rgba(59, 130, 246, 0.8)',   // Azul

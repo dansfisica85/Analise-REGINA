@@ -297,15 +297,18 @@
         let cenariosChart = null;
 
         // Inicializar página
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Inicializando simulador...');
+            
+            // Aguardar dados serem carregados
+            await carregarDados();
+            
             configurarEventListeners();
             atualizarSimulacao();
-        });
-
-        // Aguardar dados serem carregados
-        document.addEventListener('dadosCarregados', function() {
             popularSeletorEscolas('escolaSelect');
             inicializarGraficos();
+            
+            console.log('✅ Simulador inicializado');
         });
 
         function configurarEventListeners() {
@@ -408,40 +411,22 @@
         }
 
         function inicializarGraficos() {
-            // Radar de simulação
-            const ctxRadar = document.getElementById('radarSimulacao');
-            if (ctxRadar) {
-                radarChart = new Chart(ctxRadar, {
-                    type: 'radar',
-                    data: {
-                        labels: ['Frequência', 'Rendimento', 'Aprovação', 'Plataformas', 'Engajamento'],
-                        datasets: [{
-                            label: 'Atual',
-                            data: [85, 75, 85, 75, 70],
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#3b82f6'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                beginAtZero: true,
-                                max: 100
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de contribuição
-            criarGraficoPizza('graficoContribuicao');
+            console.log('🎯 Inicializando gráficos do simulador...');
             
-            // Gráfico de cenários
-            criarGraficoCenarios('graficoCenarios', dadosSimulacao.scoreInicial);
+            // Usar as funções do graficos.js
+            if (typeof criarRadarSimulacao === 'function') {
+                criarRadarSimulacao('radarSimulacao');
+            }
+            
+            if (typeof criarGraficoContribuicao === 'function') {
+                criarGraficoContribuicao('graficoContribuicao');
+            }
+            
+            if (typeof criarGraficoCenarios === 'function') {
+                criarGraficoCenarios('graficoCenarios');
+            }
+            
+            console.log('✅ Gráficos do simulador inicializados');
         }
 
         function atualizarGraficos() {
