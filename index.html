@@ -744,14 +744,20 @@
                 
                 const currentScore = parseFloat(document.getElementById('projected-score-main').textContent);
                 const freq = parseFloat(slidersMain.frequencia.value);
-                const rend = parseFloat(slidersMain.rendimento.value);
+                const profFreq = parseFloat(slidersMain.professorFreq.value);
+                const plat = parseFloat(slidersMain.plataformas.value);
+                const formacao = parseFloat(slidersMain.formacao.value);
+                const saresp = parseFloat(slidersMain.saresp.value);
                 
                 // Simular resposta da IA (substitua por chamada real à API do Gemini)
-                const prompt = `Como especialista em educação, crie um plano de ação para a escola "${selectedSchool.nome}" (tipo: ${selectedSchool.tipo}) com base nos seguintes dados:
+                const prompt = `Como especialista em educação, crie um plano de ação para a escola "${selectedSchool.nome}" (tipo: ${selectedSchool.tipo}) com base nos seguintes dados do Super BI 2025:
                 
                 - Nota projetada Super BI: ${currentScore.toFixed(2)}
-                - Frequência atual: ${freq.toFixed(1)}%
-                - Rendimento acadêmico: ${rend.toFixed(1)}
+                - Frequência de Alunos: ${freq.toFixed(1)}%
+                - Frequência de Professores: ${profFreq.toFixed(1)}%
+                - Nota Plataformas: ${plat.toFixed(1)}
+                - Formação (PdA + Multiplica): ${formacao.toFixed(0)}%
+                - SARESP (IC da Meta): ${saresp.toFixed(0)}%
                 - Evolução acadêmica: ${selectedSchool.variacao_acad > 0 ? '+' : ''}${selectedSchool.variacao_acad.toFixed(1)}
                 - Evolução frequência: ${selectedSchool.variacao_freq > 0 ? '+' : ''}${selectedSchool.variacao_freq.toFixed(1)}%
                 
@@ -761,7 +767,7 @@
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
                 // Resposta simulada (substitua por chamada real à API)
-                const aiResponse = generateMockAIPlan(selectedSchool, currentScore, freq, rend);
+                const aiResponse = generateMockAIPlan(selectedSchool, currentScore, freq, profFreq, plat, formacao, saresp);
 
                 content.innerHTML = aiResponse;
                 container.classList.remove('hidden');
@@ -778,51 +784,103 @@
             }
         }
 
-        function generateMockAIPlan(school, score, freq, rend) {
+        function generateMockAIPlan(school, score, freq, profFreq, plat, formacao, saresp) {
             const priorityActions = [];
             
-            if (freq < 85) {
+            // Análise baseada na frequência de alunos
+            if (freq < 90) {
                 priorityActions.push({
-                    title: "🎯 Estratégias de Engajamento",
+                    title: "🎯 Melhorar Frequência de Alunos",
                     actions: [
                         "Implementar sistema de monitoramento diário de faltas",
                         "Criar programa de mentoria estudantil",
-                        "Desenvolver atividades extracurriculares atrativas"
+                        "Desenvolver atividades extracurriculares atrativas",
+                        "Estabelecer comunicação direta com famílias"
                     ],
                     deadline: "30 dias"
                 });
             }
             
-            if (rend < 8.5) {
+            // Análise baseada na frequência de professores
+            if (profFreq < 95) {
                 priorityActions.push({
-                    title: "📚 Melhoria do Rendimento Acadêmico",
+                    title: "�‍🏫 Fortalecer Presença Docente",
                     actions: [
-                        "Intensificar aulas de reforço nas disciplinas críticas",
-                        "Implementar metodologias ativas de ensino",
-                        "Capacitar professores em novas estratégias pedagógicas"
+                        "Revisar políticas de substituição de professores",
+                        "Implementar programa de bem-estar docente",
+                        "Melhorar condições de trabalho e infraestrutura",
+                        "Criar sistema de acompanhamento de faltas docentes"
+                    ],
+                    deadline: "20 dias"
+                });
+            }
+            
+            // Análise baseada nas plataformas
+            if (plat < 7.0) {
+                priorityActions.push({
+                    title: "💻 Intensificar Uso de Plataformas Digitais",
+                    actions: [
+                        "Capacitar professores no uso das plataformas",
+                        "Aumentar engajamento dos alunos nas atividades online",
+                        "Monitorar regularmente o progresso nas plataformas",
+                        "Criar cronograma semanal de atividades digitais"
                     ],
                     deadline: "45 dias"
                 });
             }
             
-            if (score < 8.0) {
+            // Análise baseada na formação
+            if (formacao < 80) {
                 priorityActions.push({
-                    title: "🏆 Estratégias para Super BI",
+                    title: "📚 Melhorar Formação Continuada",
                     actions: [
-                        "Intensificar uso das plataformas digitais",
-                        "Preparação específica para SARESP",
-                        "Fortalecer formação continuada dos professores"
+                        "Aumentar participação no Programa de Ação (PdA)",
+                        "Intensificar adesão ao Programa Multiplica",
+                        "Organizar grupos de estudo internos",
+                        "Estabelecer metas mensais de formação"
                     ],
                     deadline: "60 dias"
+                });
+            }
+            
+            // Análise baseada no SARESP
+            if (saresp < 70) {
+                priorityActions.push({
+                    title: "📊 Preparação para SARESP",
+                    actions: [
+                        "Implementar simulados mensais",
+                        "Reforçar habilidades específicas avaliadas",
+                        "Capacitar professores em estratégias de avaliação",
+                        "Criar grupos de estudo focados nas competências do SARESP"
+                    ],
+                    deadline: "90 dias"
+                });
+            }
+            
+            // Se a nota geral está baixa
+            if (score < 8.0) {
+                priorityActions.push({
+                    title: "🏆 Estratégia Integrada Super BI 2025",
+                    actions: [
+                        "Criar comitê de acompanhamento do Super BI",
+                        "Estabelecer metas semanais por componente",
+                        "Implementar reuniões de monitoramento quinzenais",
+                        "Desenvolver sistema de reconhecimento e incentivos"
+                    ],
+                    deadline: "15 dias"
                 });
             }
 
             let planHTML = `
                 <h5 class="font-semibold text-slate-800 mb-3">📋 Plano de Ação Personalizado - ${school.nome}</h5>
-                <div class="text-sm text-slate-600 mb-4">
-                    <strong>Situação Atual:</strong> Nota projetada ${score.toFixed(2)} | 
-                    Frequência ${freq.toFixed(1)}% | 
-                    Rendimento ${rend.toFixed(1)}
+                <div class="text-sm text-slate-600 mb-4 p-3 bg-gray-50 rounded">
+                    <strong>Situação Atual (Super BI 2025):</strong><br>
+                    • Nota projetada: <span class="font-semibold">${score.toFixed(2)}</span><br>
+                    • Frequência Alunos: <span class="font-semibold">${freq.toFixed(1)}%</span><br>
+                    • Frequência Professores: <span class="font-semibold">${profFreq.toFixed(1)}%</span><br>
+                    • Plataformas: <span class="font-semibold">${plat.toFixed(1)}</span><br>
+                    • Formação: <span class="font-semibold">${formacao.toFixed(0)}%</span><br>
+                    • SARESP (IC): <span class="font-semibold">${saresp.toFixed(0)}%</span>
                 </div>
             `;
 
