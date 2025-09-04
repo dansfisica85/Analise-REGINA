@@ -651,6 +651,8 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ### 🌟 **Sistema REGINA 2025 - Transformando Dados em Decisões Educacionais** 🌟
 
 **Desenvolvido com ❤️ para a Educação Pública de São Paulo**
+**CRIADO POR: PROFESSOR DAVI ANTONINO NUNES DA SILVA 🐺**
+**Contato: 16 99260-4315, E-mails: davi.silva@educacao.sp.gov.br e antonino@professor.educacao.sp.gov.br**
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/dansfisica85/An-lise-REGINA)
 [![Status](https://img.shields.io/badge/Status-Produção-brightgreen)](https://github.com/dansfisica85/An-lise-REGINA)
