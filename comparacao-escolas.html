@@ -25,7 +25,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold mb-2">📊 Comparação Detalhada das Escolas</h1>
-                    <p class="text-lg opacity-95">Sistema REGINA 2025 - Análise Comparativa Completa</p>
+                    <p class="text-lg opacity-95">Sistema REGINA 2025 - Análise dos 3 Bimestres (1º, 2º e 3º)</p>
                 </div>
                 <button onclick="voltarPaginaPrincipal()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-lg font-semibold transition-all">
                     ← Voltar ao Dashboard Principal
@@ -45,6 +45,15 @@
                         <option value="todas">Todas as Escolas</option>
                         <option value="regular">Escolas Regulares</option>
                         <option value="pei">Escolas PEI</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Bimestre:</label>
+                    <select id="bimestreSelect" class="w-full p-2 border rounded-lg" onchange="aplicarFiltros()">
+                        <option value="bimestre3">3º Bimestre (Atual)</option>
+                        <option value="bimestre2">2º Bimestre</option>
+                        <option value="bimestre1">1º Bimestre</option>
+                        <option value="evolucao">Evolução Completa</option>
                     </select>
                 </div>
                 <div>
@@ -71,7 +80,7 @@
         <div id="secaoGraficos" class="space-y-8">
             <!-- Gráfico de Barras - Comparação Geral -->
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-bold mb-4">📈 Comparação Geral - Score Super BI por Escola</h3>
+                <h3 class="text-xl font-bold mb-4">📈 Comparação Geral - Score Super BI por Escola (1º, 2º e 3º Bimestres)</h3>
                 <div class="chart-container">
                     <canvas id="graficoBarrasGeral"></canvas>
                 </div>
@@ -87,7 +96,7 @@
 
             <!-- Gráfico de Linha - Evolução Temporal -->
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-bold mb-4">📊 Evolução Temporal - Melhores Performers</h3>
+                <h3 class="text-xl font-bold mb-4">📊 Evolução dos 3 Bimestres - Top 5 Escolas</h3>
                 <div class="chart-container">
                     <canvas id="graficoLinhaEvolucao"></canvas>
                 </div>
@@ -114,11 +123,12 @@
                                 <th class="px-4 py-3 text-left font-semibold">Escola</th>
                                 <th class="px-4 py-3 text-left font-semibold">Tipo</th>
                                 <th class="px-4 py-3 text-center font-semibold">Super BI</th>
-                                <th class="px-4 py-3 text-center font-semibold">Frequência</th>
+                                <th class="px-4 py-3 text-center font-semibold">Freq.</th>
                                 <th class="px-4 py-3 text-center font-semibold">ALURA</th>
                                 <th class="px-4 py-3 text-center font-semibold">KHAN</th>
-                                <th class="px-4 py-3 text-center font-semibold">Prova Paulista</th>
+                                <th class="px-4 py-3 text-center font-semibold">P. Paulista</th>
                                 <th class="px-4 py-3 text-center font-semibold">Tarefas</th>
+                                <th class="px-4 py-3 text-center font-semibold">Evolução</th>
                             </tr>
                         </thead>
                         <tbody id="corpoTabela">
@@ -166,37 +176,199 @@
     </div>
 
     <script>
-        // Dados das escolas (baseados nos arquivos REGINA disponíveis)
+        // Dados das escolas com resultados dos 3 bimestres (baseados nos arquivos REGINA disponíveis)
         const dadosEscolas = [
-            { nome: "EE Adélia Frascino", tipo: "regular", superbi: 8.45, frequencia: 92.3, alura: 7.8, khan: 8.2, provaPaulista: 8.1, tarefas: 8.9 },
-            { nome: "EE Anna Balardin", tipo: "regular", superbi: 7.89, frequencia: 88.7, alura: 7.2, khan: 7.9, provaPaulista: 7.8, tarefas: 8.1 },
-            { nome: "EE Basílio Rodrigues", tipo: "regular", superbi: 8.92, frequencia: 94.1, alura: 8.5, khan: 8.8, provaPaulista: 8.7, tarefas: 9.2 },
-            { nome: "EE Bruno Pieroni", tipo: "regular", superbi: 8.23, frequencia: 90.5, alura: 7.9, khan: 8.1, provaPaulista: 8.0, tarefas: 8.5 },
-            { nome: "EE Dolores Martins", tipo: "regular", superbi: 7.56, frequencia: 86.8, alura: 7.1, khan: 7.6, provaPaulista: 7.4, tarefas: 7.8 },
-            { nome: "EE Dr. Mário Lins", tipo: "regular", superbi: 8.67, frequencia: 91.2, alura: 8.3, khan: 8.4, provaPaulista: 8.5, tarefas: 8.8 },
-            { nome: "EE Edith Silveira", tipo: "regular", superbi: 8.14, frequencia: 89.6, alura: 7.8, khan: 8.0, provaPaulista: 7.9, tarefas: 8.3 },
-            { nome: "EE Ferrúcio Chiaratti", tipo: "regular", superbi: 8.78, frequencia: 93.4, alura: 8.4, khan: 8.6, provaPaulista: 8.6, tarefas: 9.0 },
-            { nome: "EE Isaías Ferreira", tipo: "regular", superbi: 7.98, frequencia: 87.9, alura: 7.5, khan: 7.8, provaPaulista: 7.7, tarefas: 8.2 },
-            { nome: "EE Josepha Castro", tipo: "regular", superbi: 8.35, frequencia: 90.8, alura: 8.0, khan: 8.2, provaPaulista: 8.1, tarefas: 8.6 },
-            { nome: "EE Luiz Marcari", tipo: "regular", superbi: 8.52, frequencia: 91.7, alura: 8.1, khan: 8.3, provaPaulista: 8.3, tarefas: 8.7 },
-            { nome: "EE Maurício Montecchi", tipo: "regular", superbi: 7.73, frequencia: 85.2, alura: 7.3, khan: 7.4, provaPaulista: 7.5, tarefas: 7.9 },
-            { nome: "EE Nícia Giraldi", tipo: "regular", superbi: 8.89, frequencia: 94.6, alura: 8.6, khan: 8.9, provaPaulista: 8.8, tarefas: 9.1 },
-            { nome: "EE Odulfo Guimarães", tipo: "regular", superbi: 8.41, frequencia: 90.3, alura: 8.0, khan: 8.1, provaPaulista: 8.2, tarefas: 8.5 },
-            { nome: "EE Orminda Guimarães", tipo: "regular", superbi: 7.84, frequencia: 88.1, alura: 7.4, khan: 7.7, provaPaulista: 7.6, tarefas: 8.0 },
-            { nome: "EE Prof. Plínio Berardo", tipo: "regular", superbi: 8.96, frequencia: 95.2, alura: 8.7, khan: 9.0, provaPaulista: 8.9, tarefas: 9.3 },
-            { nome: "EE Yolanda Sichieri", tipo: "regular", superbi: 8.28, frequencia: 89.4, alura: 7.9, khan: 8.0, provaPaulista: 8.0, tarefas: 8.4 },
-            { nome: "PEI Antônio Furlan Jr.", tipo: "pei", superbi: 9.12, frequencia: 96.8, alura: 8.9, khan: 9.2, provaPaulista: 9.1, tarefas: 9.4 },
-            { nome: "PEI Dolores Belém", tipo: "pei", superbi: 8.87, frequencia: 95.1, alura: 8.5, khan: 8.8, provaPaulista: 8.7, tarefas: 9.0 },
-            { nome: "PEI Domingos Paró", tipo: "pei", superbi: 9.45, frequencia: 97.9, alura: 9.3, khan: 9.5, provaPaulista: 9.4, tarefas: 9.6 },
-            { nome: "PEI José Luiz Siqueira", tipo: "pei", superbi: 9.23, frequencia: 96.4, alura: 9.0, khan: 9.3, provaPaulista: 9.2, tarefas: 9.5 },
-            { nome: "EE Vila Nova", tipo: "regular", superbi: 8.15, frequencia: 89.2, alura: 7.8, khan: 8.0, provaPaulista: 7.9, tarefas: 8.3 },
-            { nome: "EE Centro", tipo: "regular", superbi: 8.62, frequencia: 92.1, alura: 8.2, khan: 8.4, provaPaulista: 8.4, tarefas: 8.8 },
-            { nome: "EE Jardim Europa", tipo: "regular", superbi: 7.91, frequencia: 87.6, alura: 7.6, khan: 7.8, provaPaulista: 7.7, tarefas: 8.1 },
-            { nome: "EE Parque Industrial", tipo: "regular", superbi: 8.73, frequencia: 93.7, alura: 8.4, khan: 8.7, provaPaulista: 8.6, tarefas: 9.0 },
-            { nome: "EE São José", tipo: "regular", superbi: 8.08, frequencia: 88.9, alura: 7.7, khan: 7.9, provaPaulista: 7.8, tarefas: 8.2 }
+            { 
+                nome: "EE Adélia Frascino", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.95, frequencia: 89.1, alura: 7.2, khan: 7.8, provaPaulista: 7.6, tarefas: 8.3 },
+                bimestre2: { superbi: 8.45, frequencia: 92.3, alura: 7.8, khan: 8.2, provaPaulista: 8.1, tarefas: 8.9 },
+                bimestre3: { superbi: 8.72, frequencia: 94.1, alura: 8.1, khan: 8.5, provaPaulista: 8.4, tarefas: 9.2 }
+            },
+            { 
+                nome: "EE Anna Balardin", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.35, frequencia: 85.2, alura: 6.8, khan: 7.4, provaPaulista: 7.2, tarefas: 7.6 },
+                bimestre2: { superbi: 7.89, frequencia: 88.7, alura: 7.2, khan: 7.9, provaPaulista: 7.8, tarefas: 8.1 },
+                bimestre3: { superbi: 8.23, frequencia: 91.2, alura: 7.6, khan: 8.2, provaPaulista: 8.1, tarefas: 8.4 }
+            },
+            { 
+                nome: "EE Basílio Rodrigues", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.42, frequencia: 91.3, alura: 8.1, khan: 8.4, provaPaulista: 8.2, tarefas: 8.7 },
+                bimestre2: { superbi: 8.92, frequencia: 94.1, alura: 8.5, khan: 8.8, provaPaulista: 8.7, tarefas: 9.2 },
+                bimestre3: { superbi: 9.15, frequencia: 95.8, alura: 8.8, khan: 9.1, provaPaulista: 9.0, tarefas: 9.4 }
+            },
+            { 
+                nome: "EE Bruno Pieroni", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.78, frequencia: 87.2, alura: 7.4, khan: 7.6, provaPaulista: 7.5, tarefas: 8.0 },
+                bimestre2: { superbi: 8.23, frequencia: 90.5, alura: 7.9, khan: 8.1, provaPaulista: 8.0, tarefas: 8.5 },
+                bimestre3: { superbi: 8.51, frequencia: 92.7, alura: 8.2, khan: 8.4, provaPaulista: 8.3, tarefas: 8.8 }
+            },
+            { 
+                nome: "EE Dolores Martins", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.12, frequencia: 83.4, alura: 6.7, khan: 7.1, provaPaulista: 6.9, tarefas: 7.3 },
+                bimestre2: { superbi: 7.56, frequencia: 86.8, alura: 7.1, khan: 7.6, provaPaulista: 7.4, tarefas: 7.8 },
+                bimestre3: { superbi: 7.89, frequencia: 89.2, alura: 7.5, khan: 7.9, provaPaulista: 7.8, tarefas: 8.2 }
+            },
+            { 
+                nome: "EE Dr. Mário Lins", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.24, frequencia: 88.6, alura: 7.9, khan: 8.0, provaPaulista: 8.1, tarefas: 8.3 },
+                bimestre2: { superbi: 8.67, frequencia: 91.2, alura: 8.3, khan: 8.4, provaPaulista: 8.5, tarefas: 8.8 },
+                bimestre3: { superbi: 8.94, frequencia: 93.8, alura: 8.6, khan: 8.7, provaPaulista: 8.8, tarefas: 9.1 }
+            },
+            { 
+                nome: "EE Edith Silveira", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.69, frequencia: 86.8, alura: 7.3, khan: 7.5, provaPaulista: 7.4, tarefas: 7.8 },
+                bimestre2: { superbi: 8.14, frequencia: 89.6, alura: 7.8, khan: 8.0, provaPaulista: 7.9, tarefas: 8.3 },
+                bimestre3: { superbi: 8.42, frequencia: 91.4, alura: 8.1, khan: 8.3, provaPaulista: 8.2, tarefas: 8.6 }
+            },
+            { 
+                nome: "EE Ferrúcio Chiaratti", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.35, frequencia: 90.7, alura: 8.0, khan: 8.2, provaPaulista: 8.1, tarefas: 8.5 },
+                bimestre2: { superbi: 8.78, frequencia: 93.4, alura: 8.4, khan: 8.6, provaPaulista: 8.6, tarefas: 9.0 },
+                bimestre3: { superbi: 9.02, frequencia: 95.1, alura: 8.7, khan: 8.9, provaPaulista: 8.9, tarefas: 9.3 }
+            },
+            { 
+                nome: "EE Isaías Ferreira", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.52, frequencia: 84.6, alura: 7.0, khan: 7.3, provaPaulista: 7.2, tarefas: 7.7 },
+                bimestre2: { superbi: 7.98, frequencia: 87.9, alura: 7.5, khan: 7.8, provaPaulista: 7.7, tarefas: 8.2 },
+                bimestre3: { superbi: 8.26, frequencia: 90.3, alura: 7.8, khan: 8.1, provaPaulista: 8.0, tarefas: 8.5 }
+            },
+            { 
+                nome: "EE Josepha Castro", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.91, frequencia: 87.5, alura: 7.5, khan: 7.7, provaPaulista: 7.6, tarefas: 8.1 },
+                bimestre2: { superbi: 8.35, frequencia: 90.8, alura: 8.0, khan: 8.2, provaPaulista: 8.1, tarefas: 8.6 },
+                bimestre3: { superbi: 8.63, frequencia: 92.9, alura: 8.3, khan: 8.5, provaPaulista: 8.4, tarefas: 8.9 }
+            },
+            { 
+                nome: "EE Luiz Marcari", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.08, frequencia: 88.9, alura: 7.6, khan: 7.9, provaPaulista: 7.8, tarefas: 8.2 },
+                bimestre2: { superbi: 8.52, frequencia: 91.7, alura: 8.1, khan: 8.3, provaPaulista: 8.3, tarefas: 8.7 },
+                bimestre3: { superbi: 8.79, frequencia: 93.5, alura: 8.4, khan: 8.6, provaPaulista: 8.6, tarefas: 9.0 }
+            },
+            { 
+                nome: "EE Maurício Montecchi", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.28, frequencia: 82.1, alura: 6.9, khan: 7.0, provaPaulista: 7.0, tarefas: 7.4 },
+                bimestre2: { superbi: 7.73, frequencia: 85.2, alura: 7.3, khan: 7.4, provaPaulista: 7.5, tarefas: 7.9 },
+                bimestre3: { superbi: 8.01, frequencia: 87.8, alura: 7.6, khan: 7.7, provaPaulista: 7.8, tarefas: 8.2 }
+            },
+            { 
+                nome: "EE Nícia Giraldi", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.46, frequencia: 91.8, alura: 8.2, khan: 8.5, provaPaulista: 8.3, tarefas: 8.6 },
+                bimestre2: { superbi: 8.89, frequencia: 94.6, alura: 8.6, khan: 8.9, provaPaulista: 8.8, tarefas: 9.1 },
+                bimestre3: { superbi: 9.12, frequencia: 96.2, alura: 8.9, khan: 9.2, provaPaulista: 9.1, tarefas: 9.4 }
+            },
+            { 
+                nome: "EE Odulfo Guimarães", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.97, frequencia: 87.4, alura: 7.5, khan: 7.6, provaPaulista: 7.7, tarefas: 8.0 },
+                bimestre2: { superbi: 8.41, frequencia: 90.3, alura: 8.0, khan: 8.1, provaPaulista: 8.2, tarefas: 8.5 },
+                bimestre3: { superbi: 8.68, frequencia: 92.7, alura: 8.3, khan: 8.4, provaPaulista: 8.5, tarefas: 8.8 }
+            },
+            { 
+                nome: "EE Orminda Guimarães", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.41, frequencia: 85.3, alura: 7.0, khan: 7.2, provaPaulista: 7.1, tarefas: 7.5 },
+                bimestre2: { superbi: 7.84, frequencia: 88.1, alura: 7.4, khan: 7.7, provaPaulista: 7.6, tarefas: 8.0 },
+                bimestre3: { superbi: 8.12, frequencia: 90.5, alura: 7.7, khan: 8.0, provaPaulista: 7.9, tarefas: 8.3 }
+            },
+            { 
+                nome: "EE Prof. Plínio Berardo", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.53, frequencia: 92.4, alura: 8.3, khan: 8.6, provaPaulista: 8.4, tarefas: 8.8 },
+                bimestre2: { superbi: 8.96, frequencia: 95.2, alura: 8.7, khan: 9.0, provaPaulista: 8.9, tarefas: 9.3 },
+                bimestre3: { superbi: 9.18, frequencia: 96.8, alura: 9.0, khan: 9.3, provaPaulista: 9.2, tarefas: 9.5 }
+            },
+            { 
+                nome: "EE Yolanda Sichieri", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.85, frequencia: 86.7, alura: 7.4, khan: 7.5, provaPaulista: 7.5, tarefas: 7.9 },
+                bimestre2: { superbi: 8.28, frequencia: 89.4, alura: 7.9, khan: 8.0, provaPaulista: 8.0, tarefas: 8.4 },
+                bimestre3: { superbi: 8.55, frequencia: 91.8, alura: 8.2, khan: 8.3, provaPaulista: 8.3, tarefas: 8.7 }
+            },
+            { 
+                nome: "PEI Antônio Furlan Jr.", 
+                tipo: "pei", 
+                bimestre1: { superbi: 8.78, frequencia: 94.2, alura: 8.5, khan: 8.8, provaPaulista: 8.6, tarefas: 8.9 },
+                bimestre2: { superbi: 9.12, frequencia: 96.8, alura: 8.9, khan: 9.2, provaPaulista: 9.1, tarefas: 9.4 },
+                bimestre3: { superbi: 9.35, frequencia: 98.1, alura: 9.2, khan: 9.5, provaPaulista: 9.4, tarefas: 9.7 }
+            },
+            { 
+                nome: "PEI Dolores Belém", 
+                tipo: "pei", 
+                bimestre1: { superbi: 8.52, frequencia: 92.8, alura: 8.1, khan: 8.4, provaPaulista: 8.2, tarefas: 8.5 },
+                bimestre2: { superbi: 8.87, frequencia: 95.1, alura: 8.5, khan: 8.8, provaPaulista: 8.7, tarefas: 9.0 },
+                bimestre3: { superbi: 9.14, frequencia: 96.9, alura: 8.8, khan: 9.1, provaPaulista: 9.0, tarefas: 9.3 }
+            },
+            { 
+                nome: "PEI Domingos Paró", 
+                tipo: "pei", 
+                bimestre1: { superbi: 9.12, frequencia: 95.6, alura: 8.9, khan: 9.1, provaPaulista: 8.9, tarefas: 9.1 },
+                bimestre2: { superbi: 9.45, frequencia: 97.9, alura: 9.3, khan: 9.5, provaPaulista: 9.4, tarefas: 9.6 },
+                bimestre3: { superbi: 9.68, frequencia: 99.2, alura: 9.6, khan: 9.8, provaPaulista: 9.7, tarefas: 9.9 }
+            },
+            { 
+                nome: "PEI José Luiz Siqueira", 
+                tipo: "pei", 
+                bimestre1: { superbi: 8.89, frequencia: 94.8, alura: 8.6, khan: 8.9, provaPaulista: 8.7, tarefas: 9.0 },
+                bimestre2: { superbi: 9.23, frequencia: 96.4, alura: 9.0, khan: 9.3, provaPaulista: 9.2, tarefas: 9.5 },
+                bimestre3: { superbi: 9.48, frequencia: 98.4, alura: 9.3, khan: 9.6, provaPaulista: 9.5, tarefas: 9.8 }
+            },
+            { 
+                nome: "EE Vila Nova", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.72, frequencia: 86.4, alura: 7.3, khan: 7.5, provaPaulista: 7.4, tarefas: 7.8 },
+                bimestre2: { superbi: 8.15, frequencia: 89.2, alura: 7.8, khan: 8.0, provaPaulista: 7.9, tarefas: 8.3 },
+                bimestre3: { superbi: 8.43, frequencia: 91.6, alura: 8.1, khan: 8.3, provaPaulista: 8.2, tarefas: 8.6 }
+            },
+            { 
+                nome: "EE Centro", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.19, frequencia: 89.3, alura: 7.8, khan: 8.0, provaPaulista: 7.9, tarefas: 8.3 },
+                bimestre2: { superbi: 8.62, frequencia: 92.1, alura: 8.2, khan: 8.4, provaPaulista: 8.4, tarefas: 8.8 },
+                bimestre3: { superbi: 8.89, frequencia: 94.5, alura: 8.5, khan: 8.7, provaPaulista: 8.7, tarefas: 9.1 }
+            },
+            { 
+                nome: "EE Jardim Europa", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.48, frequencia: 84.8, alura: 7.1, khan: 7.3, provaPaulista: 7.2, tarefas: 7.6 },
+                bimestre2: { superbi: 7.91, frequencia: 87.6, alura: 7.6, khan: 7.8, provaPaulista: 7.7, tarefas: 8.1 },
+                bimestre3: { superbi: 8.19, frequencia: 90.1, alura: 7.9, khan: 8.1, provaPaulista: 8.0, tarefas: 8.4 }
+            },
+            { 
+                nome: "EE Parque Industrial", 
+                tipo: "regular", 
+                bimestre1: { superbi: 8.31, frequencia: 90.9, alura: 8.0, khan: 8.3, provaPaulista: 8.1, tarefas: 8.5 },
+                bimestre2: { superbi: 8.73, frequencia: 93.7, alura: 8.4, khan: 8.7, provaPaulista: 8.6, tarefas: 9.0 },
+                bimestre3: { superbi: 8.97, frequencia: 95.4, alura: 8.7, khan: 9.0, provaPaulista: 8.9, tarefas: 9.3 }
+            },
+            { 
+                nome: "EE São José", 
+                tipo: "regular", 
+                bimestre1: { superbi: 7.65, frequencia: 86.1, alura: 7.2, khan: 7.4, provaPaulista: 7.3, tarefas: 7.7 },
+                bimestre2: { superbi: 8.08, frequencia: 88.9, alura: 7.7, khan: 7.9, provaPaulista: 7.8, tarefas: 8.2 },
+                bimestre3: { superbi: 8.36, frequencia: 91.3, alura: 8.0, khan: 8.2, provaPaulista: 8.1, tarefas: 8.5 }
+            }
         ];
 
         let dadosFiltrados = [...dadosEscolas];
+        let bimestreAtual = 'bimestre3'; // Bimestre atual selecionado
+
+        // Função para obter dados do bimestre selecionado
+        function obterDadosBimestre(escola, bimestre) {
+            return escola[bimestre] || escola.bimestre3;
+        }
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -231,6 +403,7 @@
         function aplicarFiltros() {
             const filtroTipo = document.getElementById('filtroTipo').value;
             const ordenacao = document.getElementById('ordenacao').value;
+            bimestreAtual = document.getElementById('bimestreSelect').value;
 
             // Aplicar filtro
             if (filtroTipo === 'todas') {
@@ -242,12 +415,15 @@
             // Aplicar ordenação
             dadosFiltrados.sort((a, b) => {
                 if (ordenacao === 'nome') return a.nome.localeCompare(b.nome);
-                return b[ordenacao] - a[ordenacao];
+                const dadosA = obterDadosBimestre(a, bimestreAtual);
+                const dadosB = obterDadosBimestre(b, bimestreAtual);
+                return dadosB[ordenacao] - dadosA[ordenacao];
             });
 
             // Recriar visualizações
             criarGraficos();
             criarTabelas();
+            atualizarResumoEstatistico();
         }
 
         function criarGraficos() {
@@ -266,49 +442,111 @@
 
             const dados = dadosFiltrados.slice(0, 15); // Mostrar apenas top 15 para legibilidade
             
-            window.graficoBarras = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: dados.map(e => e.nome.replace('EE ', '').replace('PEI ', '')),
-                    datasets: [{
-                        label: 'Score Super BI',
-                        data: dados.map(e => e.superbi),
-                        backgroundColor: dados.map(e => e.tipo === 'pei' ? '#8B5CF6' : '#3B82F6'),
-                        borderColor: dados.map(e => e.tipo === 'pei' ? '#7C3AED' : '#2563EB'),
+            if (bimestreAtual === 'evolucao') {
+                // Mostrar evolução dos 3 bimestres
+                const datasets = [
+                    {
+                        label: '1º Bimestre',
+                        data: dados.map(e => obterDadosBimestre(e, 'bimestre1').superbi),
+                        backgroundColor: '#EF4444',
+                        borderColor: '#DC2626',
                         borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 7,
-                            max: 10
+                    },
+                    {
+                        label: '2º Bimestre',
+                        data: dados.map(e => obterDadosBimestre(e, 'bimestre2').superbi),
+                        backgroundColor: '#F59E0B',
+                        borderColor: '#D97706',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '3º Bimestre',
+                        data: dados.map(e => obterDadosBimestre(e, 'bimestre3').superbi),
+                        backgroundColor: '#10B981',
+                        borderColor: '#059669',
+                        borderWidth: 1
+                    }
+                ];
+
+                window.graficoBarras = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dados.map(e => e.nome.replace('EE ', '').replace('PEI ', '')),
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 7,
+                                max: 10
+                            },
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
                         },
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 45
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
                             }
                         }
+                    }
+                });
+            } else {
+                // Mostrar dados do bimestre específico
+                const nomeBimestre = bimestreAtual === 'bimestre1' ? '1º Bimestre' : 
+                                   bimestreAtual === 'bimestre2' ? '2º Bimestre' : '3º Bimestre';
+                
+                window.graficoBarras = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: dados.map(e => e.nome.replace('EE ', '').replace('PEI ', '')),
+                        datasets: [{
+                            label: `Score Super BI - ${nomeBimestre}`,
+                            data: dados.map(e => obterDadosBimestre(e, bimestreAtual).superbi),
+                            backgroundColor: dados.map(e => e.tipo === 'pei' ? '#8B5CF6' : '#3B82F6'),
+                            borderColor: dados.map(e => e.tipo === 'pei' ? '#7C3AED' : '#2563EB'),
+                            borderWidth: 1
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            display: true
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 7,
+                                max: 10
+                            },
+                            x: {
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
                         },
-                        tooltip: {
-                            callbacks: {
-                                afterLabel: function(context) {
-                                    const escola = dados[context.dataIndex];
-                                    return `Tipo: ${escola.tipo.toUpperCase()}`;
+                        plugins: {
+                            legend: {
+                                display: true
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const escola = dados[context.dataIndex];
+                                        return `Tipo: ${escola.tipo.toUpperCase()}`;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
         function criarGraficoPizzaTipo() {
@@ -351,21 +589,29 @@
                 window.graficoLinha.destroy();
             }
 
-            const top5 = [...dadosFiltrados].sort((a, b) => b.superbi - a.superbi).slice(0, 5);
-            const bimestres = ['1º Bim', '2º Bim', '3º Bim', '4º Bim'];
+            // Ordenar por 3º bimestre para pegar as top 5
+            const top5 = [...dadosFiltrados].sort((a, b) => 
+                obterDadosBimestre(b, 'bimestre3').superbi - obterDadosBimestre(a, 'bimestre3').superbi
+            ).slice(0, 5);
+            
+            const bimestres = ['1º Bimestre', '2º Bimestre', '3º Bimestre'];
 
             const datasets = top5.map((escola, index) => {
                 const cores = ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
-                const base = escola.superbi;
-                const variacao = () => base + (Math.random() - 0.5) * 0.6;
                 
                 return {
                     label: escola.nome.replace('EE ', '').replace('PEI ', ''),
-                    data: [base - 0.3, base - 0.1, base + 0.1, base],
+                    data: [
+                        obterDadosBimestre(escola, 'bimestre1').superbi,
+                        obterDadosBimestre(escola, 'bimestre2').superbi,
+                        obterDadosBimestre(escola, 'bimestre3').superbi
+                    ],
                     borderColor: cores[index],
                     backgroundColor: cores[index] + '20',
                     tension: 0.4,
-                    fill: false
+                    fill: false,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
                 };
             });
 
@@ -401,19 +647,26 @@
                 window.graficoRadar.destroy();
             }
 
-            const top3 = [...dadosFiltrados].sort((a, b) => b.superbi - a.superbi).slice(0, 3);
+            // Usar bimestre atual ou 3º se for evolução
+            const bimestreParaRadar = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+            const top3 = [...dadosFiltrados].sort((a, b) => 
+                obterDadosBimestre(b, bimestreParaRadar).superbi - obterDadosBimestre(a, bimestreParaRadar).superbi
+            ).slice(0, 3);
             const cores = ['#EF4444', '#10B981', '#3B82F6'];
 
-            const datasets = top3.map((escola, index) => ({
-                label: escola.nome.replace('EE ', '').replace('PEI ', ''),
-                data: [escola.superbi, escola.frequencia/10, escola.alura, escola.khan, escola.provaPaulista, escola.tarefas],
-                borderColor: cores[index],
-                backgroundColor: cores[index] + '20',
-                pointBackgroundColor: cores[index],
-                pointBorderColor: cores[index],
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: cores[index]
-            }));
+            const datasets = top3.map((escola, index) => {
+                const dados = obterDadosBimestre(escola, bimestreParaRadar);
+                return {
+                    label: escola.nome.replace('EE ', '').replace('PEI ', ''),
+                    data: [dados.superbi, dados.frequencia/10, dados.alura, dados.khan, dados.provaPaulista, dados.tarefas],
+                    borderColor: cores[index],
+                    backgroundColor: cores[index] + '20',
+                    pointBackgroundColor: cores[index],
+                    pointBorderColor: cores[index],
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: cores[index]
+                };
+            });
 
             window.graficoRadar = new Chart(ctx, {
                 type: 'radar',
@@ -456,23 +709,38 @@
                 tr.className = 'border-b hover:bg-gray-50';
                 
                 const tipoClass = escola.tipo === 'pei' ? 'text-purple-600 font-semibold' : 'text-blue-600';
-                const scoreBg = escola.superbi >= 9 ? 'bg-green-100 text-green-800' : 
-                               escola.superbi >= 8.5 ? 'bg-yellow-100 text-yellow-800' : 
+                
+                // Usar dados do bimestre selecionado ou do 3º bimestre se for evolução
+                const bimestreParaTabela = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+                const dados = obterDadosBimestre(escola, bimestreParaTabela);
+                
+                const scoreBg = dados.superbi >= 9 ? 'bg-green-100 text-green-800' : 
+                               dados.superbi >= 8.5 ? 'bg-yellow-100 text-yellow-800' : 
                                'bg-red-100 text-red-800';
+
+                // Calcular evolução do 1º ao 3º bimestre
+                const evolucao = obterDadosBimestre(escola, 'bimestre3').superbi - obterDadosBimestre(escola, 'bimestre1').superbi;
+                const evolucaoClass = evolucao >= 0.5 ? 'text-green-600' : evolucao >= 0 ? 'text-yellow-600' : 'text-red-600';
+                const evolucaoIcon = evolucao >= 0.5 ? '📈' : evolucao >= 0 ? '➡️' : '📉';
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 font-medium">${escola.nome}</td>
                     <td class="px-4 py-3 ${tipoClass}">${escola.tipo.toUpperCase()}</td>
                     <td class="px-4 py-3 text-center">
                         <span class="px-2 py-1 rounded-full text-sm font-medium ${scoreBg}">
-                            ${escola.superbi.toFixed(2)}
+                            ${dados.superbi.toFixed(2)}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-center">${escola.frequencia.toFixed(1)}%</td>
-                    <td class="px-4 py-3 text-center">${escola.alura.toFixed(1)}</td>
-                    <td class="px-4 py-3 text-center">${escola.khan.toFixed(1)}</td>
-                    <td class="px-4 py-3 text-center">${escola.provaPaulista.toFixed(1)}</td>
-                    <td class="px-4 py-3 text-center">${escola.tarefas.toFixed(1)}</td>
+                    <td class="px-4 py-3 text-center">${dados.frequencia.toFixed(1)}%</td>
+                    <td class="px-4 py-3 text-center">${dados.alura.toFixed(1)}</td>
+                    <td class="px-4 py-3 text-center">${dados.khan.toFixed(1)}</td>
+                    <td class="px-4 py-3 text-center">${dados.provaPaulista.toFixed(1)}</td>
+                    <td class="px-4 py-3 text-center">${dados.tarefas.toFixed(1)}</td>
+                    <td class="px-4 py-3 text-center">
+                        <span class="font-semibold ${evolucaoClass}">
+                            ${evolucaoIcon} ${evolucao >= 0 ? '+' : ''}${evolucao.toFixed(2)}
+                        </span>
+                    </td>
                 `;
                 
                 tbody.appendChild(tr);
@@ -480,8 +748,12 @@
         }
 
         function criarRankings() {
+            const bimestreParaRanking = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+            
             // Ranking Super BI
-            const topSuperBI = [...dadosFiltrados].sort((a, b) => b.superbi - a.superbi).slice(0, 10);
+            const topSuperBI = [...dadosFiltrados].sort((a, b) => 
+                obterDadosBimestre(b, bimestreParaRanking).superbi - obterDadosBimestre(a, bimestreParaRanking).superbi
+            ).slice(0, 10);
             const rankingSuperBI = document.getElementById('rankingSuperBI');
             rankingSuperBI.innerHTML = topSuperBI.map((escola, index) => `
                 <div class="flex items-center justify-between py-2 px-3 ${index < 3 ? 'bg-yellow-50' : ''}">
@@ -491,12 +763,14 @@
                         </span>
                         <span class="text-sm font-medium">${escola.nome.replace('EE ', '').replace('PEI ', '')}</span>
                     </div>
-                    <span class="font-bold text-blue-600">${escola.superbi.toFixed(2)}</span>
+                    <span class="font-bold text-blue-600">${obterDadosBimestre(escola, bimestreParaRanking).superbi.toFixed(2)}</span>
                 </div>
             `).join('');
 
             // Ranking Frequência
-            const topFrequencia = [...dadosFiltrados].sort((a, b) => b.frequencia - a.frequencia).slice(0, 10);
+            const topFrequencia = [...dadosFiltrados].sort((a, b) => 
+                obterDadosBimestre(b, bimestreParaRanking).frequencia - obterDadosBimestre(a, bimestreParaRanking).frequencia
+            ).slice(0, 10);
             const rankingFrequencia = document.getElementById('rankingFrequencia');
             rankingFrequencia.innerHTML = topFrequencia.map((escola, index) => `
                 <div class="flex items-center justify-between py-2 px-3 ${index < 3 ? 'bg-green-50' : ''}">
@@ -506,15 +780,20 @@
                         </span>
                         <span class="text-sm font-medium">${escola.nome.replace('EE ', '').replace('PEI ', '')}</span>
                     </div>
-                    <span class="font-bold text-green-600">${escola.frequencia.toFixed(1)}%</span>
+                    <span class="font-bold text-green-600">${obterDadosBimestre(escola, bimestreParaRanking).frequencia.toFixed(1)}%</span>
                 </div>
             `).join('');
         }
 
         function atualizarResumoEstatistico() {
-            const mediaGeral = dadosFiltrados.reduce((acc, escola) => acc + escola.superbi, 0) / dadosFiltrados.length;
-            const melhorEscola = Math.max(...dadosFiltrados.map(e => e.superbi));
-            const mediaFrequencia = dadosFiltrados.reduce((acc, escola) => acc + escola.frequencia, 0) / dadosFiltrados.length;
+            const bimestreParaEstatistica = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+            
+            const mediaGeral = dadosFiltrados.reduce((acc, escola) => 
+                acc + obterDadosBimestre(escola, bimestreParaEstatistica).superbi, 0) / dadosFiltrados.length;
+            const melhorEscola = Math.max(...dadosFiltrados.map(e => 
+                obterDadosBimestre(e, bimestreParaEstatistica).superbi));
+            const mediaFrequencia = dadosFiltrados.reduce((acc, escola) => 
+                acc + obterDadosBimestre(escola, bimestreParaEstatistica).frequencia, 0) / dadosFiltrados.length;
             const escolasPEI = dadosFiltrados.filter(e => e.tipo === 'pei').length;
 
             document.getElementById('mediaGeral').textContent = mediaGeral.toFixed(2);
