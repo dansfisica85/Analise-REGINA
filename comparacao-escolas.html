@@ -463,6 +463,21 @@
 
         let dadosFiltrados = [...dadosEscolas];
         let bimestreAtual = 'bimestre3'; // Bimestre atual selecionado
+        
+        // Objeto para rastrear gráficos criados
+        let graficosAtivos = {};
+
+        // Função para destruir gráficos existentes
+        function destruirGraficos() {
+            console.log('Destruindo gráficos existentes...');
+            Object.keys(graficosAtivos).forEach(id => {
+                if (graficosAtivos[id]) {
+                    graficosAtivos[id].destroy();
+                    delete graficosAtivos[id];
+                    console.log(`Gráfico ${id} destruído`);
+                }
+            });
+        }
 
         // Função para obter dados do bimestre selecionado
         function obterDadosBimestre(escola, bimestre) {
@@ -530,6 +545,9 @@
             console.log('=== INICIANDO CRIAÇÃO DOS GRÁFICOS ===');
             console.log('bimestreAtual:', bimestreAtual);
             console.log('dadosFiltrados length:', dadosFiltrados.length);
+            
+            // Destruir gráficos existentes primeiro
+            destruirGraficos();
             
             criarGraficoBarrasGeral();
             criarGraficoLinhaEvolucao();
