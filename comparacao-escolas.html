@@ -527,13 +527,18 @@
         }
 
         function criarGraficos() {
+            console.log('Iniciando criação dos gráficos...');
             criarGraficoBarrasGeral();
             criarGraficoLinhaEvolucao();
             criarGraficoRadar();
+            console.log('Criando gráficos de dispersão...');
             criarGraficosDispersao();
+            console.log('Criando matriz de correlação...');
             criarMatrizCorrelacao();
+            console.log('Criando análise de grupos...');
             criarAnaliseGrupos();
             atualizarResumoEstatistico();
+            console.log('Gráficos criados com sucesso!');
         }
 
         function criarGraficoBarrasGeral() {
