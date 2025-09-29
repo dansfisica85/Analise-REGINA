@@ -527,16 +527,38 @@
         }
 
         function criarGraficos() {
-            console.log('Iniciando criação dos gráficos...');
+            console.log('=== INICIANDO CRIAÇÃO DOS GRÁFICOS ===');
+            console.log('bimestreAtual:', bimestreAtual);
+            console.log('dadosFiltrados length:', dadosFiltrados.length);
+            
             criarGraficoBarrasGeral();
             criarGraficoLinhaEvolucao();
             criarGraficoRadar();
-            console.log('Criando gráficos de dispersão...');
-            criarGraficosDispersao();
-            console.log('Criando matriz de correlação...');
-            criarMatrizCorrelacao();
-            console.log('Criando análise de grupos...');
-            criarAnaliseGrupos();
+            
+            console.log('=== CRIANDO GRÁFICOS DE DISPERSÃO ===');
+            try {
+                criarGraficosDispersao();
+                console.log('✅ Gráficos de dispersão criados com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao criar gráficos de dispersão:', error);
+            }
+            
+            console.log('=== CRIANDO MATRIZ DE CORRELAÇÃO ===');
+            try {
+                criarMatrizCorrelacao();
+                console.log('✅ Matriz de correlação criada com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao criar matriz de correlação:', error);
+            }
+            
+            console.log('=== CRIANDO ANÁLISE DE GRUPOS ===');
+            try {
+                criarAnaliseGrupos();
+                console.log('✅ Análise de grupos criada com sucesso');
+            } catch (error) {
+                console.error('❌ Erro ao criar análise de grupos:', error);
+            }
+            
             atualizarResumoEstatistico();
             console.log('Gráficos criados com sucesso!');
         }
