@@ -100,9 +100,77 @@
 
             <!-- Gráfico Radar - Comparação Multidimensional -->
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-bold mb-4">🎯 Análise Multidimensional - Top 5 Escolas</h3>
+                <h3 class="text-xl font-bold mb-4">🎯 Análise Multidimensional - Todas as 26 Escolas</h3>
                 <div class="chart-container">
                     <canvas id="graficoRadar"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráficos de Dispersão por Plataforma -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Dispersão ALURA vs Super BI -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">📊 Dispersão: ALURA vs Super BI</h3>
+                    <div class="chart-container">
+                        <canvas id="graficoDispersaoAlura"></canvas>
+                    </div>
+                </div>
+
+                <!-- Dispersão KHAN vs Super BI -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">📊 Dispersão: KHAN vs Super BI</h3>
+                    <div class="chart-container">
+                        <canvas id="graficoDispersaoKhan"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Dispersão Frequência vs Super BI -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">📊 Dispersão: Frequência vs Super BI</h3>
+                    <div class="chart-container">
+                        <canvas id="graficoDispersaoFrequencia"></canvas>
+                    </div>
+                </div>
+
+                <!-- Dispersão Prova Paulista vs Super BI -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">📊 Dispersão: Prova Paulista vs Super BI</h3>
+                    <div class="chart-container">
+                        <canvas id="graficoDispersaoProva"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matriz de Correlação -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4">🔗 Matriz de Correlação entre Indicadores</h3>
+                <div class="overflow-x-auto">
+                    <table id="tabelaCorrelacao" class="w-full table-auto border-collapse">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="border px-4 py-2 font-semibold">Indicador</th>
+                                <th class="border px-4 py-2 font-semibold">Super BI</th>
+                                <th class="border px-4 py-2 font-semibold">Frequência</th>
+                                <th class="border px-4 py-2 font-semibold">ALURA</th>
+                                <th class="border px-4 py-2 font-semibold">KHAN</th>
+                                <th class="border px-4 py-2 font-semibold">P. Paulista</th>
+                                <th class="border px-4 py-2 font-semibold">Tarefas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaCorrelacao">
+                            <!-- Dados serão inseridos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Análise de Clusters -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4">🎯 Análise de Performance por Grupos</h3>
+                <div class="grid md:grid-cols-3 gap-4" id="analiseGrupos">
+                    <!-- Dados serão inseridos via JavaScript -->
                 </div>
             </div>
         </div>
@@ -456,13 +524,16 @@
             // Recriar visualizações
             criarGraficos();
             criarTabelas();
-            atualizarResumoEstatistico();
         }
 
         function criarGraficos() {
             criarGraficoBarrasGeral();
             criarGraficoLinhaEvolucao();
             criarGraficoRadar();
+            criarGraficosDispersao();
+            criarMatrizCorrelacao();
+            criarAnaliseGrupos();
+            atualizarResumoEstatistico();
         }
 
         function criarGraficoBarrasGeral() {
@@ -656,24 +727,56 @@
 
             // Usar bimestre atual ou 3º se for evolução
             const bimestreParaRadar = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
-            const top3 = [...dadosFiltrados].sort((a, b) => 
-                obterDadosBimestre(b, bimestreParaRadar).superbi - obterDadosBimestre(a, bimestreParaRadar).superbi
-            ).slice(0, 3);
-            const cores = ['#EF4444', '#10B981', '#3B82F6'];
+            
+            // Criar datasets para todas as escolas por tipo
+            const escolasRegulares = dadosFiltrados.filter(e => e.tipo === 'regular');
+            const escolasPEI9h = dadosFiltrados.filter(e => e.tipo === 'pei9h');
+            const escolasPEI7h = dadosFiltrados.filter(e => e.tipo === 'pei7h');
 
-            const datasets = top3.map((escola, index) => {
-                const dados = obterDadosBimestre(escola, bimestreParaRadar);
-                return {
-                    label: escola.nome.replace('EE ', '').replace('PEI ', ''),
-                    data: [dados.superbi, dados.frequencia/10, dados.alura, dados.khan, dados.provaPaulista, dados.tarefas],
-                    borderColor: cores[index],
-                    backgroundColor: cores[index] + '20',
-                    pointBackgroundColor: cores[index],
-                    pointBorderColor: cores[index],
+            const datasets = [];
+
+            // Calcular médias por tipo
+            if (escolasRegulares.length > 0) {
+                const mediaRegular = calcularMediaPorTipo(escolasRegulares, bimestreParaRadar);
+                datasets.push({
+                    label: 'Média Escolas Regulares',
+                    data: [mediaRegular.superbi, mediaRegular.frequencia/10, mediaRegular.alura, mediaRegular.khan, mediaRegular.provaPaulista, mediaRegular.tarefas],
+                    borderColor: '#3B82F6',
+                    backgroundColor: '#3B82F620',
+                    pointBackgroundColor: '#3B82F6',
+                    pointBorderColor: '#3B82F6',
                     pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: cores[index]
-                };
-            });
+                    pointHoverBorderColor: '#3B82F6'
+                });
+            }
+
+            if (escolasPEI9h.length > 0) {
+                const mediaPEI9h = calcularMediaPorTipo(escolasPEI9h, bimestreParaRadar);
+                datasets.push({
+                    label: 'Média PEI 9 horas',
+                    data: [mediaPEI9h.superbi, mediaPEI9h.frequencia/10, mediaPEI9h.alura, mediaPEI9h.khan, mediaPEI9h.provaPaulista, mediaPEI9h.tarefas],
+                    borderColor: '#8B5CF6',
+                    backgroundColor: '#8B5CF620',
+                    pointBackgroundColor: '#8B5CF6',
+                    pointBorderColor: '#8B5CF6',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#8B5CF6'
+                });
+            }
+
+            if (escolasPEI7h.length > 0) {
+                const mediaPEI7h = calcularMediaPorTipo(escolasPEI7h, bimestreParaRadar);
+                datasets.push({
+                    label: 'Média PEI 7 horas',
+                    data: [mediaPEI7h.superbi, mediaPEI7h.frequencia/10, mediaPEI7h.alura, mediaPEI7h.khan, mediaPEI7h.provaPaulista, mediaPEI7h.tarefas],
+                    borderColor: '#A855F7',
+                    backgroundColor: '#A855F720',
+                    pointBackgroundColor: '#A855F7',
+                    pointBorderColor: '#A855F7',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#A855F7'
+                });
+            }
 
             window.graficoRadar = new Chart(ctx, {
                 type: 'radar',
@@ -794,6 +897,223 @@
                     <span class="font-bold text-green-600">${obterDadosBimestre(escola, bimestreParaRanking).frequencia.toFixed(1)}%</span>
                 </div>
             `).join('');
+        }
+
+        // Função auxiliar para calcular média por tipo
+        function calcularMediaPorTipo(escolas, bimestre) {
+            const total = escolas.length;
+            const soma = escolas.reduce((acc, escola) => {
+                const dados = obterDadosBimestre(escola, bimestre);
+                return {
+                    superbi: acc.superbi + dados.superbi,
+                    frequencia: acc.frequencia + dados.frequencia,
+                    alura: acc.alura + dados.alura,
+                    khan: acc.khan + dados.khan,
+                    provaPaulista: acc.provaPaulista + dados.provaPaulista,
+                    tarefas: acc.tarefas + dados.tarefas
+                };
+            }, { superbi: 0, frequencia: 0, alura: 0, khan: 0, provaPaulista: 0, tarefas: 0 });
+
+            return {
+                superbi: soma.superbi / total,
+                frequencia: soma.frequencia / total,
+                alura: soma.alura / total,
+                khan: soma.khan / total,
+                provaPaulista: soma.provaPaulista / total,
+                tarefas: soma.tarefas / total
+            };
+        }
+
+        // Função para calcular correlação
+        function calcularCorrelacao(array1, array2) {
+            const n = array1.length;
+            const sum1 = array1.reduce((a, b) => a + b, 0);
+            const sum2 = array2.reduce((a, b) => a + b, 0);
+            const sum1Sq = array1.reduce((a, b) => a + b * b, 0);
+            const sum2Sq = array2.reduce((a, b) => a + b * b, 0);
+            const pSum = array1.map((x, i) => x * array2[i]).reduce((a, b) => a + b, 0);
+            
+            const num = pSum - (sum1 * sum2 / n);
+            const den = Math.sqrt((sum1Sq - sum1 * sum1 / n) * (sum2Sq - sum2 * sum2 / n));
+            
+            return den === 0 ? 0 : num / den;
+        }
+
+        function criarGraficosDispersao() {
+            const bimestreParaDispersao = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+            
+            criarGraficoDispersao('graficoDispersaoAlura', 'alura', 'ALURA', bimestreParaDispersao);
+            criarGraficoDispersao('graficoDispersaoKhan', 'khan', 'KHAN', bimestreParaDispersao);
+            criarGraficoDispersao('graficoDispersaoFrequencia', 'frequencia', 'Frequência', bimestreParaDispersao);
+            criarGraficoDispersao('graficoDispersaoProva', 'provaPaulista', 'Prova Paulista', bimestreParaDispersao);
+        }
+
+        function criarGraficoDispersao(canvasId, propriedade, titulo, bimestre) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            if (window[canvasId]) {
+                window[canvasId].destroy();
+            }
+
+            const dadosDispersao = dadosFiltrados.map(escola => {
+                const dados = obterDadosBimestre(escola, bimestre);
+                return {
+                    x: propriedade === 'frequencia' ? dados[propriedade] : dados[propriedade],
+                    y: dados.superbi,
+                    escola: escola.nome,
+                    tipo: escola.tipo
+                };
+            });
+
+            const datasets = [
+                {
+                    label: 'Escolas Regulares',
+                    data: dadosDispersao.filter(d => d.tipo === 'regular'),
+                    backgroundColor: '#3B82F6',
+                    borderColor: '#2563EB',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'PEI 9 horas',
+                    data: dadosDispersao.filter(d => d.tipo === 'pei9h'),
+                    backgroundColor: '#8B5CF6',
+                    borderColor: '#7C3AED',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'PEI 7 horas',
+                    data: dadosDispersao.filter(d => d.tipo === 'pei7h'),
+                    backgroundColor: '#A855F7',
+                    borderColor: '#9333EA',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ];
+
+            window[canvasId] = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: titulo + (propriedade === 'frequencia' ? ' (%)' : ' (Score)')
+                            },
+                            min: propriedade === 'frequencia' ? 80 : 6,
+                            max: propriedade === 'frequencia' ? 100 : 10
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Super BI (Score)'
+                            },
+                            min: 7,
+                            max: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].raw.escola;
+                                },
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return [
+                                        `${titulo}: ${point.x.toFixed(1)}${propriedade === 'frequencia' ? '%' : ''}`,
+                                        `Super BI: ${point.y.toFixed(2)}`,
+                                        `Tipo: ${point.tipo === 'regular' ? 'Regular' : point.tipo === 'pei9h' ? 'PEI 9h' : 'PEI 7h'}`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function criarMatrizCorrelacao() {
+            const bimestreParaCorrelacao = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+            
+            const indicadores = ['superbi', 'frequencia', 'alura', 'khan', 'provaPaulista', 'tarefas'];
+            const nomes = ['Super BI', 'Frequência', 'ALURA', 'KHAN', 'P. Paulista', 'Tarefas'];
+            
+            const dados = {};
+            indicadores.forEach(ind => {
+                dados[ind] = dadosFiltrados.map(escola => obterDadosBimestre(escola, bimestreParaCorrelacao)[ind]);
+            });
+
+            const tbody = document.getElementById('corpoTabelaCorrelacao');
+            tbody.innerHTML = '';
+
+            indicadores.forEach((ind1, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="border px-4 py-2 font-medium">${nomes[i]}</td>`;
+                
+                indicadores.forEach(ind2 => {
+                    const correlacao = calcularCorrelacao(dados[ind1], dados[ind2]);
+                    const corClass = Math.abs(correlacao) >= 0.7 ? 'bg-green-100 text-green-800' :
+                                   Math.abs(correlacao) >= 0.5 ? 'bg-yellow-100 text-yellow-800' :
+                                   'bg-red-100 text-red-800';
+                    
+                    tr.innerHTML += `<td class="border px-4 py-2 text-center ${corClass}">${correlacao.toFixed(3)}</td>`;
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function criarAnaliseGrupos() {
+            const bimestreParaGrupos = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
+            
+            const grupos = {
+                'Alto Desempenho': dadosFiltrados.filter(e => obterDadosBimestre(e, bimestreParaGrupos).superbi >= 9.0),
+                'Médio Desempenho': dadosFiltrados.filter(e => {
+                    const score = obterDadosBimestre(e, bimestreParaGrupos).superbi;
+                    return score >= 8.0 && score < 9.0;
+                }),
+                'Baixo Desempenho': dadosFiltrados.filter(e => obterDadosBimestre(e, bimestreParaGrupos).superbi < 8.0)
+            };
+
+            const container = document.getElementById('analiseGrupos');
+            container.innerHTML = '';
+
+            Object.entries(grupos).forEach(([nome, escolas], index) => {
+                if (escolas.length === 0) return;
+
+                const cores = ['bg-green-50 border-green-200', 'bg-yellow-50 border-yellow-200', 'bg-red-50 border-red-200'];
+                const textCores = ['text-green-800', 'text-yellow-800', 'text-red-800'];
+
+                const media = calcularMediaPorTipo(escolas, bimestreParaGrupos);
+                
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-lg border-2 ${cores[index]}`;
+                div.innerHTML = `
+                    <h4 class="font-bold text-lg ${textCores[index]} mb-2">${nome}</h4>
+                    <p class="text-sm mb-2">${escolas.length} escolas</p>
+                    <div class="space-y-1 text-xs">
+                        <div>Super BI: ${media.superbi.toFixed(2)}</div>
+                        <div>Frequência: ${media.frequencia.toFixed(1)}%</div>
+                        <div>ALURA: ${media.alura.toFixed(1)}</div>
+                        <div>KHAN: ${media.khan.toFixed(1)}</div>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-600">
+                        ${escolas.map(e => e.nome.replace('EE ', '').replace('PEI ', '')).join(', ')}
+                    </div>
+                `;
+                
+                container.appendChild(div);
+            });
         }
 
         function atualizarResumoEstatistico() {
