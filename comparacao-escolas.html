@@ -942,14 +942,29 @@
         function criarGraficosDispersao() {
             const bimestreParaDispersao = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
             
-            criarGraficoDispersao('graficoDispersaoAlura', 'alura', 'ALURA', bimestreParaDispersao);
-            criarGraficoDispersao('graficoDispersaoKhan', 'khan', 'KHAN', bimestreParaDispersao);
-            criarGraficoDispersao('graficoDispersaoFrequencia', 'frequencia', 'Frequência', bimestreParaDispersao);
-            criarGraficoDispersao('graficoDispersaoProva', 'provaPaulista', 'Prova Paulista', bimestreParaDispersao);
+            // Verificar se os elementos existem antes de criar os gráficos
+            if (document.getElementById('graficoDispersaoAlura')) {
+                criarGraficoDispersao('graficoDispersaoAlura', 'alura', 'ALURA', bimestreParaDispersao);
+            }
+            if (document.getElementById('graficoDispersaoKhan')) {
+                criarGraficoDispersao('graficoDispersaoKhan', 'khan', 'KHAN', bimestreParaDispersao);
+            }
+            if (document.getElementById('graficoDispersaoFrequencia')) {
+                criarGraficoDispersao('graficoDispersaoFrequencia', 'frequencia', 'Frequência', bimestreParaDispersao);
+            }
+            if (document.getElementById('graficoDispersaoProva')) {
+                criarGraficoDispersao('graficoDispersaoProva', 'provaPaulista', 'Prova Paulista', bimestreParaDispersao);
+            }
         }
 
         function criarGraficoDispersao(canvasId, propriedade, titulo, bimestre) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error(`Canvas ${canvasId} não encontrado`);
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
             
             if (window[canvasId]) {
                 window[canvasId].destroy();
@@ -958,7 +973,7 @@
             const dadosDispersao = dadosFiltrados.map(escola => {
                 const dados = obterDadosBimestre(escola, bimestre);
                 return {
-                    x: propriedade === 'frequencia' ? dados[propriedade] : dados[propriedade],
+                    x: dados[propriedade],
                     y: dados.superbi,
                     escola: escola.nome,
                     tipo: escola.tipo
@@ -1043,6 +1058,12 @@
         }
 
         function criarMatrizCorrelacao() {
+            const tbody = document.getElementById('corpoTabelaCorrelacao');
+            if (!tbody) {
+                console.error('Elemento corpoTabelaCorrelacao não encontrado');
+                return;
+            }
+
             const bimestreParaCorrelacao = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
             
             const indicadores = ['superbi', 'frequencia', 'alura', 'khan', 'provaPaulista', 'tarefas'];
@@ -1053,7 +1074,6 @@
                 dados[ind] = dadosFiltrados.map(escola => obterDadosBimestre(escola, bimestreParaCorrelacao)[ind]);
             });
 
-            const tbody = document.getElementById('corpoTabelaCorrelacao');
             tbody.innerHTML = '';
 
             indicadores.forEach((ind1, i) => {
@@ -1074,6 +1094,12 @@
         }
 
         function criarAnaliseGrupos() {
+            const container = document.getElementById('analiseGrupos');
+            if (!container) {
+                console.error('Elemento analiseGrupos não encontrado');
+                return;
+            }
+
             const bimestreParaGrupos = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
             
             const grupos = {
@@ -1085,7 +1111,6 @@
                 'Baixo Desempenho': dadosFiltrados.filter(e => obterDadosBimestre(e, bimestreParaGrupos).superbi < 8.0)
             };
 
-            const container = document.getElementById('analiseGrupos');
             container.innerHTML = '';
 
             Object.entries(grupos).forEach(([nome, escolas], index) => {
