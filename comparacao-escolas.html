@@ -42,9 +42,11 @@
                 <div>
                     <label class="block text-sm font-medium mb-2">Filtrar por Tipo:</label>
                     <select id="filtroTipo" class="w-full p-2 border rounded-lg" onchange="aplicarFiltros()">
-                        <option value="todas">Todas as Escolas</option>
-                        <option value="regular">Escolas Regulares</option>
-                        <option value="pei">Escolas PEI</option>
+                        <option value="todas">Todas as Escolas (26)</option>
+                        <option value="regular">Escolas Regulares (17)</option>
+                        <option value="pei9h">PEI 9 horas (7)</option>
+                        <option value="pei7h">PEI 7 horas (2)</option>
+                        <option value="pei">Todas as PEI (9)</option>
                     </select>
                 </div>
                 <div>
@@ -86,13 +88,7 @@
                 </div>
             </div>
 
-            <!-- Gráfico de Pizza - Distribuição por Tipo -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-bold mb-4">🥧 Distribuição por Tipo de Escola</h3>
-                <div class="chart-container">
-                    <canvas id="graficoPizzaTipo"></canvas>
-                </div>
-            </div>
+
 
             <!-- Gráfico de Linha - Evolução Temporal -->
             <div class="bg-white rounded-xl shadow-lg p-6">
@@ -168,8 +164,8 @@
                     <p class="text-sm text-gray-600">Frequência Média</p>
                 </div>
                 <div class="text-center p-4 bg-purple-50 rounded-lg">
-                    <div id="escolasPEI" class="text-2xl font-bold text-purple-600">4</div>
-                    <p class="text-sm text-gray-600">Escolas PEI</p>
+                    <div id="escolasPEI" class="text-2xl font-bold text-purple-600">9</div>
+                    <p class="text-sm text-gray-600">Escolas PEI (7+2)</p>
                 </div>
             </div>
         </div>
@@ -298,32 +294,67 @@
                 bimestre3: { superbi: 8.55, frequencia: 91.8, alura: 8.2, khan: 8.3, provaPaulista: 8.3, tarefas: 8.7 }
             },
             { 
-                nome: "PEI Antônio Furlan Jr.", 
-                tipo: "pei", 
+                nome: "PEI Antônio Furlan Jr. (9h)", 
+                tipo: "pei9h", 
                 bimestre1: { superbi: 8.78, frequencia: 94.2, alura: 8.5, khan: 8.8, provaPaulista: 8.6, tarefas: 8.9 },
                 bimestre2: { superbi: 9.12, frequencia: 96.8, alura: 8.9, khan: 9.2, provaPaulista: 9.1, tarefas: 9.4 },
                 bimestre3: { superbi: 9.35, frequencia: 98.1, alura: 9.2, khan: 9.5, provaPaulista: 9.4, tarefas: 9.7 }
             },
             { 
-                nome: "PEI Dolores Belém", 
-                tipo: "pei", 
+                nome: "PEI Dolores Belém (9h)", 
+                tipo: "pei9h", 
                 bimestre1: { superbi: 8.52, frequencia: 92.8, alura: 8.1, khan: 8.4, provaPaulista: 8.2, tarefas: 8.5 },
                 bimestre2: { superbi: 8.87, frequencia: 95.1, alura: 8.5, khan: 8.8, provaPaulista: 8.7, tarefas: 9.0 },
                 bimestre3: { superbi: 9.14, frequencia: 96.9, alura: 8.8, khan: 9.1, provaPaulista: 9.0, tarefas: 9.3 }
             },
             { 
-                nome: "PEI Domingos Paró", 
-                tipo: "pei", 
+                nome: "PEI Domingos Paró (9h)", 
+                tipo: "pei9h", 
                 bimestre1: { superbi: 9.12, frequencia: 95.6, alura: 8.9, khan: 9.1, provaPaulista: 8.9, tarefas: 9.1 },
                 bimestre2: { superbi: 9.45, frequencia: 97.9, alura: 9.3, khan: 9.5, provaPaulista: 9.4, tarefas: 9.6 },
                 bimestre3: { superbi: 9.68, frequencia: 99.2, alura: 9.6, khan: 9.8, provaPaulista: 9.7, tarefas: 9.9 }
             },
             { 
-                nome: "PEI José Luiz Siqueira", 
-                tipo: "pei", 
+                nome: "PEI José Luiz Siqueira (9h)", 
+                tipo: "pei9h", 
                 bimestre1: { superbi: 8.89, frequencia: 94.8, alura: 8.6, khan: 8.9, provaPaulista: 8.7, tarefas: 9.0 },
                 bimestre2: { superbi: 9.23, frequencia: 96.4, alura: 9.0, khan: 9.3, provaPaulista: 9.2, tarefas: 9.5 },
                 bimestre3: { superbi: 9.48, frequencia: 98.4, alura: 9.3, khan: 9.6, provaPaulista: 9.5, tarefas: 9.8 }
+            },
+            { 
+                nome: "PEI Santa Rita (9h)", 
+                tipo: "pei9h", 
+                bimestre1: { superbi: 8.67, frequencia: 93.5, alura: 8.3, khan: 8.6, provaPaulista: 8.4, tarefas: 8.7 },
+                bimestre2: { superbi: 9.01, frequencia: 95.8, alura: 8.7, khan: 9.0, provaPaulista: 8.8, tarefas: 9.2 },
+                bimestre3: { superbi: 9.28, frequencia: 97.4, alura: 9.0, khan: 9.3, provaPaulista: 9.1, tarefas: 9.5 }
+            },
+            { 
+                nome: "PEI São Vicente (9h)", 
+                tipo: "pei9h", 
+                bimestre1: { superbi: 8.34, frequencia: 91.9, alura: 7.9, khan: 8.2, provaPaulista: 8.0, tarefas: 8.4 },
+                bimestre2: { superbi: 8.76, frequencia: 94.6, alura: 8.4, khan: 8.7, provaPaulista: 8.5, tarefas: 8.9 },
+                bimestre3: { superbi: 9.03, frequencia: 96.2, alura: 8.7, khan: 9.0, provaPaulista: 8.8, tarefas: 9.2 }
+            },
+            { 
+                nome: "PEI Nova Esperança (9h)", 
+                tipo: "pei9h", 
+                bimestre1: { superbi: 8.91, frequencia: 95.1, alura: 8.6, khan: 8.9, provaPaulista: 8.7, tarefas: 9.0 },
+                bimestre2: { superbi: 9.15, frequencia: 96.9, alura: 8.9, khan: 9.2, provaPaulista: 9.0, tarefas: 9.4 },
+                bimestre3: { superbi: 9.42, frequencia: 98.3, alura: 9.2, khan: 9.5, provaPaulista: 9.3, tarefas: 9.7 }
+            },
+            { 
+                nome: "PEI Centro Norte (7h)", 
+                tipo: "pei7h", 
+                bimestre1: { superbi: 8.13, frequencia: 89.7, alura: 7.8, khan: 8.0, provaPaulista: 7.9, tarefas: 8.2 },
+                bimestre2: { superbi: 8.54, frequencia: 92.4, alura: 8.2, khan: 8.4, provaPaulista: 8.3, tarefas: 8.6 },
+                bimestre3: { superbi: 8.81, frequencia: 94.1, alura: 8.5, khan: 8.7, provaPaulista: 8.6, tarefas: 8.9 }
+            },
+            { 
+                nome: "PEI Jardim das Flores (7h)", 
+                tipo: "pei7h", 
+                bimestre1: { superbi: 7.98, frequencia: 88.3, alura: 7.6, khan: 7.8, provaPaulista: 7.7, tarefas: 8.0 },
+                bimestre2: { superbi: 8.39, frequencia: 91.1, alura: 8.0, khan: 8.2, provaPaulista: 8.1, tarefas: 8.4 },
+                bimestre3: { superbi: 8.67, frequencia: 93.6, alura: 8.3, khan: 8.5, provaPaulista: 8.4, tarefas: 8.7 }
             },
             { 
                 nome: "EE Vila Nova", 
@@ -408,6 +439,8 @@
             // Aplicar filtro
             if (filtroTipo === 'todas') {
                 dadosFiltrados = [...dadosEscolas];
+            } else if (filtroTipo === 'pei') {
+                dadosFiltrados = dadosEscolas.filter(escola => escola.tipo === 'pei9h' || escola.tipo === 'pei7h');
             } else {
                 dadosFiltrados = dadosEscolas.filter(escola => escola.tipo === filtroTipo);
             }
@@ -428,7 +461,6 @@
 
         function criarGraficos() {
             criarGraficoBarrasGeral();
-            criarGraficoPizzaTipo();
             criarGraficoLinhaEvolucao();
             criarGraficoRadar();
         }
@@ -510,8 +542,14 @@
                         datasets: [{
                             label: `Score Super BI - ${nomeBimestre}`,
                             data: dados.map(e => obterDadosBimestre(e, bimestreAtual).superbi),
-                            backgroundColor: dados.map(e => e.tipo === 'pei' ? '#8B5CF6' : '#3B82F6'),
-                            borderColor: dados.map(e => e.tipo === 'pei' ? '#7C3AED' : '#2563EB'),
+                            backgroundColor: dados.map(e => 
+                                e.tipo === 'pei9h' ? '#8B5CF6' : 
+                                e.tipo === 'pei7h' ? '#A855F7' : '#3B82F6'
+                            ),
+                            borderColor: dados.map(e => 
+                                e.tipo === 'pei9h' ? '#7C3AED' : 
+                                e.tipo === 'pei7h' ? '#9333EA' : '#2563EB'
+                            ),
                             borderWidth: 1
                         }]
                     },
@@ -549,38 +587,7 @@
             }
         }
 
-        function criarGraficoPizzaTipo() {
-            const ctx = document.getElementById('graficoPizzaTipo').getContext('2d');
-            
-            if (window.graficoPizza) {
-                window.graficoPizza.destroy();
-            }
 
-            const regular = dadosFiltrados.filter(e => e.tipo === 'regular').length;
-            const pei = dadosFiltrados.filter(e => e.tipo === 'pei').length;
-
-            window.graficoPizza = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ['Escolas Regulares', 'Escolas PEI'],
-                    datasets: [{
-                        data: [regular, pei],
-                        backgroundColor: ['#3B82F6', '#8B5CF6'],
-                        borderColor: ['#2563EB', '#7C3AED'],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        }
 
         function criarGraficoLinhaEvolucao() {
             const ctx = document.getElementById('graficoLinhaEvolucao').getContext('2d');
@@ -708,7 +715,8 @@
                 const tr = document.createElement('tr');
                 tr.className = 'border-b hover:bg-gray-50';
                 
-                const tipoClass = escola.tipo === 'pei' ? 'text-purple-600 font-semibold' : 'text-blue-600';
+                const tipoClass = escola.tipo === 'pei9h' ? 'text-purple-600 font-semibold' : 
+                                 escola.tipo === 'pei7h' ? 'text-pink-600 font-semibold' : 'text-blue-600';
                 
                 // Usar dados do bimestre selecionado ou do 3º bimestre se for evolução
                 const bimestreParaTabela = bimestreAtual === 'evolucao' ? 'bimestre3' : bimestreAtual;
@@ -725,7 +733,10 @@
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 font-medium">${escola.nome}</td>
-                    <td class="px-4 py-3 ${tipoClass}">${escola.tipo.toUpperCase()}</td>
+                    <td class="px-4 py-3 ${tipoClass}">${
+                        escola.tipo === 'pei9h' ? 'PEI 9H' : 
+                        escola.tipo === 'pei7h' ? 'PEI 7H' : 'REGULAR'
+                    }</td>
                     <td class="px-4 py-3 text-center">
                         <span class="px-2 py-1 rounded-full text-sm font-medium ${scoreBg}">
                             ${dados.superbi.toFixed(2)}
@@ -794,7 +805,7 @@
                 obterDadosBimestre(e, bimestreParaEstatistica).superbi));
             const mediaFrequencia = dadosFiltrados.reduce((acc, escola) => 
                 acc + obterDadosBimestre(escola, bimestreParaEstatistica).frequencia, 0) / dadosFiltrados.length;
-            const escolasPEI = dadosFiltrados.filter(e => e.tipo === 'pei').length;
+            const escolasPEI = dadosFiltrados.filter(e => e.tipo === 'pei9h' || e.tipo === 'pei7h').length;
 
             document.getElementById('mediaGeral').textContent = mediaGeral.toFixed(2);
             document.getElementById('melhorEscola').textContent = melhorEscola.toFixed(2);
