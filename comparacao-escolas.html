@@ -584,8 +584,9 @@
         function criarGraficoBarrasGeral() {
             const ctx = document.getElementById('graficoBarrasGeral').getContext('2d');
             
-            if (window.graficoBarras) {
-                window.graficoBarras.destroy();
+            if (graficosAtivos['graficoBarrasGeral']) {
+                graficosAtivos['graficoBarrasGeral'].destroy();
+                delete graficosAtivos['graficoBarrasGeral'];
             }
 
             const dados = dadosFiltrados.slice(0, 15); // Mostrar apenas top 15 para legibilidade
@@ -616,7 +617,7 @@
                     }
                 ];
 
-                window.graficoBarras = new Chart(ctx, {
+                graficosAtivos['graficoBarrasGeral'] = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: dados.map(e => e.nome.replace('EE ', '').replace('PEI ', '')),
@@ -651,7 +652,7 @@
                 const nomeBimestre = bimestreAtual === 'bimestre1' ? '1º Bimestre' : 
                                    bimestreAtual === 'bimestre2' ? '2º Bimestre' : '3º Bimestre';
                 
-                window.graficoBarras = new Chart(ctx, {
+                graficosAtivos['graficoBarrasGeral'] = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: dados.map(e => e.nome.replace('EE ', '').replace('PEI ', '')),
@@ -708,8 +709,9 @@
         function criarGraficoLinhaEvolucao() {
             const ctx = document.getElementById('graficoLinhaEvolucao').getContext('2d');
             
-            if (window.graficoLinha) {
-                window.graficoLinha.destroy();
+            if (graficosAtivos['graficoLinhaEvolucao']) {
+                graficosAtivos['graficoLinhaEvolucao'].destroy();
+                delete graficosAtivos['graficoLinhaEvolucao'];
             }
 
             // Ordenar por 3º bimestre para pegar as top 5
@@ -738,7 +740,7 @@
                 };
             });
 
-            window.graficoLinha = new Chart(ctx, {
+            graficosAtivos['graficoLinhaEvolucao'] = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: bimestres,
@@ -766,8 +768,9 @@
         function criarGraficoRadar() {
             const ctx = document.getElementById('graficoRadar').getContext('2d');
             
-            if (window.graficoRadar) {
-                window.graficoRadar.destroy();
+            if (graficosAtivos['graficoRadar']) {
+                graficosAtivos['graficoRadar'].destroy();
+                delete graficosAtivos['graficoRadar'];
             }
 
             // Usar bimestre atual ou 3º se for evolução
@@ -823,7 +826,7 @@
                 });
             }
 
-            window.graficoRadar = new Chart(ctx, {
+            graficosAtivos['graficoRadar'] = new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: ['Super BI', 'Frequência', 'ALURA', 'KHAN', 'Prova Paulista', 'Tarefas'],
@@ -1011,8 +1014,10 @@
 
             const ctx = canvas.getContext('2d');
             
-            if (window[canvasId]) {
-                window[canvasId].destroy();
+            // Destruir gráfico existente se houver
+            if (graficosAtivos[canvasId]) {
+                graficosAtivos[canvasId].destroy();
+                delete graficosAtivos[canvasId];
             }
 
             const dadosDispersao = dadosFiltrados.map(escola => {
@@ -1052,7 +1057,7 @@
                 }
             ];
 
-            window[canvasId] = new Chart(ctx, {
+            graficosAtivos[canvasId] = new Chart(ctx, {
                 type: 'scatter',
                 data: { datasets: datasets },
                 options: {
