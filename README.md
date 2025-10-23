@@ -573,14 +573,14 @@ chore: manutenção
 
 **Daniel Santos**
 - GitHub: [@dansfisica85](https://github.com/dansfisica85)
-- Email: daniel.santos@educacao.sp.gov.br
-- LinkedIn: [Daniel Santos](https://linkedin.com/in/dansfisica85)
+- Email: davi.silva@educacao.sp.gov.br
+- LinkedIn: [Davi Nunes da Silva](https://linkedin.com/in/davinunesdasilva)
 
 ### 🏢 **Equipe de Desenvolvimento**
-- **Análise de Dados**: Daniel Santos
-- **Frontend**: Daniel Santos  
-- **Documentação**: Daniel Santos
-- **Testes**: Daniel Santos
+- **Análise de Dados**: Davi Antonino Nunes da Silva
+- **Frontend**: Davi Antonino Nunes da Silva  
+- **Documentação**: Davi Antonino Nunes da Silva
+- **Testes**: Davi Antonino Nunes da Silva
 
 ---
 
@@ -612,7 +612,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 - Compartilhe ideias de melhoria
 
 #### 📧 **Contato Direto**
-- Email: daniel.santos@educacao.sp.gov.br
+- Email: davi.silva@educacao.sp.gov.br
 - Resposta em até 48h úteis
 
 ---
